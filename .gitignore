@@ -13,3 +13,6 @@ Thumbs.db
 log/
 log.zip
 material-web-main/
+
+# Локальный архив с чужим примером nginx (Next/Strapi) — не нужен для сборки
+nginx.zip

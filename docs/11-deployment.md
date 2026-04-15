@@ -2,19 +2,48 @@
 
 ---
 
-## Docker
+## Docker (обзор)
 
-Один контейнер, один процесс (Hono на Node.js).
+По умолчанию в корневом **`docker-compose.yml`** поднимаются **два** сервиса:
 
-### Dockerfile (multi-stage)
+| Сервис | Роль |
+|--------|------|
+| **`family-tree`** | Сборка из корневого **`Dockerfile`**: Node 22, Hono, SQLite, Sharp; слушает **3000** только **внутри** сети Docker (на хост порт не пробрасывается, чтобы не конфликтовать с локальным `pnpm run dev:server`). |
+| **`nginx`** | Образ из **`docker/nginx/`**: reverse proxy **хост `8080` → контейнер `80` → upstream `family-tree:3000`**. Сайт с машины разработчика: **http://localhost:8080**. |
+
+**Обязательно:** в **`.env`** в корне задать **`JWT_SECRET`** (≥ 32 символов). Иначе `docker compose` не подставит секрет и завершится с ошибкой (см. подстановку в `docker-compose.yml`).
+
+### Быстрый старт (локально)
+
+```bash
+cp .env.example .env
+# Заполните JWT_SECRET (openssl rand -hex 32) и ADMIN_PASSWORD
+mkdir -p data/db data/photos data/backups
+docker compose up -d --build
+curl -s http://localhost:8080/health
+```
+
+Логи: **`docker compose logs -f family-tree`**, **`docker compose logs -f nginx`**. Остановка: **`docker compose down`**.
+
+**Продакшен на VPS:** когда порт **80** свободен, в **`docker-compose.yml`** у сервиса **`nginx`** замените **`"8080:80"`** на **`"80:80"`** (и при необходимости настройте TLS — см. ниже про Caddy).
+
+**Прямой доступ к API без nginx:** под сервисом **`family-tree`** добавьте **`ports: ["3000:3000"]`** (или используйте **`docker-compose.override.yml`**, не коммитимый в git).
+
+### Dockerfile приложения (multi-stage)
 
 ```
 Stage 1 (deps):     node:22-alpine + pnpm install --frozen-lockfile
-Stage 2 (builder):  pnpm build shared -> client -> server
-Stage 3 (runner):   node:22-alpine + apk add vips-dev (для sharp)
-                    Копируем: server/dist, client/dist, shared/dist, node_modules
-                    CMD: node dist/serve.js (миграции и опциональный сид при импорте bootstrap.ts)
+Stage 2 (builder):  pnpm build client + server + pnpm prune --prod
+Stage 3 (runner):   node:22-alpine + vips-dev (для sharp)
+                    Копируется /app, entrypoint, cron для бэкапов
+                    CMD: node dist/serve.js (миграции и сид через bootstrap)
 ```
+
+### Nginx в репозитории
+
+- **`docker/nginx/Dockerfile`** — `nginx:1.27-alpine`, подмена **`/etc/nginx/nginx.conf`** на **`docker/nginx/family-tree.conf`**.
+- **`docker/nginx/family-tree.conf`** — один `server` на 80, `proxy_pass` на **`http://family-tree:3000`**, gzip, **`client_max_body_size 20m`**, заголовки **`X-Forwarded-*`**, поддержка **`Upgrade`** для WebSocket.
+- **`docker/nginx/README.md`** — откуда взялся пример (архив с конфигами под другой стек); в git **не** коммитится **`nginx.zip`** (см. **`.gitignore`**).
 
 ### Старт процесса (`bootstrap.ts`)
 
@@ -43,54 +72,53 @@ Stage 3 (runner):   node:22-alpine + apk add vips-dev (для sharp)
 
 В **`serve.ts`**: по **SIGINT** / **SIGTERM** вызывается **`server.close()`**, затем **`sqlite.close()`**; при зависании закрытия — принудительный выход через **10 с**. Повторный сигнал во время остановки завершает процесс сразу.
 
-В **`docker-compose.yml`** для сервиса задан **`stop_grace_period: 15s`**, чтобы Docker не послал **SIGKILL** раньше внутреннего таймаута.
+В **`docker-compose.yml`** для сервиса **`family-tree`** задан **`stop_grace_period: 15s`**, чтобы Docker не послал **SIGKILL** раньше внутреннего таймаута.
 
-### docker-compose.yml
+### docker-compose.yml (как в репозитории)
 
-В корне репозитория переменная **`JWT_SECRET`** передаётся в контейнер только из `.env` / окружения хоста: при пустом или отсутствующем значении **`docker compose`** завершится с ошибкой подстановки (нет небезопасного дефолта). Длина **≥ 32** символов дополнительно проверяется кодом сервера при логине.
+Ниже — актуальная схема (два сервиса). Переменные окружения приложения задаются в **`environment:`**; **`JWT_SECRET`** берётся из **`.env`** хоста.
 
 ```yaml
 services:
   family-tree:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: family-tree
+    stop_grace_period: 15s
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     volumes:
       - ./data/db:/data/db
       - ./data/photos:/data/photos
       - ./data/backups:/data/backups
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - JWT_SECRET=${JWT_SECRET}
-      - ADMIN_LOGIN=${ADMIN_LOGIN:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-changeme}
-      - DB_PATH=/data/db/family-tree.db
-      - PHOTOS_PATH=/data/photos
-      - BACKUPS_PATH=/data/backups
-      - SESSION_TTL_DAYS=30
-      - MAX_UPLOAD_SIZE_MB=10
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_PATH: /data/db/family-tree.db
+      PHOTOS_PATH: /data/photos
+      BACKUPS_PATH: /data/backups
+      ENABLE_BACKUP_CRON: "1"
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      ADMIN_LOGIN: ${ADMIN_LOGIN:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme}
+      RATE_LIMIT_MAX_ATTEMPTS: ${RATE_LIMIT_MAX_ATTEMPTS:-5}
+      RATE_LIMIT_WINDOW_MINUTES: ${RATE_LIMIT_WINDOW_MINUTES:-15}
 
-  caddy:
-    image: caddy:2-alpine
-    container_name: caddy
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: family-tree-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
+      - "8080:80"
     depends_on:
       - family-tree
-
-volumes:
-  caddy_data:
-  caddy_config:
 ```
+
+Отдельный compose с **только** приложением и **Caddy** для HTTPS (без nginx из репозитория) можно собрать вручную по примеру ниже — в репозитории по умолчанию используется связка **family-tree + nginx**.
 
 ### Caddyfile
 
@@ -131,9 +159,10 @@ Caddy автоматически получает Let's Encrypt сертифик
 | Компонент | RAM |
 |-----------|-----|
 | Node.js (Hono + SQLite) | 80-120 МБ |
-| Caddy | 10-15 МБ |
+| Nginx (reverse proxy) | ~5-15 МБ |
+| Caddy (если используете отдельно) | 10-15 МБ |
 | Docker overhead | 20-30 МБ |
-| Итого | ~130-170 МБ |
+| Итого (compose по умолчанию) | ~130-180 МБ |
 
 ### Установка
 
@@ -160,9 +189,11 @@ mkdir -p data/db data/photos data/backups
 # 6. Запуск
 docker compose up -d --build
 
-# 7. Проверка
+# 7. Проверка (с nginx по умолчанию — порт 8080; на VPS смените mapping на 80:80 или поставьте Caddy)
 docker compose logs -f
-curl -k https://tree.example.com
+curl -s http://127.0.0.1:8080/health
+# При TLS через Caddy на 443:
+# curl -fsS https://tree.example.com/health
 ```
 
 ### Обновление
@@ -183,7 +214,8 @@ docker compose up -d --build
 | ADMIN_LOGIN | нет | admin | Логин админа (seed) |
 | ADMIN_PASSWORD | нет | changeme | Пароль админа (seed) |
 | PORT | нет | 3000 | Порт сервера |
-| DB_PATH | нет | /data/db/family-tree.db | Путь к SQLite |
+| DATABASE_PATH | нет | см. compose | Путь к SQLite в контейнере (**`/data/db/family-tree.db`** в compose) |
+| DB_PATH | нет | — | Алиас к **DATABASE_PATH** (см. `.env.example`) |
 | PHOTOS_PATH | нет | /data/photos | Директория фото |
 | BACKUPS_PATH | нет | /data/backups | Директория бэкапов |
 | ENABLE_BACKUP_CRON | нет | 0 | В **`docker-compose.yml`** по умолчанию **1**: cron + ротация 30 дней (см. раздел выше) |

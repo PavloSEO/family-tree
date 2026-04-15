@@ -5,6 +5,6 @@
 3. Перед коммитом выполните **`pnpm run typecheck`** и при необходимости **`pnpm run build`**.
 4. Опишите изменения в сообщении коммита и в описании pull request.
 
-Не добавляйте в git каталог **`log/`**, **`log.zip`** и **`material-web-main/`** (локальные артефакты и справочная копия исходников; в проекте используется npm-пакет `@material/web`). Они перечислены в **`.gitignore`**.
+Не добавляйте в git каталог **`log/`**, **`log.zip`**, **`material-web-main/`**, корневой **`nginx.zip`** (локальные артефакты и чужие примеры конфигов). Они перечислены в **`.gitignore`**. Рабочий конфиг nginx для Docker — **`docker/nginx/`**.
 
 Вопросы и баги — через [Issues](https://github.com/PavloSEO/family-tree/issues).
