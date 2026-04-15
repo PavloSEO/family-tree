@@ -1,0 +1,39 @@
+{
+  "name": "@family-tree/client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@family-tree/shared": "workspace:*",
+    "@hookform/resolvers": "3.10.0",
+    "@material/web": "^2.4.1",
+    "@tanstack/react-table": "8.21.3",
+    "@xyflow/react": "^12.4.4",
+    "elkjs": "^0.11.1",
+    "i18next": "^26.0.5",
+    "ky": "^1.7.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "7.56.1",
+    "react-i18next": "^17.0.3",
+    "react-router-dom": "^7.5.1",
+    "sonner": "^2.0.7",
+    "yet-another-react-lightbox": "^3.31.0",
+    "zod": "3.24.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "tailwindcss": "^4.1.4",
+    "typescript": "~5.8.2",
+    "vite": "^6.3.3"
+  }
+}

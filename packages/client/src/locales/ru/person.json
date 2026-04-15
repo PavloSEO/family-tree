@@ -1,0 +1,130 @@
+{
+  "validation": {
+    "firstNameRequired": "Имя обязательно",
+    "lastNameRequired": "Фамилия обязательна",
+    "invalidEmail": "Некорректный email",
+    "checkData": "Проверьте данные"
+  },
+  "gender": {
+    "prefix": "Пол",
+    "male": "мужской",
+    "female": "женский",
+    "maleShort": "Мужской",
+    "femaleShort": "Женский"
+  },
+  "maiden": " (девичья: {{name}})",
+  "date": {
+    "empty": "—"
+  },
+  "age": {
+    "years_one": "{{count}} год",
+    "years_few": "{{count}} года",
+    "years_many": "{{count}} лет",
+    "years_other": "{{count}} лет"
+  },
+  "zodiac": {
+    "cnBirthYearNote": "(по году рождения)"
+  },
+  "page": {
+    "loading": "Загрузка…",
+    "noId": "Не указан идентификатор",
+    "notFound": "Карточка не найдена",
+    "unknownError": "Неизвестная ошибка",
+    "treeViz": "Визуализация дерева",
+    "edit": "Редактировать",
+    "relativesEmpty": "В графе связей рядом с этой карточкой нет других людей.",
+    "albumYear": "Год: {{year}}",
+    "albumYearUnknown": "Год не указан"
+  },
+  "sections": {
+    "infographics": "Инфографика",
+    "photoAlbums": "Фотоальбомы",
+    "relatives": "Родственники",
+    "about": "О человеке",
+    "contacts": "Контакты",
+    "workHobbies": "Работа и увлечения",
+    "extra": "Дополнительно",
+    "customFields": "Дополнительные поля"
+  },
+  "about": {
+    "bio": "Биография",
+    "dateOfBirth": "Дата рождения",
+    "dateOfDeath": "Дата смерти",
+    "birthPlace": "Место рождения",
+    "currentLocation": "Текущее место"
+  },
+  "work": {
+    "occupation": "Род занятий",
+    "hobbies": "Хобби"
+  },
+  "extra": {
+    "country": "Страна",
+    "localizedNames": "Имена на других языках"
+  },
+  "contacts": {
+    "phone": "Телефон",
+    "email": "Email",
+    "social": "Соцсети"
+  },
+  "info": {
+    "age": "Возраст",
+    "westernZodiac": "Знак зодиака",
+    "chineseZodiac": "Китайский зодиак",
+    "bloodType": "Группа крови",
+    "birthPlace": "Место рождения",
+    "currentLocation": "Текущее место"
+  },
+  "welcome": {
+    "loading": "Загрузка…",
+    "loadError": "Ошибка загрузки",
+    "draftToastTitle": "Восстановлен черновик",
+    "draftToastDesc": "Продолжите заполнение карточки.",
+    "title": "Добро пожаловать",
+    "intro": "В базе пока нет ни одной карточки. Начните с создания первой записи — так проще подключить родственников и дерево.",
+    "draftHint": "Черновик формы сохраняется в этой вкладке браузера и при уходе со страницы; после истечения сессии войдите снова и откройте «Приветствие», чтобы продолжить.",
+    "firstCardHeading": "Первая карточка",
+    "cardCreatedTitle": "Карточка создана",
+    "cardCreatedDesc": "Можно добавлять связи и открывать дерево.",
+    "viewerMessage": "Создание карточек доступно администратору. Откройте дерево или альбомы либо обратитесь к администратору сайта.",
+    "goToTree": "Перейти к дереву",
+    "photoAlbums": "Фотоальбомы"
+  },
+  "form": {
+    "accordionExtraName": "Дополнительное имя",
+    "accordionDatesPlaces": "Даты и места",
+    "accordionPhoto": "Фото",
+    "accordionContacts": "Контакты",
+    "accordionAbout": "О человеке",
+    "accordionMedical": "Медицинское",
+    "accordionCustom": "Дополнительные поля",
+    "photoLine1": "На сервере доступен",
+    "photoLine2": "(multipart, поле",
+    "photoLine3": "). Поле загрузки в этой форме пока не подключено — превью после сохранения карточки можно смотреть в списке и на странице карточки.",
+    "genderLegend": "Пол *",
+    "bloodNotSpecified": "Не указано",
+    "labels": {
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "patronymic": "Отчество",
+      "maidenName": "Девичья фамилия",
+      "localizedNamesJson": "Локализованные имена (JSON)",
+      "localizedNamesHint": "Объект вида {\"en\":{\"firstName\":\"…\",\"lastName\":\"…\"}} или пусто",
+      "dateOfBirth": "Дата рождения",
+      "dateOfDeath": "Дата смерти",
+      "birthPlace": "Место рождения",
+      "currentLocation": "Текущее место",
+      "country": "Страна (ISO-3166-1 alpha-2)",
+      "phone": "Телефон",
+      "email": "Email",
+      "socialLinksJson": "Соцсети (JSON-массив)",
+      "socialLinksHint": "[{\"platform\":\"…\",\"url\":\"…\"}]",
+      "bio": "Биография",
+      "occupation": "Род занятий",
+      "hobbies": "Хобби",
+      "hobbiesHint": "По одному на строку",
+      "bloodType": "Группа крови",
+      "customFieldsJson": "Произвольные поля (JSON-объект)",
+      "customFieldsHint": "{\"ключ\":\"значение\"}"
+    }
+  }
+}

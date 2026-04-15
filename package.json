@@ -1,0 +1,8 @@
+{
+  "name": "family-tree",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "pnpm --filter @family-tree/client build && pnpm --filter @family-tree/server build"
+  }
+}

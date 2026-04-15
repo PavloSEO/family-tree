@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+.git
+.gitignore
+data
+.env
+.env.*
+*.log
+.cursor
+material-web-main
+**/dist
+**/.turbo
+**/*.tsbuildinfo

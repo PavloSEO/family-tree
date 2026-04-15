@@ -1,0 +1,46 @@
+{
+  "pageTitle": "Дерево",
+  "loadingTree": "Загрузка дерева…",
+  "noRootId": "Не указан идентификатор корня дерева",
+  "noData": "Нет данных",
+  "unknownError": "Неизвестная ошибка",
+  "personCard": "Карточка человека",
+  "personCardShort": "Карточка",
+  "toTreePicker": "К выбору дерева",
+  "anotherRoot": "Другой корень",
+  "landingIntro": "Чтобы открыть визуализацию, перейдите с карточки человека по ссылке «Дерево» или выберите карточку в списке и откройте дерево оттуда.",
+  "personListLink": "Список карточек",
+  "externalBranchBadge": "внешняя ветка",
+  "nodeClickHint": "Клик — карточка, двойной клик — дерево от этого человека",
+  "externalBranchesShown": "Внешние ветки показаны",
+  "externalBranchesHidden": "Внешние ветки скрыты",
+  "hideExternalAncestors": "Скрыть внешних предков",
+  "showExternalAncestors": "Показать внешних предков",
+  "controls": {
+    "viewModeAria": "Режим просмотра дерева",
+    "depthLabel": "Глубина (вверх и вниз): {{value}}",
+    "resetView": "Сбросить вид",
+    "mode": {
+      "full": "Полное",
+      "ancestors": "Предки",
+      "descendants": "Потомки",
+      "direct": "Прямые",
+      "family": "Семья",
+      "paternal": "По отцу",
+      "maternal": "По матери"
+    }
+  },
+  "filters": {
+    "country": "Страна",
+    "allCountries": "Все страны",
+    "status": "Статус",
+    "all": "Все",
+    "aliveOnly": "Только живые",
+    "branch": "Ветка",
+    "coreOnly": "Только ядро",
+    "externalAncestorsDepth": "Внешние предки (глубина {{depth}})",
+    "findLabel": "Поиск по имени",
+    "findPlaceholder": "Имя или фамилия",
+    "findSupporting": "Подсветка и прокрутка к первому совпадению в текущем дереве"
+  }
+}

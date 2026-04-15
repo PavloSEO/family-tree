@@ -1,0 +1,18 @@
+{
+  "brandTitle": "Family Tree",
+  "navCaption": "Navigation",
+  "sectionAdmin": "Administration",
+  "logout": "Sign out",
+  "nav": {
+    "tree": "Tree",
+    "albums": "Photo albums",
+    "home": "Home",
+    "welcome": "Welcome",
+    "adminPersons": "Person records",
+    "adminRelationships": "Relationships",
+    "adminUsers": "Users",
+    "adminAlbums": "Albums (admin)",
+    "adminSettings": "Settings",
+    "adminBackup": "Backups"
+  }
+}

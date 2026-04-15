@@ -1,0 +1,46 @@
+{
+  "pageTitle": "Tree",
+  "loadingTree": "Loading tree…",
+  "noRootId": "Tree root is not specified",
+  "noData": "No data",
+  "unknownError": "Unknown error",
+  "personCard": "Person profile",
+  "personCardShort": "Profile",
+  "toTreePicker": "Choose another root",
+  "anotherRoot": "Another root",
+  "landingIntro": "To open the visualization, go from a person’s profile via the “Tree” link, or pick a person in the list and open the tree from there.",
+  "personListLink": "Person records",
+  "externalBranchBadge": "external branch",
+  "nodeClickHint": "Click — profile, double-click — tree rooted at this person",
+  "externalBranchesShown": "External branches visible",
+  "externalBranchesHidden": "External branches hidden",
+  "hideExternalAncestors": "Hide external ancestors",
+  "showExternalAncestors": "Show external ancestors",
+  "controls": {
+    "viewModeAria": "Tree view mode",
+    "depthLabel": "Depth (up and down): {{value}}",
+    "resetView": "Reset view",
+    "mode": {
+      "full": "Full",
+      "ancestors": "Ancestors",
+      "descendants": "Descendants",
+      "direct": "Direct",
+      "family": "Family",
+      "paternal": "Paternal",
+      "maternal": "Maternal"
+    }
+  },
+  "filters": {
+    "country": "Country",
+    "allCountries": "All countries",
+    "status": "Status",
+    "all": "All",
+    "aliveOnly": "Living only",
+    "branch": "Branch",
+    "coreOnly": "Core only",
+    "externalAncestorsDepth": "External ancestors (depth {{depth}})",
+    "findLabel": "Search by name",
+    "findPlaceholder": "First or last name",
+    "findSupporting": "Highlights and scrolls to the first match in the current tree"
+  }
+}

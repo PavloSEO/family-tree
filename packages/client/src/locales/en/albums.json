@@ -1,0 +1,60 @@
+{
+  "common": {
+    "unknownError": "Unknown error"
+  },
+  "browse": {
+    "title": "Photo albums",
+    "subtitle": "Shared albums. Open an album to view and tag photos.",
+    "empty": "No albums yet.",
+    "year": "Year: {{year}}",
+    "yearUnknown": "Year not set"
+  },
+  "albumPage": {
+    "errorNoAlbumId": "Album not specified",
+    "invalidUrl": "Invalid URL.",
+    "backToAlbums": "← Albums",
+    "titleLoading": "Loading…",
+    "titleFallback": "Album",
+    "sectionUpload": "Upload photos",
+    "sectionPhotos": "Photos",
+    "emptyPhotos": "This album has no photos yet.",
+    "openFullscreenAria": "Open fullscreen viewer",
+    "taggingLink": "Tag"
+  },
+  "tagPage": {
+    "errorBadParams": "Invalid address",
+    "errorWrongAlbum": "This photo belongs to another album.",
+    "invalidUrl": "Invalid URL.",
+    "backToAlbum": "← Back to album",
+    "title": "Photo tagging",
+    "emptyDisplay": "Nothing to display."
+  },
+  "uploader": {
+    "hintDropOrClick": "Drop files here or click to choose",
+    "hintMimeAndSize": "JPEG, PNG, or WebP. Multiple files allowed. Up to {{mb}} MB per file.",
+    "queueHeading": "Queued: {{count}}",
+    "removeFromQueueTitle": "Remove from list",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "clearQueue": "Clear list",
+    "errAllTooBig": "Files over {{mb}} MB are not queued (same limit as on the server).",
+    "errMimeOnly": "Only JPEG, PNG, and WebP are supported.",
+    "errSomeTooBig": "Files over {{mb}} MB not queued: {{count}}.",
+    "errUploadFailed": "Could not upload photo"
+  },
+  "gallery": {
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "tagger": {
+    "whoInRegion": "Who is in the selected area?",
+    "searchLabel": "Search by first or last name",
+    "searching": "Searching…",
+    "cancelFrame": "Cancel selection",
+    "hintDraw": "Draw a rectangle on the photo, then pick a person from search.",
+    "tagsHeading": "Tags",
+    "noTags": "No tags yet.",
+    "deleting": "Removing…"
+  }
+}

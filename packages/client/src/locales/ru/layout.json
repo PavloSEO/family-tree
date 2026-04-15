@@ -1,0 +1,18 @@
+{
+  "brandTitle": "Family Tree",
+  "navCaption": "Навигация",
+  "sectionAdmin": "Администрирование",
+  "logout": "Выйти",
+  "nav": {
+    "tree": "Дерево",
+    "albums": "Фотоальбомы",
+    "home": "Главная",
+    "welcome": "Приветствие",
+    "adminPersons": "Карточки",
+    "adminRelationships": "Связи",
+    "adminUsers": "Пользователи",
+    "adminAlbums": "Альбомы (админ)",
+    "adminSettings": "Настройки",
+    "adminBackup": "Резервные копии"
+  }
+}

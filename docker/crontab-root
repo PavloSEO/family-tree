@@ -1,0 +1,1 @@
+0 3 * * * /bin/sh /app/scripts/docker-backup-run.sh >> /data/backups/cron.log 2>&1

@@ -1,0 +1,128 @@
+{
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "invalidEmail": "Invalid email",
+    "checkData": "Please check the form"
+  },
+  "gender": {
+    "prefix": "Gender",
+    "male": "male",
+    "female": "female",
+    "maleShort": "Male",
+    "femaleShort": "Female"
+  },
+  "maiden": " (née: {{name}})",
+  "date": {
+    "empty": "—"
+  },
+  "age": {
+    "years_one": "{{count}} year",
+    "years_other": "{{count}} years"
+  },
+  "zodiac": {
+    "cnBirthYearNote": "(by birth year)"
+  },
+  "page": {
+    "loading": "Loading…",
+    "noId": "No person id specified",
+    "notFound": "Person not found",
+    "unknownError": "Unknown error",
+    "treeViz": "Tree visualization",
+    "edit": "Edit",
+    "relativesEmpty": "No other people are linked next to this record in the graph.",
+    "albumYear": "Year: {{year}}",
+    "albumYearUnknown": "Year not set"
+  },
+  "sections": {
+    "infographics": "Infographics",
+    "photoAlbums": "Photo albums",
+    "relatives": "Relatives",
+    "about": "About",
+    "contacts": "Contacts",
+    "workHobbies": "Work and hobbies",
+    "extra": "Additional",
+    "customFields": "Custom fields"
+  },
+  "about": {
+    "bio": "Biography",
+    "dateOfBirth": "Date of birth",
+    "dateOfDeath": "Date of death",
+    "birthPlace": "Place of birth",
+    "currentLocation": "Current location"
+  },
+  "work": {
+    "occupation": "Occupation",
+    "hobbies": "Hobbies"
+  },
+  "extra": {
+    "country": "Country",
+    "localizedNames": "Names in other languages"
+  },
+  "contacts": {
+    "phone": "Phone",
+    "email": "Email",
+    "social": "Social links"
+  },
+  "info": {
+    "age": "Age",
+    "westernZodiac": "Western zodiac",
+    "chineseZodiac": "Chinese zodiac",
+    "bloodType": "Blood type",
+    "birthPlace": "Place of birth",
+    "currentLocation": "Current location"
+  },
+  "welcome": {
+    "loading": "Loading…",
+    "loadError": "Failed to load",
+    "draftToastTitle": "Draft restored",
+    "draftToastDesc": "Continue filling in the person record.",
+    "title": "Welcome",
+    "intro": "The database has no person records yet. Start by creating the first one — it makes it easier to add relatives and the tree.",
+    "draftHint": "The form draft is saved in this browser tab and when you leave the page; after your session expires, sign in again and open Welcome to continue.",
+    "firstCardHeading": "First person record",
+    "cardCreatedTitle": "Person created",
+    "cardCreatedDesc": "You can add relationships and open the tree.",
+    "viewerMessage": "Only an administrator can create records. Open the tree or albums, or contact the site administrator.",
+    "goToTree": "Go to tree",
+    "photoAlbums": "Photo albums"
+  },
+  "form": {
+    "accordionExtraName": "Additional name",
+    "accordionDatesPlaces": "Dates and places",
+    "accordionPhoto": "Photo",
+    "accordionContacts": "Contacts",
+    "accordionAbout": "About",
+    "accordionMedical": "Medical",
+    "accordionCustom": "Custom fields",
+    "photoLine1": "On the server you can use",
+    "photoLine2": "(multipart, field",
+    "photoLine3": "). File upload in this form is not wired yet — after saving, preview the person in the list or on the profile page.",
+    "genderLegend": "Gender *",
+    "bloodNotSpecified": "Not specified",
+    "labels": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "patronymic": "Patronymic",
+      "maidenName": "Maiden name",
+      "localizedNamesJson": "Localized names (JSON)",
+      "localizedNamesHint": "Object like {\"en\":{\"firstName\":\"…\",\"lastName\":\"…\"}} or empty",
+      "dateOfBirth": "Date of birth",
+      "dateOfDeath": "Date of death",
+      "birthPlace": "Place of birth",
+      "currentLocation": "Current location",
+      "country": "Country (ISO-3166-1 alpha-2)",
+      "phone": "Phone",
+      "email": "Email",
+      "socialLinksJson": "Social links (JSON array)",
+      "socialLinksHint": "[{\"platform\":\"…\",\"url\":\"…\"}]",
+      "bio": "Biography",
+      "occupation": "Occupation",
+      "hobbies": "Hobbies",
+      "hobbiesHint": "One per line",
+      "bloodType": "Blood type",
+      "customFieldsJson": "Custom fields (JSON object)",
+      "customFieldsHint": "{\"key\":\"value\"}"
+    }
+  }
+}

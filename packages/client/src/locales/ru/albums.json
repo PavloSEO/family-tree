@@ -1,0 +1,60 @@
+{
+  "common": {
+    "unknownError": "Неизвестная ошибка"
+  },
+  "browse": {
+    "title": "Фотоальбомы",
+    "subtitle": "Общие альбомы. Откройте альбом, чтобы просмотреть и разметить фото.",
+    "empty": "Пока нет альбомов.",
+    "year": "Год: {{year}}",
+    "yearUnknown": "Год не указан"
+  },
+  "albumPage": {
+    "errorNoAlbumId": "Не указан альбом",
+    "invalidUrl": "Некорректный адрес.",
+    "backToAlbums": "← Альбомы",
+    "titleLoading": "Загрузка…",
+    "titleFallback": "Альбом",
+    "sectionUpload": "Загрузка фото",
+    "sectionPhotos": "Фотографии",
+    "emptyPhotos": "В этом альбоме пока нет фото.",
+    "openFullscreenAria": "Открыть в полноэкранном просмотре",
+    "taggingLink": "Разметка"
+  },
+  "tagPage": {
+    "errorBadParams": "Некорректный адрес",
+    "errorWrongAlbum": "Это фото из другого альбома.",
+    "invalidUrl": "Некорректный адрес.",
+    "backToAlbum": "← К альбому",
+    "title": "Разметка фото",
+    "emptyDisplay": "Нет данных для отображения."
+  },
+  "uploader": {
+    "hintDropOrClick": "Перетащите сюда файлы или нажмите, чтобы выбрать",
+    "hintMimeAndSize": "JPEG, PNG или WebP. Можно выбрать несколько файлов. Не больше {{mb}} МБ на файл.",
+    "queueHeading": "К загрузке: {{count}}",
+    "removeFromQueueTitle": "Убрать из списка",
+    "upload": "Загрузить",
+    "uploading": "Загрузка…",
+    "clearQueue": "Очистить список",
+    "errAllTooBig": "Файл больше {{mb}} МБ не добавляется в очередь (лимит как на сервере).",
+    "errMimeOnly": "Поддерживаются только JPEG, PNG и WebP.",
+    "errSomeTooBig": "В очередь не попали файлы больше {{mb}} МБ: {{count}} шт.",
+    "errUploadFailed": "Не удалось загрузить фото"
+  },
+  "gallery": {
+    "close": "Закрыть",
+    "next": "Далее",
+    "previous": "Назад"
+  },
+  "tagger": {
+    "whoInRegion": "Кто в выделенной области?",
+    "searchLabel": "Поиск по имени или фамилии",
+    "searching": "Поиск…",
+    "cancelFrame": "Отменить рамку",
+    "hintDraw": "Нарисуйте прямоугольник на фото, затем выберите человека в поиске.",
+    "tagsHeading": "Разметки",
+    "noTags": "Разметок пока нет.",
+    "deleting": "Удаление…"
+  }
+}

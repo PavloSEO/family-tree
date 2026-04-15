@@ -1,0 +1,12 @@
+{
+  "save": "Сохранить",
+  "cancel": "Отмена",
+  "delete": "Удалить",
+  "upload": "Загрузить",
+  "back": "Назад",
+  "error": "Ошибка",
+  "loading": "Загрузка…",
+  "optionalPlaceholder": "Необязательно",
+  "searchPlaceholder": "Поиск…",
+  "interfaceLanguage": "Язык интерфейса"
+}

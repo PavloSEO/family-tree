@@ -1,0 +1,127 @@
+.data-table-layout {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-surface);
+}
+
+.data-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.data-table-toolbar__grow {
+  flex: 1 1 200px;
+  max-width: 28rem;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead {
+  background: var(--md-sys-color-surface-container);
+}
+
+.data-table th {
+  padding: 12px 16px;
+  text-align: left;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  letter-spacing: 0.1px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  vertical-align: middle;
+}
+
+.data-table td {
+  padding: 12px 16px;
+  color: var(--md-sys-color-on-surface);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.data-table tbody tr:hover td {
+  background: var(--md-sys-color-surface-container-low);
+}
+
+md-text-button.data-table-sort-btn {
+  display: inline-flex;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  height: auto;
+  --md-sys-color-primary: var(--md-sys-color-on-surface-variant);
+  --md-text-button-label-text-color: var(--md-sys-color-on-surface-variant);
+  --md-text-button-hover-label-text-color: var(--md-sys-color-on-surface);
+  font: inherit;
+}
+
+md-text-button.data-table-sort-btn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.data-table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px;
+  color: var(--md-sys-color-on-surface-variant);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.data-table-pagination__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.data-table-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.data-table-empty__icon {
+  font-size: 48px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.data-table-empty__description {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.data-table-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: auto;
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-surface) 65%,
+    transparent
+  );
+}
+
+.data-table-loading-overlay md-linear-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
