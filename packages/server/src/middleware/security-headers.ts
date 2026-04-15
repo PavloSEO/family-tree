@@ -1,13 +1,13 @@
 import type { MiddlewareHandler } from "hono";
 
 /**
- * Базовый CSP для SPA + API того же origin.
- * Google Fonts — как в `packages/client/index.html`.
- * `img` — превью blob/data и фото с `/api/...`.
+ * Baseline CSP for SPA + same-origin API.
+ * Google Fonts — as in `packages/client/index.html`.
+ * `img` — blob/data previews and photos from `/api/...`.
  *
- * Доп. источники для `fetch` / XHR (клиент с `VITE_API_BASE_URL` на другой origin):
- * переменная окружения **`CSP_CONNECT_SRC_EXTRA`** — пробел-разделённый список origin
- * (например `https://api.example.com`), добавляется к **`connect-src`** после **`'self'`**.
+ * Extra sources for `fetch` / XHR (client with `VITE_API_BASE_URL` on another origin):
+ * env **`CSP_CONNECT_SRC_EXTRA`** — space-separated origins
+ * (e.g. `https://api.example.com`), appended to **`connect-src`** after **`'self'`**.
  */
 function buildContentSecurityPolicy(): string {
   const extraConnect = process.env.CSP_CONNECT_SRC_EXTRA?.trim();

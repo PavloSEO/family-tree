@@ -52,7 +52,7 @@ export function LoginPage() {
         try {
           body = (await e.response.json()) as { error?: string };
         } catch {
-          /* не JSON */
+          /* not JSON */
         }
         const msg = body.error?.toLowerCase() ?? "";
         if (st === 403 && accountSuspendedMessage(msg)) {

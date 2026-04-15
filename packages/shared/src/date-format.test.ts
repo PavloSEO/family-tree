@@ -6,7 +6,7 @@ import {
 } from "./date-format.js";
 
 describe("parseIsoDateParts", () => {
-  it("парсит YYYY-MM-DD", () => {
+  it("parses YYYY-MM-DD", () => {
     expect(parseIsoDateParts("2026-04-14")).toEqual({
       year: 2026,
       month: 4,
@@ -14,7 +14,7 @@ describe("parseIsoDateParts", () => {
     });
   });
 
-  it("отсекает время после T", () => {
+  it("strips time after T", () => {
     expect(parseIsoDateParts("1999-12-31T23:59:59Z")).toEqual({
       year: 1999,
       month: 12,
@@ -22,11 +22,11 @@ describe("parseIsoDateParts", () => {
     });
   });
 
-  it("отклоняет 29 февраля в невисокосный год", () => {
+  it("rejects Feb 29 in non-leap year", () => {
     expect(parseIsoDateParts("2023-02-29")).toBeNull();
   });
 
-  it("принимает 29 февраля в високосный год", () => {
+  it("accepts Feb 29 in leap year", () => {
     expect(parseIsoDateParts("2024-02-29")).toEqual({
       year: 2024,
       month: 2,
@@ -34,18 +34,18 @@ describe("parseIsoDateParts", () => {
     });
   });
 
-  it("отклоняет мусор", () => {
+  it("rejects garbage", () => {
     expect(parseIsoDateParts("not-a-date")).toBeNull();
     expect(parseIsoDateParts("2026-13-01")).toBeNull();
   });
 });
 
 describe("formatDateRu", () => {
-  it("форматирует в DD.MM.YYYY", () => {
+  it("formats as DD.MM.YYYY", () => {
     expect(formatDateRu("2026-04-14")).toBe("14.04.2026");
   });
 
-  it("возвращает null для пустых значений", () => {
+  it("returns null for empty values", () => {
     expect(formatDateRu(null)).toBeNull();
     expect(formatDateRu("")).toBeNull();
     expect(formatDateRu("   ")).toBeNull();
@@ -53,7 +53,7 @@ describe("formatDateRu", () => {
 });
 
 describe("formatDateLongRu", () => {
-  it("возвращает строку с месяцем по-русски", () => {
+  it("returns string with Russian month name", () => {
     const s = formatDateLongRu("2026-04-14");
     expect(s).toBeTruthy();
     expect(s).toMatch(/2026/);

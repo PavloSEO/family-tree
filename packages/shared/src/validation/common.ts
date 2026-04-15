@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** Дата в формате YYYY-MM-DD (колонки SQLite `*_date` в ТЗ) */
+/** Date as YYYY-MM-DD (SQLite `*_date` columns in spec) */
 export const isoDateStringSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Ожидается дата ISO: YYYY-MM-DD");
@@ -16,5 +16,5 @@ export const countryCodeSchema = z
 
 export const uuidSchema = z.string().uuid();
 
-/** Метки времени из SQLite (`datetime('now')` и т.п.) — непустая строка */
+/** SQLite timestamps (`datetime('now')`, etc.) — non-empty string */
 export const sqliteTimestampSchema = z.string().min(1);

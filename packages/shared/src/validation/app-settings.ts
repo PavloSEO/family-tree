@@ -18,7 +18,7 @@ const hexColorSchema = z
   .string()
   .regex(/^#[0-9A-Fa-f]{6}$/, "Цвет: формат #RRGGBB");
 
-/** Полный объект настроек (ответ GET и внутренняя модель). */
+/** Full settings object (GET response and internal model). */
 export const appSettingsSchema = z.object({
   siteName: z.string().min(1).max(200),
   defaultRootPersonId: uuidSchema.nullable(),
@@ -32,7 +32,7 @@ export const appSettingsSchema = z.object({
 
 export type AppSettings = z.infer<typeof appSettingsSchema>;
 
-/** Тело PUT: только известные поля, все опциональны. */
+/** PUT body: known fields only, all optional. */
 export const appSettingsPatchSchema = z
   .object({
     siteName: z.string().min(1).max(200).optional(),

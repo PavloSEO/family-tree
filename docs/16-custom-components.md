@@ -1,26 +1,26 @@
-# 16 -- Кастомные компоненты
+# 16 — Custom components
 
 ---
 
-Компоненты, которых нет в `@material/web` и которые строятся вручную с использованием M3 CSS-токенов.
+Components not provided by `@material/web`, built manually with M3 CSS tokens.
 
 ## DataTable
 
-Headless-логика: TanStack Table 8. Стили: M3-токены.
+Headless logic: TanStack Table 8. Styles: M3 tokens.
 
-### Визуал
+### Layout
 
 ```
 +---------------------------------------------------------------+
 | [search field]              [filter 1] [filter 2]    [+ FAB]  |
 +---------------------------------------------------------------+
-| Имя          | Фамилия     | Пол | Дата рожд. | [sort icon]  |
+| First name   | Last name   | Sex | Birth date | [sort icon]  |
 | ------------ | ----------- | --- | ---------- | ------------ |
-| Иван         | Петров      | M   | 15.03.1985 | [edit] [del] |
-| Ольга        | Петрова     | Ж   | 22.07.1988 | [edit] [del] |
+| John         | Smith       | M   | 03/15/1985 | [edit] [del] |
+| Jane         | Smith       | F   | 07/22/1988 | [edit] [del] |
 | ...          | ...         | ... | ...        | ...          |
 +---------------------------------------------------------------+
-| << < Страница 1 из 5 > >>                    Всего: 42       |
+| << < Page 1 of 5 > >>                    Total: 42         |
 +---------------------------------------------------------------+
 ```
 
@@ -89,9 +89,9 @@ type DataTableProps<T> = {
 
 ---
 
-## Accordion (сворачиваемая секция)
+## Accordion (collapsible section)
 
-Для формы PersonForm -- опциональные секции.
+For PersonForm — optional sections.
 
 ```tsx
 function Accordion({ title, icon, defaultOpen = false, children }) {
@@ -122,30 +122,30 @@ function Accordion({ title, icon, defaultOpen = false, children }) {
 
 ## FileDropzone
 
-Drag & drop зона для загрузки фото.
+Drag-and-drop zone for photo uploads.
 
 ```
 +-------------------------------------------+
 |                                           |
 |     [upload icon]                         |
 |                                           |
-|     Перетащите фото сюда                  |
-|     или нажмите для выбора                |
+|     Drop photos here                      |
+|     or click to choose                    |
 |                                           |
-|     JPG, PNG, WebP -- до 10 МБ           |
+|     JPG, PNG, WebP — up to 10 MB         |
 |                                           |
 +-------------------------------------------+
 ```
 
-### Состояния
+### States
 
-| Состояние | Визуал |
+| State | Visual |
 |-----------|--------|
-| Пустое | Пунктирная рамка `--md-sys-color-outline`, иконка `upload` |
-| Drag over | Рамка `--md-sys-color-primary`, фон `--md-sys-color-primary-container` (10% opacity) |
-| Загрузка | `md-linear-progress` indeterminate |
-| Превью | Миниатюра + имя файла + размер + кнопка удаления |
-| Ошибка | Рамка `--md-sys-color-error`, текст ошибки |
+| Empty | Dashed border `--md-sys-color-outline`, `upload` icon |
+| Drag over | Border `--md-sys-color-primary`, background `--md-sys-color-primary-container` (10% opacity) |
+| Uploading | `md-linear-progress` indeterminate |
+| Preview | Thumbnail + filename + size + delete button |
+| Error | Border `--md-sys-color-error`, error text |
 
 ### CSS
 
@@ -174,17 +174,17 @@ Drag & drop зона для загрузки фото.
 
 ## EmptyState
 
-Отображение пустого состояния (нет данных).
+Empty state (no data).
 
 ```
 +-------------------------------------------+
 |                                           |
 |         [large icon, 48px]                |
 |                                           |
-|         Нет карточек                      |
-|         Создайте первую карточку          |
+|         No cards                          |
+|         Create the first card             |
 |                                           |
-|         [md-filled-button: Создать]       |
+|         [md-filled-button: Create]        |
 |                                           |
 +-------------------------------------------+
 ```
@@ -220,7 +220,7 @@ function EmptyState({ icon, title, description, actionLabel, onAction }) {
 
 ## ConfirmDialog
 
-Обертка над `md-dialog` для подтверждения действий.
+Wrapper over `md-dialog` for confirmations.
 
 ```tsx
 function ConfirmDialog({ open, title, message, confirmLabel, onConfirm, onCancel }) {
@@ -232,7 +232,7 @@ function ConfirmDialog({ open, title, message, confirmLabel, onConfirm, onCancel
         <span className="md-typescale-body-medium">{message}</span>
       </div>
       <div slot="actions">
-        <md-text-button onClick={onCancel}>Отмена</md-text-button>
+        <md-text-button onClick={onCancel}>Cancel</md-text-button>
         <md-filled-button onClick={onConfirm}>{confirmLabel}</md-filled-button>
       </div>
     </md-dialog>
@@ -244,10 +244,10 @@ function ConfirmDialog({ open, title, message, confirmLabel, onConfirm, onCancel
 
 ## SearchField
 
-`md-outlined-text-field` с debounce и иконкой поиска.
+`md-outlined-text-field` with debounce and search icon.
 
 ```tsx
-function SearchField({ value, onChange, placeholder = "Поиск...", debounceMs = 300 }) {
+function SearchField({ value, onChange, placeholder = "Search...", debounceMs = 300 }) {
   const [local, setLocal] = useState(value);
   const debouncedOnChange = useDebounce(onChange, debounceMs);
 
@@ -276,12 +276,12 @@ function SearchField({ value, onChange, placeholder = "Поиск...", debounceM
 
 ---
 
-## Toast (sonner + M3 стили)
+## Toast (sonner + M3 styles)
 
 ```tsx
 import { Toaster } from 'sonner';
 
-// В App.tsx
+// In App.tsx
 <Toaster
   position="bottom-center"
   toastOptions={{

@@ -1,11 +1,10 @@
 import { parseIsoDateParts } from "./date-format.js";
 
 /**
- * Упрощённая привязка к григорианскому году: животное по году даты без сдвига
- * на китайский Новый год (достаточно для MVP).
+ * Simplified Gregorian-year mapping: animal from the calendar year of the date,
+ * without shifting for Chinese New Year (MVP).
  *
- * Цикл синхронизирован так, что **2024** — год **Дракона** (как в распространённой
- * таблице «год − 4» mod 12, 1984 — Крыса).
+ * Cycle aligned so **2024** is **Dragon** (common “year − 4” mod 12 table; 1984 — Rat).
  */
 export const CHINESE_ZODIAC_ANIMALS_RU = [
   "Крыса",
@@ -36,7 +35,7 @@ export function chineseZodiacAnimalFromYear(
   return CHINESE_ZODIAC_ANIMALS_RU[i % 12]!;
 }
 
-/** Животное по дате `YYYY-MM-DD` (берётся календарный год даты). */
+/** Animal from `YYYY-MM-DD` (uses the calendar year of the date). */
 export function chineseZodiacAnimalFromIso(
   isoDate: string | null | undefined,
 ): ChineseZodiacAnimalRu | null {

@@ -17,19 +17,19 @@ const ids = {
 } as const;
 
 describe("findShortestPath", () => {
-  it("возвращает одну вершину для совпадения from и to", () => {
+  it("returns single vertex when from equals to", () => {
     const rels: RelationshipGraphEdge[] = [];
     expect(findShortestPath(ids.a, ids.a, rels)).toEqual([ids.a]);
   });
 
-  it("находит прямого родителя", () => {
+  it("finds direct parent", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "parent", fromPersonId: ids.b, toPersonId: ids.a },
     ];
     expect(findShortestPath(ids.a, ids.b, rels)).toEqual([ids.a, ids.b]);
   });
 
-  it("находит дедушку (два шага вверх)", () => {
+  it("finds grandparent (two steps up)", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "parent", fromPersonId: ids.b, toPersonId: ids.a },
       { type: "parent", fromPersonId: ids.c, toPersonId: ids.b },
@@ -37,7 +37,7 @@ describe("findShortestPath", () => {
     expect(findShortestPath(ids.a, ids.c, rels)).toEqual([ids.a, ids.b, ids.c]);
   });
 
-  it("учитывает супружеское ребро в обе стороны", () => {
+  it("traverses spouse edge in both directions", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "parent", fromPersonId: ids.b, toPersonId: ids.a },
       { type: "spouse", fromPersonId: ids.b, toPersonId: ids.c },
@@ -45,7 +45,7 @@ describe("findShortestPath", () => {
     expect(findShortestPath(ids.a, ids.c, rels)).toEqual([ids.a, ids.b, ids.c]);
   });
 
-  it("возвращает null при отсутствии связи", () => {
+  it("returns null when disconnected", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "parent", fromPersonId: ids.b, toPersonId: ids.a },
     ];
@@ -54,7 +54,7 @@ describe("findShortestPath", () => {
 });
 
 describe("pathToKinshipSteps", () => {
-  it("классифицирует шаг к родителю и к ребёнку", () => {
+  it("classifies step to parent and to child", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "parent", fromPersonId: ids.b, toPersonId: ids.a },
       { type: "parent", fromPersonId: ids.c, toPersonId: ids.b },
@@ -63,7 +63,7 @@ describe("pathToKinshipSteps", () => {
     expect(stepsKey(pathToKinshipSteps(path, rels))).toBe("to_parent,to_parent");
   });
 
-  it("классифицирует супруга", () => {
+  it("classifies spouse step", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "spouse", fromPersonId: ids.a, toPersonId: ids.b },
     ];
@@ -72,7 +72,7 @@ describe("pathToKinshipSteps", () => {
 });
 
 describe("kinshipStepsToLabel", () => {
-  it("отец / мать", () => {
+  it("father / mother", () => {
     expect(
       kinshipStepsToLabel(["to_parent"], {
         subjectGender: "male",
@@ -87,7 +87,7 @@ describe("kinshipStepsToLabel", () => {
     ).toBe("мать");
   });
 
-  it("сын / дочь", () => {
+  it("son / daughter", () => {
     expect(
       kinshipStepsToLabel(["to_child"], {
         subjectGender: "female",
@@ -96,7 +96,7 @@ describe("kinshipStepsToLabel", () => {
     ).toBe("сын");
   });
 
-  it("брат / сестра (общий родитель)", () => {
+  it("brother / sister (shared parent)", () => {
     expect(
       kinshipStepsToLabel(["to_parent", "to_child"], {
         subjectGender: "male",
@@ -107,7 +107,7 @@ describe("kinshipStepsToLabel", () => {
 });
 
 describe("getRelationshipLabel", () => {
-  it("склеивает путь и рёбра", () => {
+  it("combines path and edges", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "parent", fromPersonId: ids.b, toPersonId: ids.a },
     ];
@@ -122,7 +122,7 @@ describe("getRelationshipLabel", () => {
 });
 
 describe("collectConnectedPersonIds", () => {
-  it("собирает компоненту", () => {
+  it("collects connected component", () => {
     const rels: RelationshipGraphEdge[] = [
       { type: "parent", fromPersonId: ids.b, toPersonId: ids.a },
       { type: "spouse", fromPersonId: ids.c, toPersonId: ids.d },

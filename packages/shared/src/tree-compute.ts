@@ -1,6 +1,6 @@
 /**
- * Неориентированный граф родства: рёбра parent (родитель → ребёнок) и spouse
- * трактуются как двусторонние для поиска кратчайшего пути.
+ * Undirected kinship graph: `parent` (parent → child) and `spouse` edges
+ * are treated as bidirectional for shortest-path search.
  */
 
 export type RelationshipGraphEdge = {
@@ -13,7 +13,7 @@ export type KinshipStep = "to_parent" | "to_child" | "spouse";
 
 export type KinshipGender = "male" | "female";
 
-/** Смежность для BFS по неориентированному графу родства. */
+/** Adjacency list for BFS on the undirected kinship graph. */
 export function buildUndirectedAdjacency(
   relationships: RelationshipGraphEdge[],
 ): Map<string, string[]> {
@@ -58,7 +58,7 @@ function findRelBetween(
   return undefined;
 }
 
-/** Шаг по пути вершин `path[i] → path[i+1]`. */
+/** One step along vertex path `path[i] → path[i+1]`. */
 export function pathToKinshipSteps(
   path: string[],
   relationships: RelationshipGraphEdge[],
@@ -72,7 +72,7 @@ export function pathToKinshipSteps(
     const v = path[i + 1]!;
     const r = findRelBetween(u, v, relationships);
     if (!r) {
-      throw new Error(`Нет связи между ${u} и ${v}`);
+      throw new Error(`No relationship between ${u} and ${v}`);
     }
     if (r.type === "spouse") {
       steps.push("spouse");
@@ -86,8 +86,8 @@ export function pathToKinshipSteps(
 }
 
 /**
- * Кратчайший путь по рёбрам (BFS). Возвращает список id включая концы
- * или `null`, если цели нет в компоненте связности.
+ * Shortest path over edges (BFS). Returns id list including endpoints,
+ * or `null` if the target is unreachable in the same connected component.
  */
 export function findShortestPath(
   fromPersonId: string,
@@ -156,14 +156,14 @@ function siblingWord(g: KinshipGender): string {
   return g === "male" ? "брат" : "сестра";
 }
 
-/** Сравнение цепочек шагов (для тестов и отладки). */
+/** Serialize step chains (tests / debugging). */
 export function stepsKey(steps: KinshipStep[]): string {
   return steps.join(",");
 }
 
 /**
- * Русское обозначение родства относительно субъекта (владелец карточки)
- * к целевой персоне по кратчайшему пути.
+ * Kinship label in the default product locale (Russian) from subject (card owner)
+ * to target along the shortest path. See `to-do/english-migration-notes.md` for EN/i18n.
  */
 export function kinshipStepsToLabel(
   steps: KinshipStep[],
@@ -213,7 +213,7 @@ export function getRelationshipLabel(
   return kinshipStepsToLabel(steps, opts);
 }
 
-/** Все id в той же компоненте связности, что и `personId` (включая его). */
+/** All ids in the same connected component as `personId` (including it). */
 export function collectConnectedPersonIds(
   personId: string,
   relationships: RelationshipGraphEdge[],

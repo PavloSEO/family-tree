@@ -1,4 +1,4 @@
-/** Парсинг даты `YYYY-MM-DD` (опционально с суффиксом времени после `T`). */
+/** Parse `YYYY-MM-DD` (optional time suffix after `T`). */
 export function parseIsoDateParts(
   iso: string,
 ): { year: number; month: number; day: number } | null {
@@ -30,7 +30,7 @@ function isValidCalendarDate(y: number, mo: number, d: number): boolean {
   return d <= max;
 }
 
-/** `DD.MM.YYYY` или `null`, если строка пустая / невалидна. */
+/** `DD.MM.YYYY` or `null` if empty / invalid. */
 export function formatDateRu(
   iso: string | null | undefined,
 ): string | null {
@@ -46,7 +46,7 @@ export function formatDateRu(
   return `${dd}.${mm}.${p.year}`;
 }
 
-/** Для `Intl` — полдень UTC, чтобы не сдвигать календарный день из-за TZ. */
+/** For `Intl` — noon UTC so the calendar day does not shift with TZ. */
 function utcNoonFromParts(p: {
   year: number;
   month: number;
@@ -58,7 +58,7 @@ function utcNoonFromParts(p: {
   return new Date(Date.UTC(p.year, p.month - 1, p.day, 12, 0, 0));
 }
 
-/** Длинная дата по-русски, например «14 апреля 2026 г.». */
+/** Long Russian date string, e.g. «14 апреля 2026 г.» (locale-specific output). */
 export function formatDateLongRu(
   iso: string | null | undefined,
 ): string | null {

@@ -21,7 +21,7 @@ import { MdButton, MdTextField } from "./md/index.js";
 
 const MIN_NORM = 0.012;
 
-/** Canvas 2D не всегда корректно парсит `var(--md-sys-color-*)` в `strokeStyle`. */
+/** Canvas 2D may not parse `var(--md-sys-color-*)` correctly in `strokeStyle`. */
 function readPrimaryColorForCanvas(): string {
   if (typeof document === "undefined") {
     return "#6750a4";

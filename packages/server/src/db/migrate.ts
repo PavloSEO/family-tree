@@ -5,12 +5,12 @@ import { db } from "./connection.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/** Каталог SQL-миграций (рядом с собранным `migrate.js` или `serve.js` в `dist/`). */
+/** Directory of SQL migrations (next to built `migrate.js` or `serve.js` in `dist/`). */
 const migrationsFolder =
   process.env.MIGRATIONS_PATH?.trim() ||
   path.join(__dirname, "migrations");
 
-/** Применяет SQL-миграции (идемпотентно). */
+/** Apply SQL migrations (idempotent). */
 export function runMigrate(): void {
   migrate(db, {
     migrationsFolder,

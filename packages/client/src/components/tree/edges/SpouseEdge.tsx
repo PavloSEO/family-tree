@@ -1,6 +1,6 @@
 import { BaseEdge, getSmoothStepPath, type EdgeProps } from "@xyflow/react";
 
-/** Супруги: две параллельные линии, primary (`docs/08-tree-visualization.md`). */
+/** Spouses: two parallel lines, primary color (`docs/08-tree-visualization.md`). */
 export function SpouseEdge({
   id,
   sourceX,

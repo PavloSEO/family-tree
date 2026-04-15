@@ -124,7 +124,7 @@ photosRoutes.post("/upload", requireAuth, requireAdmin, async (c) => {
 });
 
 /**
- * GET /api/photos/file/person/:personId/:fileName — `main.*` под каталогом персоны (без `..`).
+ * GET /api/photos/file/person/:personId/:fileName — `main.*` under person dir (no `..`).
  */
 photosRoutes.get("/file/person/:personId/:fileName", requireAuth, async (c) => {
   const personId = c.req.param("personId");
@@ -140,7 +140,7 @@ photosRoutes.get("/file/person/:personId/:fileName", requireAuth, async (c) => {
 });
 
 /**
- * GET /api/photos/file/album/:albumId/:fileName — JPEG альбома (`uuid.jpg` / `uuid_thumb.jpg`).
+ * GET /api/photos/file/album/:albumId/:fileName — album JPEG (`uuid.jpg` / `uuid_thumb.jpg`).
  */
 photosRoutes.get("/file/album/:albumId/:fileName", requireAuth, async (c) => {
   const albumId = c.req.param("albumId");
@@ -153,7 +153,7 @@ photosRoutes.get("/file/album/:albumId/:fileName", requireAuth, async (c) => {
 });
 
 /**
- * GET /api/photos/file/:path — один URL-сегмент (`encodeURIComponent(rel)`), как `personId%2Fmain.jpg`.
+ * GET /api/photos/file/:path — single URL segment (`encodeURIComponent(rel)`), e.g. `personId%2Fmain.jpg`.
  */
 photosRoutes.get("/file/:path", requireAuth, async (c) => {
   const blob = c.req.param("path");

@@ -76,7 +76,7 @@ body {
   margin: 0;
 }
 
-/* AppShell: подсветка активного пункта (ripple на интерактивных md-list-item встроен в MW) */
+/* AppShell: active item highlight (ripple on interactive md-list-item is built into MW) */
 .app-shell__list {
   --md-list-item-one-line-container-height: 48px;
 }
@@ -118,7 +118,7 @@ body {
   overflow: hidden;
 }
 
-/* md-text-button (Accordion): полоса на всю ширину, цвета как у прежнего native button */
+/* md-text-button (Accordion): full-width row, colors like former native button */
 .accordion-header {
   width: 100%;
   justify-content: space-between;
@@ -152,7 +152,7 @@ body {
   color: var(--md-sys-color-on-surface-variant);
 }
 
-/* Sonner — близко к M3 snackbar (светлая тема) */
+/* Sonner — close to M3 snackbar (light theme) */
 .sonner-toast {
   border-radius: var(--md-sys-shape-corner-medium) !important;
   background: var(--md-sys-color-inverse-surface) !important;

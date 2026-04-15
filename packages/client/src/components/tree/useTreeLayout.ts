@@ -9,7 +9,7 @@ import {
 } from "./tree-graph-build.js";
 
 /**
- * ELK-раскладка дерева (этап 31). При ошибке или пустом результате — сетка по рангам (как на этапе 29–30).
+ * ELK tree layout (phase 31). On error or empty result — rank-based grid (phases 29–30 fallback).
  */
 export function useTreeLayout(data: TreeResponse): {
   nodes: Node[];

@@ -1,82 +1,82 @@
-# 11 -- Деплой
+# 11 — Deployment
 
 ---
 
-## Docker (обзор)
+## Docker (overview)
 
-По умолчанию в корневом **`docker-compose.yml`** поднимаются **два** сервиса:
+By default the root **`docker-compose.yml`** starts **two** services:
 
-| Сервис | Роль |
+| Service | Role |
 |--------|------|
-| **`family-tree`** | Сборка из корневого **`Dockerfile`**: Node 22, Hono, SQLite, Sharp; слушает **3000** только **внутри** сети Docker (на хост порт не пробрасывается, чтобы не конфликтовать с локальным `pnpm run dev:server`). |
-| **`nginx`** | Образ из **`docker/nginx/`**: reverse proxy **хост `8080` → контейнер `80` → upstream `family-tree:3000`**. Сайт с машины разработчика: **http://localhost:8080**. |
+| **`family-tree`** | Built from root **`Dockerfile`**: Node 22, Hono, SQLite, Sharp; listens on **3000** **inside** Docker only (no host port, to avoid clashing with local `pnpm run dev:server`). |
+| **`nginx`** | Image from **`docker/nginx/`**: reverse proxy **host `8080` → container `80` → upstream `family-tree:3000`**. Dev machine: **http://localhost:8080**. |
 
-**Обязательно:** в **`.env`** в корне задать **`JWT_SECRET`** (≥ 32 символов). Иначе `docker compose` не подставит секрет и завершится с ошибкой (см. подстановку в `docker-compose.yml`).
+**Required:** set **`JWT_SECRET`** in root **`.env`** (≥ 32 characters). Otherwise `docker compose` will fail variable substitution (see `docker-compose.yml`).
 
-### Быстрый старт (локально)
+### Quick start (local)
 
 ```bash
 cp .env.example .env
-# Заполните JWT_SECRET (openssl rand -hex 32) и ADMIN_PASSWORD
+# Set JWT_SECRET (openssl rand -hex 32) and ADMIN_PASSWORD
 mkdir -p data/db data/photos data/backups
 docker compose up -d --build
 curl -s http://localhost:8080/health
 ```
 
-Логи: **`docker compose logs -f family-tree`**, **`docker compose logs -f nginx`**. Остановка: **`docker compose down`**.
+Logs: **`docker compose logs -f family-tree`**, **`docker compose logs -f nginx`**. Stop: **`docker compose down`**.
 
-**Продакшен на VPS:** когда порт **80** свободен, в **`docker-compose.yml`** у сервиса **`nginx`** замените **`"8080:80"`** на **`"80:80"`** (и при необходимости настройте TLS — см. ниже про Caddy).
+**Production on a VPS:** when port **80** is free, under **`nginx`** in **`docker-compose.yml`** change **`"8080:80"`** to **`"80:80"`** (and configure TLS if needed — see Caddy below).
 
-**Прямой доступ к API без nginx:** под сервисом **`family-tree`** добавьте **`ports: ["3000:3000"]`** (или используйте **`docker-compose.override.yml`**, не коммитимый в git).
+**Direct API access without nginx:** under **`family-tree`** add **`ports: ["3000:3000"]`** (or use **`docker-compose.override.yml`**, not committed).
 
-### Dockerfile приложения (multi-stage)
+### App Dockerfile (multi-stage)
 
 ```
 Stage 1 (deps):     node:22-alpine + pnpm install --frozen-lockfile
 Stage 2 (builder):  pnpm build client + server + pnpm prune --prod
-Stage 3 (runner):   node:22-alpine + vips-dev (для sharp)
-                    Копируется /app, entrypoint, cron для бэкапов
-                    CMD: node dist/serve.js (миграции и сид через bootstrap)
+Stage 3 (runner):   node:22-alpine + vips-dev (for sharp)
+                    Copy /app, entrypoint, backup cron
+                    CMD: node dist/serve.js (migrations + seed via bootstrap)
 ```
 
-### Nginx в репозитории
+### Nginx in this repo
 
-- **`docker/nginx/Dockerfile`** — `nginx:1.27-alpine`, подмена **`/etc/nginx/nginx.conf`** на **`docker/nginx/family-tree.conf`**.
-- **`docker/nginx/family-tree.conf`** — один `server` на 80, `proxy_pass` на **`http://family-tree:3000`**, gzip, **`client_max_body_size 20m`**, заголовки **`X-Forwarded-*`**, поддержка **`Upgrade`** для WebSocket.
-- **`docker/nginx/README.md`** — откуда взялся пример (архив с конфигами под другой стек); в git **не** коммитится **`nginx.zip`** (см. **`.gitignore`**).
+- **`docker/nginx/Dockerfile`** — `nginx:1.27-alpine`, replace **`/etc/nginx/nginx.conf`** with **`docker/nginx/family-tree.conf`**.
+- **`docker/nginx/family-tree.conf`** — single **`http{}`**: gzip, **`merge_slashes`**, **`client_max_body_size`**, **upstream** to **`family-tree:3000`**. Two **`server`** blocks on **80**: first — **301** from **`www.`** to same host **without** `www` (canonical URL); redirect scheme respects **`X-Forwarded-Proto`** behind TLS terminator. Second — **`default_server`**, **`proxy_pass`** to the app, **`X-Forwarded-*`**, **`Upgrade`** for WebSocket.
+- **`docker/nginx/README.md`** — details, **www**→apex, **SSL** options (Caddy, certs volume, external balancer).
 
-### Старт процесса (`bootstrap.ts`)
+### Startup (`bootstrap.ts`)
 
-При запуске **`node dist/serve.js`** модуль **`bootstrap.ts`** (подключается из `index.ts`) выполняет по порядку:
+When **`node dist/serve.js`** runs, **`bootstrap.ts`** (from `index.ts`) does:
 
-1. **`runMigrate()`** — применение SQL-миграций Drizzle к файлу SQLite (**`DATABASE_PATH`** / **`DB_PATH`**).
-2. Если **`SKIP_DB_SEED` ≠ `1`** — **`runSeed()`**: при отсутствии пользователя с ролью **admin** создаётся первый admin из **`ADMIN_LOGIN`** / **`ADMIN_PASSWORD`**; иначе выход без изменений.
+1. **`runMigrate()`** — apply Drizzle SQL migrations to the SQLite file (**`DATABASE_PATH`** / **`DB_PATH`**).
+2. If **`SKIP_DB_SEED` ≠ `1`** — **`runSeed()`**: if no user with role **admin**, create first admin from **`ADMIN_LOGIN`** / **`ADMIN_PASSWORD`**; otherwise no-op.
 
-В лог контейнера пишутся строки **`[bootstrap] ...`** (в т.ч. при **`SKIP_DB_SEED=1`**).
+Container logs show **`[bootstrap] ...`** lines (including when **`SKIP_DB_SEED=1`**).
 
-### Кэш браузера (production SPA)
+### Browser cache (production SPA)
 
-Файлы из **`packages/client/dist`** отдаёт **`static-spa.ts`** (`NODE_ENV=production`):
+**`static-spa.ts`** serves **`packages/client/dist`** (`NODE_ENV=production`):
 
-- пути с **`/assets/`** — **`Cache-Control: public, max-age=31536000, immutable`** (у Vite в имени есть хэш);
-- **`index.html`** (как файл) и **SPA fallback** — **`Cache-Control: no-cache`** и **`Pragma: no-cache`**, чтобы после деплоя подтянулась новая оболочка;
-- остальное из **`dist`** (например, favicon) — по умолчанию сутки.
+- paths under **`/assets/`** — **`Cache-Control: public, max-age=31536000, immutable`** (Vite-hashed filenames);
+- **`index.html`** (as file) and **SPA fallback** — **`Cache-Control: no-cache`** and **`Pragma: no-cache`** so a new shell loads after deploy;
+- other **`dist`** assets (e.g. favicon) — default ~1 day.
 
-### Заголовки безопасности (CSP, nosniff)
+### Security headers (CSP, nosniff)
 
-Приложение Hono выставляет ответам заголовки из **`packages/server/src/middleware/security-headers.ts`**: в том числе **`Content-Security-Policy`** и **`X-Content-Type-Options: nosniff`**. Подробный разбор и **`CSP_CONNECT_SRC_EXTRA`** (если статика и API на разных origin) — в **`docs/07-auth.md`** (раздел «Заголовки безопасности»).
+The Hono app sets headers from **`packages/server/src/middleware/security-headers.ts`**, including **`Content-Security-Policy`** and **`X-Content-Type-Options: nosniff`**. Details and **`CSP_CONNECT_SRC_EXTRA`** (static vs API on different origins) — **`docs/07-auth.md`** (“Security headers”).
 
-Если перед Node стоит reverse proxy (Caddy, nginx), не дублируйте конфликтующий CSP без необходимости: либо оставьте политику на приложении, либо перенесите на прокси и отключите на приложении отдельной задачей.
+If a reverse proxy (Caddy, nginx) sits in front of Node, avoid duplicating conflicting CSP: either keep policy on the app or move to the proxy and disable on the app in a dedicated change.
 
-### Остановка процесса (SIGINT / SIGTERM)
+### Shutdown (SIGINT / SIGTERM)
 
-В **`serve.ts`**: по **SIGINT** / **SIGTERM** вызывается **`server.close()`**, затем **`sqlite.close()`**; при зависании закрытия — принудительный выход через **10 с**. Повторный сигнал во время остановки завершает процесс сразу.
+In **`serve.ts`**: on **SIGINT** / **SIGTERM** call **`server.close()`**, then **`sqlite.close()`**; if close hangs — force exit after **10 s**. A second signal during shutdown exits immediately.
 
-В **`docker-compose.yml`** для сервиса **`family-tree`** задан **`stop_grace_period: 15s`**, чтобы Docker не послал **SIGKILL** раньше внутреннего таймаута.
+**`docker-compose.yml`** sets **`stop_grace_period: 15s`** for **`family-tree`** so Docker does not send **SIGKILL** before the internal timeout.
 
-### docker-compose.yml (как в репозитории)
+### docker-compose.yml (as in repo)
 
-Ниже — актуальная схема (два сервиса). Переменные окружения приложения задаются в **`environment:`**; **`JWT_SECRET`** берётся из **`.env`** хоста.
+Below is the current shape (two services). App env vars in **`environment:`**; **`JWT_SECRET`** from host **`.env`**.
 
 ```yaml
 services:
@@ -118,11 +118,11 @@ services:
       - family-tree
 ```
 
-Отдельный compose с **только** приложением и **Caddy** для HTTPS (без nginx из репозитория) можно собрать вручную по примеру ниже — в репозитории по умолчанию используется связка **family-tree + nginx**.
+You can assemble a separate compose with **only** the app and **Caddy** for HTTPS (no repo nginx) — the default here is **family-tree + nginx**.
 
 ### Caddyfile
 
-В корне репозитория лежит файл **`Caddyfile`** (тот же пример, что ниже); при монтировании в контейнер Caddy подставьте свой домен.
+The repo root **`Caddyfile`** matches the example below; mount into the Caddy container and replace the hostname.
 
 ```
 tree.example.com {
@@ -130,47 +130,47 @@ tree.example.com {
 }
 ```
 
-Caddy автоматически получает Let's Encrypt сертификат. Менять `tree.example.com` на реальный домен.
+Caddy obtains a Let’s Encrypt certificate automatically. Replace `tree.example.com` with your domain.
 
-### Автоматические бэкапы в контейнере
+### Automatic backups in the container
 
-При **`ENABLE_BACKUP_CRON=1`** (по умолчанию в `docker-compose.yml`) entrypoint запускает **`crond`** и подхватывает **`/etc/crontabs/root`**:
+With **`ENABLE_BACKUP_CRON=1`** (default in `docker-compose.yml`) the entrypoint starts **`crond`** and loads **`/etc/crontabs/root`**:
 
-- **03:00** каждый день (время контейнера, обычно UTC) выполняется **`scripts/docker-backup-run.sh`**.
-- Скрипт удаляет файлы **`*.tar.gz`** в **`BACKUPS_PATH`**, старше **30** дней (`find … -mtime +30`), затем вызывает **`node dist/backup-cli.js`** (тот же код, что и **`POST /api/backup`**: tar.gz с БД и каталогом фото).
-- Перед упаковкой фото проверяются **симлинки**: если ссылка указывает **вне** каталога **`PHOTOS_PATH`**, бэкап **прерывается** с ошибкой (защита от обхода корня).
-- Лог cron: **`/data/backups/cron.log`** (volume `./data/backups`).
+- **03:00** daily (container time, usually UTC) runs **`scripts/docker-backup-run.sh`**.
+- The script deletes **`*.tar.gz`** in **`BACKUPS_PATH`** older than **30** days (`find … -mtime +30`), then runs **`node dist/backup-cli.js`** (same as **`POST /api/backup`**: tar.gz with DB and photos).
+- Before packing photos, **symlinks** are checked: if a link points **outside** **`PHOTOS_PATH`**, backup **aborts** (path traversal guard).
+- Cron log: **`/data/backups/cron.log`** (volume `./data/backups`).
 
-Отключить cron: **`ENABLE_BACKUP_CRON=0`** в окружении сервиса.
+Disable cron: **`ENABLE_BACKUP_CRON=0`** on the service.
 
-## VPS (cloudvps.by)
+## VPS (example host)
 
-### Минимальные требования
+### Minimum requirements
 
-| Ресурс | Минимум | Рекомендация |
+| Resource | Minimum | Recommended |
 |--------|---------|-------------|
-| RAM | 512 МБ | 1 ГБ |
+| RAM | 512 MB | 1 GB |
 | CPU | 1 vCPU | 1 vCPU |
-| Disk | 10 ГБ | 20 ГБ (зависит от фото) |
+| Disk | 10 GB | 20 GB (depends on photos) |
 | OS | Ubuntu 22.04+ | Ubuntu 24.04 LTS |
 
-### Потребление
+### Memory use (rough)
 
-| Компонент | RAM |
+| Component | RAM |
 |-----------|-----|
-| Node.js (Hono + SQLite) | 80-120 МБ |
-| Nginx (reverse proxy) | ~5-15 МБ |
-| Caddy (если используете отдельно) | 10-15 МБ |
-| Docker overhead | 20-30 МБ |
-| Итого (compose по умолчанию) | ~130-180 МБ |
+| Node.js (Hono + SQLite) | 80–120 MB |
+| Nginx (reverse proxy) | ~5–15 MB |
+| Caddy (if used separately) | 10–15 MB |
+| Docker overhead | 20–30 MB |
+| Total (default compose) | ~130–180 MB |
 
-### Установка
+### Install
 
 ```bash
 # 1. Docker
 curl -fsSL https://get.docker.com | sh
 
-# 2. Проект
+# 2. Project
 mkdir -p /opt/family-tree && cd /opt/family-tree
 git clone <repo> .
 
@@ -180,23 +180,23 @@ nano .env
 # JWT_SECRET=$(openssl rand -hex 32)
 # ADMIN_PASSWORD=<strong password>
 
-# 4. Данные
+# 4. Data
 mkdir -p data/db data/photos data/backups
 
 # 5. DNS
-# A-запись: tree.example.com -> IP VPS
+# A record: tree.example.com -> VPS IP
 
-# 6. Запуск
+# 6. Run
 docker compose up -d --build
 
-# 7. Проверка (с nginx по умолчанию — порт 8080; на VPS смените mapping на 80:80 или поставьте Caddy)
+# 7. Check (default nginx maps 8080; on VPS use 80:80 or Caddy)
 docker compose logs -f
 curl -s http://127.0.0.1:8080/health
-# При TLS через Caddy на 443:
+# With TLS via Caddy on 443:
 # curl -fsS https://tree.example.com/health
 ```
 
-### Обновление
+### Update
 
 ```bash
 cd /opt/family-tree
@@ -204,54 +204,54 @@ git pull
 docker compose up -d --build
 ```
 
-Данные в volumes (`data/`) не теряются при пересборке контейнера.
+Data in volumes (`data/`) survives image rebuilds.
 
 ## Environment variables
 
-| Переменная | Обязательная | Default | Описание |
+| Variable | Required | Default | Description |
 |-----------|-------------|---------|----------|
-| JWT_SECRET | да | -- | Секрет для JWT (min 32 символа) |
-| ADMIN_LOGIN | нет | admin | Логин админа (seed) |
-| ADMIN_PASSWORD | нет | changeme | Пароль админа (seed) |
-| PORT | нет | 3000 | Порт сервера |
-| DATABASE_PATH | нет | см. compose | Путь к SQLite в контейнере (**`/data/db/family-tree.db`** в compose) |
-| DB_PATH | нет | — | Алиас к **DATABASE_PATH** (см. `.env.example`) |
-| PHOTOS_PATH | нет | /data/photos | Директория фото |
-| BACKUPS_PATH | нет | /data/backups | Директория бэкапов |
-| ENABLE_BACKUP_CRON | нет | 0 | В **`docker-compose.yml`** по умолчанию **1**: cron + ротация 30 дней (см. раздел выше) |
-| SESSION_TTL_DAYS | нет | 30 | TTL JWT «Запомнить» |
-| MAX_UPLOAD_SIZE_MB | нет | 10 | Макс. размер загрузки фото |
-| RATE_LIMIT_MAX_ATTEMPTS | нет | 5 | Попытки логина (окно ниже) |
-| RATE_LIMIT_WINDOW_MINUTES | нет | 15 | Окно rate limit логина |
-| API_MUTATE_RATE_LIMIT_MAX | нет | 400 | Макс. мутаций API (POST/PUT/PATCH/DELETE) с одного IP за окно ниже; не считает `POST /api/auth/login` |
-| API_MUTATE_RATE_LIMIT_WINDOW_MINUTES | нет | 15 | Окно для лимита мутаций (in-memory) |
-| SKIP_DB_SEED | нет | 0 | Если **`1`**, при старте не вызывается **`runSeed()`** (миграции остаются); admin должен быть в БД заранее |
+| JWT_SECRET | yes | — | JWT secret (min 32 chars) |
+| ADMIN_LOGIN | no | admin | Admin login (seed) |
+| ADMIN_PASSWORD | no | changeme | Admin password (seed) |
+| PORT | no | 3000 | Server port |
+| DATABASE_PATH | no | see compose | SQLite path in container (**`/data/db/family-tree.db`** in compose) |
+| DB_PATH | no | — | Alias for **DATABASE_PATH** (see `.env.example`) |
+| PHOTOS_PATH | no | /data/photos | Photos directory |
+| BACKUPS_PATH | no | /data/backups | Backups directory |
+| ENABLE_BACKUP_CRON | no | 0 | In **`docker-compose.yml`** default **1**: cron + 30-day rotation (see above) |
+| SESSION_TTL_DAYS | no | 30 | JWT “Remember me” TTL |
+| MAX_UPLOAD_SIZE_MB | no | 10 | Max photo upload size |
+| RATE_LIMIT_MAX_ATTEMPTS | no | 5 | Login attempts (window below) |
+| RATE_LIMIT_WINDOW_MINUTES | no | 15 | Login rate-limit window |
+| API_MUTATE_RATE_LIMIT_MAX | no | 400 | Max API mutations (POST/PUT/PATCH/DELETE) per IP per window below; excludes `POST /api/auth/login` |
+| API_MUTATE_RATE_LIMIT_WINDOW_MINUTES | no | 15 | Mutation rate-limit window (in-memory) |
+| SKIP_DB_SEED | no | 0 | If **`1`**, **`runSeed()`** skipped on start (migrations still run); admin must exist |
 
-## Сброс пароля через CLI
+## Password reset via CLI
 
-В контейнере (или на хосте с тем же **`DATABASE_PATH`**) после сборки сервера есть бандл **`dist/admin-password-cli.js`**.
+Inside the container (or on the host with the same **`DATABASE_PATH`**) after building the server, **`dist/admin-password-cli.js`** is available.
 
-1. Остановите трафик или кратко остановите контейнер, если боитесь гонок (необязательно для SQLite при одном писателе).
-2. Выполните (пример для логина по умолчанию **`admin`** из seed):
+1. Stop traffic or briefly stop the container if you worry about races (optional for single-writer SQLite).
+2. Example for default seed login **`admin`**:
 
 ```bash
-docker compose exec -e NEW_ADMIN_PASSWORD='НовыйПароль123' family-tree \
+docker compose exec -e NEW_ADMIN_PASSWORD='NewPassword123' family-tree \
   node dist/admin-password-cli.js
 ```
 
-Рабочая директория контейнера — **`/app/packages/server`** (см. Dockerfile).
+Working directory in the container — **`/app/packages/server`** (see Dockerfile).
 
-Другой логин:
+Another login:
 
 ```bash
 docker compose exec -e NEW_ADMIN_PASSWORD='...' family-tree \
-  node dist/admin-password-cli.js --login=имя_пользователя
+  node dist/admin-password-cli.js --login=other_user
 ```
 
-Локально (dev): **`pnpm --filter @family-tree/server exec tsx src/admin-password-cli.ts`** при установленных **`DATABASE_PATH`** / **`DB_PATH`** и **`NEW_ADMIN_PASSWORD`**.
+Locally (dev): **`pnpm --filter @family-tree/server exec tsx src/admin-password-cli.ts`** with **`DATABASE_PATH`** / **`DB_PATH`** and **`NEW_ADMIN_PASSWORD`** set.
 
-Пароль: не короче **8** символов (как в API пользователей).
+Password: at least **8** characters (same as users API).
 
-## SPA в production
+## SPA in production
 
-При **`NODE_ENV=production`** сервер отдаёт файлы из **`packages/client/dist`** и для путей вне **`/api`** / **`/health`** отвечает **`index.html`** (клиентский роутинг). Сборка Docker уже выполняет **`pnpm --filter @family-tree/client build`**.
+With **`NODE_ENV=production`** the server serves **`packages/client/dist`** and for paths outside **`/api`** / **`/health`** responds with **`index.html`** (client routing). The Docker build already runs **`pnpm --filter @family-tree/client build`**.

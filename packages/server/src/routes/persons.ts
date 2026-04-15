@@ -22,13 +22,13 @@ function zodFirstMessage(err: z.ZodError): string {
 
 export const personRoutes = new Hono<{ Variables: { user: AuthUser } }>();
 
-/** GET /api/persons/duplicates — только admin (`docs/06-api.md`). */
+/** GET /api/persons/duplicates — admin only (`docs/06-api.md`). */
 personRoutes.get("/duplicates", requireAuth, requireAdmin, async (c) => {
   const data = await findPersonDuplicates();
   return c.json({ data });
 });
 
-/** GET /api/persons — admin + viewer. */
+/** GET /api/persons — admin and viewer. */
 personRoutes.get("/", requireAuth, async (c) => {
   try {
     const result = await listPersons(c.req.query());
@@ -86,7 +86,7 @@ personRoutes.put("/:id", requireAuth, requireAdmin, async (c) => {
   }
 });
 
-/** POST /api/persons/:id/photo — admin, multipart поле `file`. */
+/** POST /api/persons/:id/photo — admin, multipart field `file`. */
 personRoutes.post("/:id/photo", requireAuth, requireAdmin, async (c) => {
   const idParsed = idParamSchema.safeParse(c.req.param("id"));
   if (!idParsed.success) {
@@ -137,7 +137,7 @@ personRoutes.delete("/:id", requireAuth, requireAdmin, async (c) => {
   }
 });
 
-/** GET /api/persons/:id/relatives — admin + viewer (граф связей). */
+/** GET /api/persons/:id/relatives — admin and viewer (relationship graph). */
 personRoutes.get("/:id/relatives", requireAuth, async (c) => {
   const idParsed = idParamSchema.safeParse(c.req.param("id"));
   if (!idParsed.success) {

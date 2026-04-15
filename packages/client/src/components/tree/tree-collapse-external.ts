@@ -1,6 +1,6 @@
 import type { TreeResponse } from "@family-tree/shared";
 
-/** Подграф без внешних персон (для режима «внешние свернуты» на клиенте). */
+/** Subgraph without external persons (client “external collapsed” mode). */
 export function treeResponseWithoutExternalNodes(
   data: TreeResponse,
 ): TreeResponse {

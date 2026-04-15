@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Минимальный конфиг: без кастомных цветов (см. `docs/14-theming.md`).
- * Разрешённые утилиты Tailwind — только перечисленные в том документе.
+ * Minimal config: no custom colors (see `docs/14-theming.md`).
+ * Tailwind utilities allowed — only those listed in that doc.
  */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],

@@ -35,7 +35,7 @@ async function errorMessage(
         return body.error;
       }
     } catch {
-      /* не JSON */
+      /* not JSON */
     }
   }
   return baseErrorMessage(e, unknownLabel);

@@ -1,25 +1,25 @@
-# 05 -- База данных
+# 05 — Database
 
 ---
 
-## Движок
+## Engine
 
-SQLite через `better-sqlite3` (синхронный драйвер) + `drizzle-orm`.
+SQLite via `better-sqlite3` (synchronous driver) + `drizzle-orm`.
 
-Файл БД: `/data/db/family-tree.db` (Docker volume).
+DB file: `/data/db/family-tree.db` (Docker volume).
 
-Pragmas при подключении:
+Pragmas on connect:
 ```sql
 PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;
 PRAGMA busy_timeout = 5000;
 ```
 
-## Схема таблиц
+## Tables
 
 ### users
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | id | TEXT | PK, uuid |
 | login | TEXT | NOT NULL, UNIQUE |
@@ -32,7 +32,7 @@ PRAGMA busy_timeout = 5000;
 
 ### persons
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | id | TEXT | PK, uuid |
 | first_name | TEXT | NOT NULL |
@@ -60,7 +60,7 @@ PRAGMA busy_timeout = 5000;
 
 ### relationships
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | id | TEXT | PK, uuid |
 | type | TEXT | NOT NULL, enum: parent / spouse |
@@ -72,12 +72,12 @@ PRAGMA busy_timeout = 5000;
 | notes | TEXT | nullable |
 | created_at | TEXT | NOT NULL |
 
-**Для parent:** from_person_id = родитель, to_person_id = ребенок.
-**Для spouse:** порядок не важен, связь двусторонняя.
+**For parent:** from_person_id = parent, to_person_id = child.
+**For spouse:** order does not matter; the link is bidirectional.
 
 ### albums
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | id | TEXT | PK, uuid |
 | title | TEXT | NOT NULL |
@@ -88,16 +88,16 @@ PRAGMA busy_timeout = 5000;
 | created_at | TEXT | NOT NULL |
 | updated_at | TEXT | NOT NULL |
 
-`owner_id = null` -- общий альбом. Иначе -- альбом привязан к карточке.
+`owner_id = null` — shared album. Otherwise — album tied to a person card.
 
 ### photos
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | id | TEXT | PK, uuid |
 | album_id | TEXT | NOT NULL, FK -> albums.id, ON DELETE CASCADE |
-| src | TEXT | NOT NULL, path к оригиналу |
-| thumbnail | TEXT | nullable, path к превью |
+| src | TEXT | NOT NULL, path to original |
+| thumbnail | TEXT | nullable, path to preview |
 | description | TEXT | nullable |
 | date_taken | TEXT | nullable, ISO date |
 | year | INTEGER | nullable |
@@ -107,7 +107,7 @@ PRAGMA busy_timeout = 5000;
 
 ### tagged_persons
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | id | TEXT | PK, uuid |
 | photo_id | TEXT | NOT NULL, FK -> photos.id, ON DELETE CASCADE |
@@ -119,14 +119,14 @@ PRAGMA busy_timeout = 5000;
 
 ### settings
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | key | TEXT | PK |
 | value | TEXT | NOT NULL |
 
 ### login_attempts
 
-| Колонка | Тип | Constraints |
+| Column | Type | Constraints |
 |---------|-----|------------|
 | id | TEXT | PK, uuid |
 | ip | TEXT | NOT NULL |
@@ -134,7 +134,7 @@ PRAGMA busy_timeout = 5000;
 | attempted_at | TEXT | NOT NULL |
 | success | INTEGER | NOT NULL, boolean, DEFAULT 0 |
 
-## Индексы
+## Indexes
 
 ```sql
 CREATE INDEX idx_persons_name ON persons (first_name, last_name);
@@ -147,16 +147,16 @@ CREATE INDEX idx_tagged_person ON tagged_persons (person_id);
 CREATE INDEX idx_login_ip ON login_attempts (ip, attempted_at);
 ```
 
-## Миграции
+## Migrations
 
 ```bash
-# Генерация миграций после изменения schema.ts
+# Generate migrations after changing schema.ts
 pnpm --filter server drizzle-kit generate
 
-# Применение миграций (выполняется автоматически при старте сервера)
+# Apply migrations (runs automatically on server start)
 node server/db/migrate.js
 ```
 
-## Seed (первый запуск)
+## Seed (first run)
 
-При первом запуске seed.ts создает admin-пользователя из env-переменных `ADMIN_LOGIN` и `ADMIN_PASSWORD`. Если admin уже существует -- пропускает.
+On first run `seed.ts` creates the admin user from `ADMIN_LOGIN` and `ADMIN_PASSWORD`. If an admin already exists, it skips.

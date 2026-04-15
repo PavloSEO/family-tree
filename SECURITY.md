@@ -1,5 +1,5 @@
-# Безопасность
+# Security
 
-Если вы нашли уязвимость, пожалуйста, **не** открывайте публичный issue с деталями эксплуатации.
+If you find a vulnerability, please **do not** open a public issue with exploitation details.
 
-Напишите автору приватно (через контакты в профиле GitHub [@PavloSEO](https://github.com/PavloSEO)) или создайте issue с пометкой «security» без раскрытия PoC — по возможности ответим и исправим в разумный срок.
+Contact the maintainer privately (via GitHub profile [@PavloSEO](https://github.com/PavloSEO)) or open an issue labeled “security” without a public PoC — we will respond and fix when we can.

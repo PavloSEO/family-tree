@@ -7,7 +7,7 @@ import type {
 
 export type { Person, PersonCreate, PersonListQuery, PersonUpdate };
 
-/** Группа возможных дубликатов (`GET /api/persons/duplicates`). */
+/** Possible duplicate group (`GET /api/persons/duplicates`). */
 export type PersonDuplicateGroup = {
   persons: Person[];
 };

@@ -1,4 +1,4 @@
-/** URL превью mainPhoto (относительный путь или абсолютный URL). */
+/** mainPhoto preview URL (relative path or absolute URL). */
 export function mainPhotoSrc(mainPhoto: string | null): string | null {
   if (!mainPhoto) {
     return null;

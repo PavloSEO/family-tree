@@ -109,7 +109,7 @@ const personListSortSchema = z.enum([
   "gender",
 ]);
 
-/** GET списка карточек (query / фильтры) — `docs/06-api.md`, этапы 17–18. */
+/** GET person list (query / filters) — `docs/06-api.md`, phases 17–18. */
 export const personListQuerySchema = z.object({
   search: z.preprocess((v) => {
     if (v === undefined || v === null || v === "") {
@@ -122,9 +122,9 @@ export const personListQuerySchema = z.object({
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     countryCodeSchema.optional(),
   ),
-  /** Явный фильтр (внутренний); приоритет ниже, чем у `alive`. */
+  /** Explicit filter (internal); lower precedence than `alive`. */
   status: z.enum(["alive", "dead"]).optional(),
-  /** Query `alive` из API: true — только живые, false — только умершие, без параметра — все. */
+  /** API `alive` query: true — living only, false — deceased only, omit — all. */
   alive: z.preprocess((v) => {
     if (v === undefined || v === null || v === "") {
       return undefined;

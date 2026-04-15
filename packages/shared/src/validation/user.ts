@@ -5,7 +5,7 @@ export const userRoleSchema = z.enum(["admin", "viewer"]);
 
 export const userStatusSchema = z.enum(["active", "disabled"]);
 
-/** Пользователь в API (без пароля) */
+/** User in API responses (no password) */
 export const userPublicSchema = z.object({
   id: uuidSchema,
   login: z.string().min(1),
@@ -18,7 +18,7 @@ export const userPublicSchema = z.object({
 
 export type User = z.infer<typeof userPublicSchema>;
 
-/** Хранение в БД / внутренние проверки сервера */
+/** DB row / internal server checks */
 export const userRowSchema = userPublicSchema.extend({
   passwordHash: z.string().min(1),
 });

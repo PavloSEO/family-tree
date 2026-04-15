@@ -1,6 +1,6 @@
 import { BaseEdge, getSmoothStepPath, type EdgeProps } from "@xyflow/react";
 
-/** Родитель → ребёнок: сплошная линия 2px (`docs/08-tree-visualization.md`). */
+/** Parent → child: solid 2px line (`docs/08-tree-visualization.md`). */
 export function ParentTreeEdge({
   id,
   sourceX,

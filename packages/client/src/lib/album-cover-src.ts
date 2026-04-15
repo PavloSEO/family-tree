@@ -1,4 +1,4 @@
-/** URL превью обложки альбома (`thumbnail` или `src` из API). */
+/** Album cover preview URL (`thumbnail` or `src` from API). */
 export function albumCoverSrc(rel: string | null): string | null {
   if (!rel) {
     return null;

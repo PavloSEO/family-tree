@@ -1,6 +1,6 @@
 import { defineConfig } from "drizzle-kit";
 
-/** Пути относительно `packages/server` (рабочая директория для `pnpm exec drizzle-kit`). */
+/** Paths relative to `packages/server` (cwd for `pnpm exec drizzle-kit`). */
 export default defineConfig({
   schema: "./src/db/schema.ts",
   out: "./src/db/migrations",

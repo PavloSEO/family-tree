@@ -1,54 +1,54 @@
-# 12 — Smoke-чеклист (ручной)
+# 12 — Manual smoke checklist
 
-После **`docker compose up --build`** или локально **`pnpm`** build + server + client dev.
+After **`docker compose up --build`** or locally **`pnpm`** build + server + client dev.
 
-## 1. Сборка и контейнер
+## 1. Build and container
 
-| Шаг | Действие | Ожидание |
+| Step | Action | Expected |
 |-----|----------|----------|
-| 1.1 | `docker compose up --build -d` (или локально: server `NODE_ENV=production` + client `build` + `node dist/serve.js`) | Контейнер **healthy**, порт **3000** |
+| 1.1 | `docker compose up --build -d` (or locally: server `NODE_ENV=production` + client `build` + `node dist/serve.js`) | Container **healthy**, port **3000** |
 | 1.2 | `curl -s http://localhost:3000/health` | `{"status":"ok"}` |
-| 1.3 | Открыть `http://localhost:3000/` в браузере | SPA: страница логина или приложение |
+| 1.3 | Open `http://localhost:3000/` in the browser | SPA: login page or app |
 
 ## 2. Auth
 
-| Шаг | Действие | Ожидание |
+| Step | Action | Expected |
 |-----|----------|----------|
-| 2.1 | Логин admin из **`.env`** / compose | Редирект на главную / welcome |
-| 2.2 | Выход и снова вход с «Запомнить меня» | Сессия восстанавливается |
-| 2.3 | Неверный пароль | Сообщение об ошибке |
+| 2.1 | Log in as admin from **`.env`** / compose | Redirect to home / welcome |
+| 2.2 | Sign out and sign in again with “Remember me” | Session restored |
+| 2.3 | Wrong password | Error message |
 
 ## 3. CRUD (admin)
 
-| Шаг | Действие | Ожидание |
+| Step | Action | Expected |
 |-----|----------|----------|
-| 3.1 | **Карточки**: создать, открыть, редактировать, удалить (тестовая) | Без 500 |
-| 3.2 | **Связи**: создать связь между двумя карточками | Валидация при дубликатах |
-| 3.3 | **Пользователи** (если не один admin): создать viewer | 201 |
-| 3.4 | **Настройки**: изменить название сайта, сохранить | 200 |
-| 3.5 | **Бэкап**: создать, скачать, удалить файл | tar.gz скачивается |
+| 3.1 | **Cards**: create, open, edit, delete (test card) | No 500 |
+| 3.2 | **Links**: create a link between two cards | Validation on duplicates |
+| 3.3 | **Users** (if not only admin): create viewer | 201 |
+| 3.4 | **Settings**: change site title, save | 200 |
+| 3.5 | **Backup**: create, download, delete file | tar.gz downloads |
 
-## 4. Дерево
+## 4. Tree
 
-| Шаг | Действие | Ожидание |
+| Step | Action | Expected |
 |-----|----------|----------|
-| 4.1 | Открыть **Дерево** с корнем из карточки | Ноды, панель, зум |
-| 4.2 | Двойной клик по ноде | Перестроение от выбранного человека |
+| 4.1 | Open **Tree** with root from a card | Nodes, panel, zoom |
+| 4.2 | Double-click a node | Rebuild from selected person |
 
-## 5. Фотоальбомы и карточка
+## 5. Photo albums and card
 
-| Шаг | Действие | Ожидание |
+| Step | Action | Expected |
 |-----|----------|----------|
-| 5.1 | Альбом: загрузка фото | Превью |
-| 5.2 | **PersonPage**: блоки инфографики / контакты при наличии данных | Отображение |
+| 5.1 | Album: upload photo | Preview |
+| 5.2 | **PersonPage**: infographics / contacts when data exists | Renders |
 
 ## 6. Viewer
 
-| Шаг | Действие | Ожидание |
+| Step | Action | Expected |
 |-----|----------|----------|
-| 6.1 | Войти как **viewer** | Нет админ-разделов в меню |
-| 6.2 | Дерево и альбомы | Доступ |
+| 6.1 | Log in as **viewer** | No admin sections in menu |
+| 6.2 | Tree and albums | Access allowed |
 
 ---
 
-**Деплой на VPS:** по инструкции **`docs/11-deployment.md`** (Docker, DNS, Caddy при необходимости). После деплоя повторить строки **1.2–2.1** на боевом URL.
+**VPS deploy:** follow **`docs/11-deployment.md`** (Docker, DNS, Caddy if needed). After deploy, repeat steps **1.2–2.1** on the production URL.

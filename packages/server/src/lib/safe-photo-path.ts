@@ -5,7 +5,7 @@ const UUID_RE =
 
 const MAIN_FILE_RE = /^main\.[a-z0-9]+$/i;
 
-/** `{photoUuid}.jpg` или `{photoUuid}_thumb.jpg` (Sharp сохраняет как JPEG). */
+/** `{photoUuid}.jpg` or `{photoUuid}_thumb.jpg` (Sharp writes JPEG). */
 const ALBUM_JPG_RE =
   /^([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})(_thumb)?\.jpg$/i;
 
@@ -50,9 +50,9 @@ function resolveAlbumPhoto(
 }
 
 /**
- * Безопасно резолвит относительный путь под `PHOTOS_PATH`:
+ * Safely resolve a relative path under `PHOTOS_PATH`:
  * - `{personId}/main.ext` — mainPhoto;
- * - `album/{albumId}/{photoId}.jpg` / `…_thumb.jpg` — фотоальбомы (этап 35+).
+ * - `album/{albumId}/{photoId}.jpg` / `…_thumb.jpg` — album photos (phase 35+).
  */
 export function resolvePhotoFile(
   photosRoot: string,

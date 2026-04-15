@@ -4,7 +4,7 @@ import { db } from "../db/connection.js";
 import { users } from "../db/schema.js";
 import { verifyToken, type JwtRole } from "../services/auth.service.js";
 
-/** Пользователь в контексте после успешной проверки JWT и БД (`docs/07-auth.md`). */
+/** User in context after successful JWT + DB check (`docs/07-auth.md`). */
 export type AuthUser = {
   id: string;
   login: string;
@@ -16,8 +16,8 @@ export type AuthUser = {
 };
 
 /**
- * Проверка `Authorization: Bearer <token>`, JWT, пользователь в БД, статус **active**.
- * Кладёт **`user`** в контекст.
+ * Validates `Authorization: Bearer <token>`, JWT, DB user, **active** status.
+ * Sets **`user`** on the context.
  */
 export const requireAuth = createMiddleware<{
   Variables: {
@@ -81,7 +81,7 @@ export const requireAuth = createMiddleware<{
   await next();
 });
 
-/** Только после `requireAuth`. Роль **admin**, иначе 403. */
+/** After `requireAuth` only. Requires **admin** role, else 403. */
 export const requireAdmin = createMiddleware<{
   Variables: {
     user: AuthUser;

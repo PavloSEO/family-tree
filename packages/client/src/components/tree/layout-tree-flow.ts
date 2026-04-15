@@ -1,4 +1,4 @@
-/** Реэкспорт для обратной совместимости импортов. */
+/** Re-export for backward-compatible imports. */
 export {
   NODE_H,
   NODE_W,

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { treeQuerySchema } from "./validation/tree.js";
 
 describe("treeQuerySchema", () => {
-  it("подставляет значения по умолчанию", () => {
+  it("applies default values", () => {
     const q = treeQuerySchema.parse({});
     expect(q.mode).toBe("full");
     expect(q.depthUp).toBe(3);
@@ -13,7 +13,7 @@ describe("treeQuerySchema", () => {
     expect(q.country).toBeUndefined();
   });
 
-  it("разбирает query-параметры", () => {
+  it("parses query parameters", () => {
     const q = treeQuerySchema.parse({
       mode: "ancestors",
       depthUp: "5",

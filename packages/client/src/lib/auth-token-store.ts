@@ -1,4 +1,4 @@
-/** Ключ в `localStorage` при «Запомнить меня» (`docs/07-auth.md`). */
+/** `localStorage` key when “Remember me” is enabled (`docs/07-auth.md`). */
 export const LS_TOKEN_KEY = "ft_token";
 
 let memoryToken: string | null = null;

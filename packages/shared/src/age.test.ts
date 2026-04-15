@@ -2,14 +2,14 @@ import { describe, expect, it } from "vitest";
 import { computeAgeYears } from "./age.js";
 
 describe("computeAgeYears", () => {
-  it("считает полные года до дня рождения", () => {
+  it("counts full years relative to birthday", () => {
     const asOf = new Date(2026, 3, 14);
     expect(computeAgeYears("1990-04-13", { asOf })).toBe(36);
     expect(computeAgeYears("1990-04-14", { asOf })).toBe(36);
     expect(computeAgeYears("1990-04-15", { asOf })).toBe(35);
   });
 
-  it("возраст на дату смерти", () => {
+  it("age as of death date", () => {
     expect(
       computeAgeYears("1980-06-10", { deathIso: "2020-06-09" }),
     ).toBe(39);
@@ -18,7 +18,7 @@ describe("computeAgeYears", () => {
     ).toBe(40);
   });
 
-  it("null если рождение позже конечной даты", () => {
+  it("returns null when birth is after end date", () => {
     expect(computeAgeYears("2030-01-01", { asOf: new Date(2020, 0, 1) })).toBe(
       null,
     );
@@ -27,7 +27,7 @@ describe("computeAgeYears", () => {
     ).toBeNull();
   });
 
-  it("null при пустой или невалидной дате рождения", () => {
+  it("returns null for empty or invalid birth date", () => {
     expect(computeAgeYears(null)).toBeNull();
     expect(computeAgeYears("not")).toBeNull();
   });

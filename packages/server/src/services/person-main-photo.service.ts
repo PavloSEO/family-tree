@@ -31,8 +31,8 @@ async function unlinkOldMainFiles(dir: string): Promise<void> {
 }
 
 /**
- * Сохраняет mainPhoto: sharp (EXIF rotate, превью до 300 px по длинной стороне), файл `main.jpg`,
- * путь в БД: `{personId}/main.jpg` (POSIX).
+ * Save mainPhoto: sharp (EXIF rotate, preview up to 300px on long side), file `main.jpg`,
+ * DB path `{personId}/main.jpg` (POSIX).
  */
 export async function uploadPersonMainPhoto(
   personId: string,

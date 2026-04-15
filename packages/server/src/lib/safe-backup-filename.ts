@@ -15,7 +15,7 @@ export function isValidBackupArchiveName(name: string): boolean {
   return true;
 }
 
-/** Имя файла для нового бэкапа (уникальный суффикс). */
+/** Filename for a new backup (unique suffix). */
 export function generateBackupFileName(): string {
   const d = new Date();
   const stamp = [
@@ -32,7 +32,7 @@ export function generateBackupFileName(): string {
 }
 
 /**
- * Абсолютный путь к файлу бэкапа под `getBackupsRoot()` или `null`, если имя небезопасно.
+ * Absolute path to backup file under `getBackupsRoot()`, or `null` if filename is unsafe.
  */
 export function resolveBackupFilePath(filename: string): string | null {
   const base = path.basename(filename);

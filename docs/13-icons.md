@@ -1,112 +1,112 @@
-# 13 -- Система иконок
+# 13 — Icon system
 
 ---
 
-## Основные иконки: Material Symbols
+## Primary icons: Material Symbols
 
-Подключение через Google Fonts CDN в `index.html`:
+Loaded via Google Fonts CDN in `index.html`:
 ```html
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
 ```
 
-Использование в Material Web:
+Usage in Material Web:
 ```html
 <md-icon>person</md-icon>
 ```
 
-Использование в кастомных компонентах:
+Usage in custom components:
 ```html
 <span class="material-symbols-outlined">person</span>
 ```
 
-## Каталог используемых иконок
+## Catalog of icons in use
 
-### Навигация
+### Navigation
 
-| Назначение | Material Symbol |
+| Purpose | Material Symbol |
 |-----------|----------------|
-| Дерево | `account_tree` |
-| Карточки | `person` |
-| Связи | `link` |
-| Фотоальбомы | `photo_library` |
-| Пользователи | `group` |
-| Настройки | `settings` |
-| Бэкапы | `backup` |
+| Tree | `account_tree` |
+| Cards | `person` |
+| Links | `link` |
+| Photo albums | `photo_library` |
+| Users | `group` |
+| Settings | `settings` |
+| Backups | `backup` |
 
-### Действия
+### Actions
 
-| Назначение | Material Symbol |
+| Purpose | Material Symbol |
 |-----------|----------------|
-| Создать | `add` |
-| Редактировать | `edit` |
-| Удалить | `delete` |
-| Сохранить | `save` |
-| Отмена | `close` |
-| Поиск | `search` |
-| Фильтр | `filter_list` |
-| Сортировка вверх | `arrow_upward` |
-| Сортировка вниз | `arrow_downward` |
-| Скачать | `download` |
-| Загрузить файл | `upload` |
-| Обновить | `refresh` |
-| Сбросить | `restart_alt` |
-| Развернуть | `unfold_more` |
-| Свернуть | `unfold_less` |
-| Назад | `arrow_back` |
-| Вперед | `arrow_forward` |
-| Предыдущий | `chevron_left` |
-| Следующий | `chevron_right` |
-| Выйти | `logout` |
-| Войти | `login` |
+| Create | `add` |
+| Edit | `edit` |
+| Delete | `delete` |
+| Save | `save` |
+| Cancel | `close` |
+| Search | `search` |
+| Filter | `filter_list` |
+| Sort ascending | `arrow_upward` |
+| Sort descending | `arrow_downward` |
+| Download | `download` |
+| Upload file | `upload` |
+| Refresh | `refresh` |
+| Reset | `restart_alt` |
+| Expand | `unfold_more` |
+| Collapse | `unfold_less` |
+| Back | `arrow_back` |
+| Forward | `arrow_forward` |
+| Previous | `chevron_left` |
+| Next | `chevron_right` |
+| Sign out | `logout` |
+| Sign in | `login` |
 
-### Статусы и данные
+### Status and data
 
-| Назначение | Material Symbol |
+| Purpose | Material Symbol |
 |-----------|----------------|
-| Мужской пол | `male` |
-| Женский пол | `female` |
-| Живой | `favorite` |
-| Умерший | `church` (или без иконки, ч/б стиль) |
-| Предупреждение | `warning` |
-| Ошибка | `error` |
-| Успех | `check_circle` |
-| Инфо | `info` |
-| Пустая фото | `no_photography` |
-| Битая фото | `broken_image` |
-| Нет данных | `person_off` |
+| Male | `male` |
+| Female | `female` |
+| Living | `favorite` |
+| Deceased | `church` (or no icon, monochrome style) |
+| Warning | `warning` |
+| Error | `error` |
+| Success | `check_circle` |
+| Info | `info` |
+| Empty photo | `no_photography` |
+| Broken photo | `broken_image` |
+| No data | `person_off` |
 
-### Контакты
+### Contacts
 
-| Назначение | Material Symbol |
+| Purpose | Material Symbol |
 |-----------|----------------|
-| Телефон | `phone` |
+| Phone | `phone` |
 | Email | `mail` |
-| Сайт | `language` |
-| Место | `location_on` |
-| Дата | `calendar_today` |
+| Website | `language` |
+| Place | `location_on` |
+| Date | `calendar_today` |
 
-### Карточка
+### Card
 
-| Назначение | Material Symbol |
+| Purpose | Material Symbol |
 |-----------|----------------|
-| Родственники | `family_restroom` |
-| Инфографика | `analytics` |
-| Биография | `description` |
-| Работа | `work` |
-| Хобби | `interests` |
-| Доп. поля | `more_horiz` |
-| Фото | `photo_camera` |
-| Альбомы | `collections` |
+| Relatives | `family_restroom` |
+| Infographics | `analytics` |
+| Biography | `description` |
+| Work | `work` |
+| Hobbies | `interests` |
+| Extra fields | `more_horiz` |
+| Photo | `photo_camera` |
+| Albums | `collections` |
 
 ## Fallback: Lucide React
 
-Для иконок, которых нет в Material Symbols (соцсети, специфичные):
+For icons missing from Material Symbols (social networks, specifics):
 
 ```tsx
 import { Send, Facebook, Instagram, Linkedin, MessageCircle, Music2 } from 'lucide-react';
 ```
 
-| Платформа | Lucide компонент |
+| Platform | Lucide component |
 |-----------|-----------------|
 | Telegram | `Send` |
 | Facebook | `Facebook` |
@@ -114,9 +114,9 @@ import { Send, Facebook, Instagram, Linkedin, MessageCircle, Music2 } from 'luci
 | LinkedIn | `Linkedin` |
 | WhatsApp | `MessageCircle` |
 | TikTok | `Music2` |
-| VK | Кастомная SVG (нет в Lucide) |
+| VK | Custom SVG (not in Lucide) |
 
-### Стилизация Lucide под M3
+### Styling Lucide for M3
 
 ```tsx
 <Send
@@ -126,6 +126,6 @@ import { Send, Facebook, Instagram, Linkedin, MessageCircle, Music2 } from 'luci
 />
 ```
 
-## Никаких emoji в UI
+## No emoji in UI
 
-Emoji используются ТОЛЬКО для флагов стран (программно из ISO-кода). Все остальные иконки -- Material Symbols или Lucide.
+Emoji are used ONLY for country flags (derived from ISO codes programmatically). All other icons are Material Symbols or Lucide.

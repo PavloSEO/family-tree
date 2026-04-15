@@ -1,19 +1,19 @@
-# 09 -- Система фотографий
+# 09 — Photo system
 
 ---
 
-## Хранение
+## Storage
 
-Файловая система, Docker volume `/data/photos/`.
+Filesystem, Docker volume `/data/photos/`.
 
-Структура директорий:
+Directory layout:
 ```
 /data/photos/
   {personId}/
     {albumId}/
-      {photoId}.jpg         <- оригинал (с EXIF-ротацией)
+      {photoId}.jpg         <- original (EXIF-rotated)
       thumbs/
-        {photoId}.jpg       <- thumbnail 300px
+        {photoId}.jpg       <- 300px thumbnail
   shared/
     {albumId}/
       {photoId}.jpg
@@ -21,103 +21,103 @@
         {photoId}.jpg
 ```
 
-`shared/` -- общие альбомы (не привязанные к карточке).
+`shared/` — albums not tied to a person card.
 
-## Загрузка
+## Upload
 
 Endpoint: `POST /api/photos/upload` (multipart/form-data).
 
-Поля:
-- `albumId` (обязательно) -- UUID альбома
-- `file` (обязательно) -- файл изображения
-- `description` (опционально)
-- `dateTaken` (опционально, ISO date)
-- `location` (опционально)
+Fields:
+- `albumId` (required) — album UUID
+- `file` (required) — image file
+- `description` (optional)
+- `dateTaken` (optional, ISO date)
+- `location` (optional)
 
-### Пайплайн обработки
+### Processing pipeline
 
 ```
-1. Валидация MIME-type
-   Допустимые: image/jpeg, image/png, image/webp
-   Проверка: magic bytes файла, НЕ расширение
-   -> Ошибка: "Неподдерживаемый формат"
+1. MIME validation
+   Allowed: image/jpeg, image/png, image/webp
+   Check: magic bytes, NOT extension only
+   -> Error: "Unsupported format"
 
-2. Валидация размера
-   Максимум: 10 МБ (env MAX_UPLOAD_SIZE_MB)
-   -> Ошибка: "Файл слишком большой. Максимум 10 МБ."
+2. Size validation
+   Max: 10 MB (env MAX_UPLOAD_SIZE_MB)
+   -> Error: "File too large. Maximum 10 MB."
 
-3. EXIF-парсинг (exifr)
-   Извлекаем:
-   - DateTimeOriginal -> dateTaken (если не указан вручную)
-   - GPSLatitude + GPSLongitude -> location (если не указан)
-   - Orientation -> авторотация в шаге 4
+3. EXIF parsing (exifr)
+   Extract:
+   - DateTimeOriginal -> dateTaken (if not set manually)
+   - GPSLatitude + GPSLongitude -> location (if not set)
+   - Orientation -> auto-rotate in step 4
 
-4. Сохранение оригинала (sharp)
+4. Save original (sharp)
    sharp(buffer).rotate().toFile(filePath)
-   .rotate() без аргументов = авторотация по EXIF
+   .rotate() with no args = EXIF auto-rotate
 
-5. Генерация thumbnail (sharp)
+5. Generate thumbnail (sharp)
    sharp(buffer).rotate().resize(300, 300, {
      fit: 'inside',
      withoutEnlargement: true
    }).toFile(thumbPath)
 
-6. Запись в БД
+6. DB insert
    INSERT INTO photos (id, album_id, src, thumbnail, ...)
 
-7. Ответ
+7. Response
    { id, src, thumbnail, dateTaken, location }
 ```
 
-## Раздача файлов
+## File serving
 
 Endpoint: `GET /api/photos/file/*`
 
-Hono middleware раздает файлы из `/data/photos/`. Защита от directory traversal: проверка что resolved path начинается с `/data/photos/`.
+Hono middleware serves files under `/data/photos/`. Directory traversal guard: resolved path must start with `/data/photos/`.
 
-## Разметка людей
+## People tagging
 
-Координаты -- нормализованные (0.0 - 1.0) относительно размеров изображения:
-- `x` -- левый край области
-- `y` -- верхний край области
-- `width` -- ширина области
-- `height` -- высота области
+Coordinates are normalized (0.0–1.0) relative to image dimensions:
+- `x` — left edge of region
+- `y` — top edge of region
+- `width` — region width
+- `height` — region height
 
-Нормализованные координаты масштабируются вместе с фото при любом размере отображения.
+Normalized coords scale with the image at any display size.
 
-### UI разметки (admin only)
+### Tagging UI (admin only)
 
-1. Открыть фото в режиме редактирования
-2. Canvas overlay поверх изображения
-3. mousedown + mousemove = рисование прямоугольника
-4. mouseup = открытие dropdown выбора человека (`md-menu` с поиском по имени)
-5. Выбор человека = POST /api/photos/:id/tag
-6. Отображение: полупрозрачная рамка + имя
+1. Open photo in edit mode
+2. Canvas overlay on top of image
+3. mousedown + mousemove — draw rectangle
+4. mouseup — open dropdown to pick person (`md-menu` with name search)
+5. Pick person — POST /api/photos/:id/tag
+6. Display: semi-transparent frame + name
 
-### Отображение разметки (для всех)
+### Showing tags (everyone)
 
-- Полупрозрачные рамки (border: 2px solid, background: rgba) поверх фото
-- При hover/tap: tooltip с именем + мини-аватар + ссылка на карточку
-- Тоггл "Скрыть разметку" (`md-switch`)
+- Semi-transparent frames (border: 2px solid, background: rgba) on photo
+- Hover/tap: tooltip with name + mini avatar + link to card
+- Toggle “Hide tags” (`md-switch`)
 
-## Альбомы
+## Albums
 
-Два типа:
-- Персональные: `owner_id = person_uuid` -- привязаны к карточке, отображаются и в профиле, и в общем разделе
-- Общие: `owner_id = null` -- только в общем разделе
+Two types:
+- Personal: `owner_id = person_uuid` — tied to a card, shown in profile and global section
+- Shared: `owner_id = null` — global section only
 
 UI:
-- Сетка альбомов: CSS Grid, `md-elevated-card` (labs) с обложкой, названием, годом
-- При клике -- галерея фото (yet-another-react-lightbox)
+- Album grid: CSS Grid, `md-elevated-card` (labs) with cover, title, year
+- Click — photo gallery (yet-another-react-lightbox)
 
-## Фоллбеки
+## Fallbacks
 
-| Ситуация | Обработка |
+| Situation | Handling |
 |----------|----------|
-| Нет thumbnail | Генерируется при загрузке. Если потерян -- показать оригинал |
-| Нет taggedPersons | Рамки не показываются |
-| personId в tag указывает на удаленную карточку | Показать "Неизвестный" |
-| Нет dateTaken, есть year | Показать год |
-| Нет dateTaken и year | "Дата неизвестна" |
-| Битый src | Заглушка: серый прямоугольник + Material Symbol `broken_image` |
-| Фото < 100px | Предупреждение при загрузке |
+| No thumbnail | Generated on upload. If missing — show original |
+| No taggedPersons | No frames |
+| tag.personId points to deleted card | Show “Unknown” |
+| No dateTaken, year set | Show year |
+| No dateTaken and no year | “Date unknown” |
+| Broken src | Placeholder: gray box + Material Symbol `broken_image` |
+| Photo < 100px | Warning on upload |

@@ -1,10 +1,10 @@
-# Участие в проекте
+# Contributing
 
-1. Форкните репозиторий и создайте ветку от `main`.
-2. Установите зависимости: `corepack enable` и `pnpm install` в корне монорепозитория.
-3. Перед коммитом выполните **`pnpm run typecheck`** и при необходимости **`pnpm run build`**.
-4. Опишите изменения в сообщении коммита и в описании pull request.
+1. Fork the repository and create a branch from `main`.
+2. Install dependencies: `corepack enable` and `pnpm install` at the monorepo root.
+3. Before committing, run **`pnpm run typecheck`** and, if needed, **`pnpm run build`**.
+4. Describe changes in the commit message and in the pull request description.
 
-Не добавляйте в git каталог **`log/`**, **`log.zip`**, **`material-web-main/`**, корневой **`nginx.zip`** (локальные артефакты и чужие примеры конфигов). Они перечислены в **`.gitignore`**. Рабочий конфиг nginx для Docker — **`docker/nginx/`**.
+Do not commit the **`log/`** directory, **`log.zip`**, **`material-web-main/`**, or secrets such as **`docker/nginx/certs/*.pem`**. See **`.gitignore`**. The working nginx config lives under **`docker/nginx/`**.
 
-Вопросы и баги — через [Issues](https://github.com/PavloSEO/family-tree/issues).
+Questions and bugs — via [Issues](https://github.com/PavloSEO/family-tree/issues).

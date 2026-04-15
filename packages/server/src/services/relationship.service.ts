@@ -19,7 +19,7 @@ export class RelationshipNotFoundError extends Error {
   }
 }
 
-/** Дубликат пары (тип + люди) — для HTTP 409 на этапе 24. */
+/** Duplicate pair (type + people) — HTTP 409, phase 24. */
 export class RelationshipDuplicateError extends Error {
   readonly code = "RELATIONSHIP_DUPLICATE";
 
@@ -29,7 +29,7 @@ export class RelationshipDuplicateError extends Error {
   }
 }
 
-/** Цикл в графе родитель → ребёнок. */
+/** Cycle in parent → child graph. */
 export class RelationshipCycleError extends Error {
   readonly code = "RELATIONSHIP_CYCLE";
 
@@ -39,7 +39,7 @@ export class RelationshipCycleError extends Error {
   }
 }
 
-/** У ребёнка уже два родителя типа parent. */
+/** Child already has two parent-type edges. */
 export class RelationshipTooManyParentsError extends Error {
   readonly code = "TOO_MANY_PARENTS";
 
@@ -49,7 +49,7 @@ export class RelationshipTooManyParentsError extends Error {
   }
 }
 
-/** Карточка не найдена (для связи). */
+/** Person not found (for relationship validation). */
 export class RelationshipPersonNotFoundError extends Error {
   readonly code = "PERSON_NOT_FOUND";
 
@@ -91,7 +91,7 @@ async function requirePerson(id: string): Promise<void> {
   }
 }
 
-/** Дата YYYY-MM-DD или префикс; сравнение лексикографически для одного формата. */
+/** YYYY-MM-DD date or prefix; lexicographic compare for same format. */
 function compareIsoDates(a: string | null, b: string | null): number | null {
   if (!a || !b) {
     return null;
@@ -174,8 +174,8 @@ async function countParentsOfChild(childId: string): Promise<number> {
 }
 
 /**
- * Существующие рёбра parent: from → to (родитель → ребёнок).
- * Проверка цикла: при добавлении from→to, если из to по рёбрам parent→child можно дойти до from — будет цикл.
+ * Existing parent edges: from → to (parent → child).
+ * Cycle check: when adding from→to, if from `to` you can reach `from` following parent→child edges, it would cycle.
  */
 async function wouldCreateParentCycle(
   newFrom: string,

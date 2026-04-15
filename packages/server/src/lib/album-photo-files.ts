@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { getPhotosRoot } from "./photos-root.js";
 
-/** Удаляет файлы по относительным POSIX-путям под `PHOTOS_PATH`. */
+/** Delete files by relative POSIX paths under `PHOTOS_PATH`. */
 export async function unlinkAlbumPhotoFiles(
   relSrc: string,
   relThumb: string | null,

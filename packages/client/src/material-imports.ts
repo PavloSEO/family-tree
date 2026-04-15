@@ -1,5 +1,5 @@
 /**
- * Tree-shakeable импорты MW (см. `docs/03-material-web.md`).
+ * Tree-shakeable Material Web imports (see `docs/03-material-web.md`).
  */
 import "@material/web/button/elevated-button.js";
 import "@material/web/button/filled-button.js";

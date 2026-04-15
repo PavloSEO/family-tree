@@ -9,14 +9,14 @@ function partsFromDate(d: Date): { year: number; month: number; day: number } {
 }
 
 /**
- * Полных лет на дату «как есть» (день рождения ещё не наступил в этом году — минус год).
- * Если указана дата смерти, возраст считается на этот день; иначе — на `asOf` или «сегодня».
+ * Full years on a calendar date (if birthday has not occurred yet this year, subtract one).
+ * If death date is set, age is as of that day; otherwise as of `asOf` or “today”.
  */
 export function computeAgeYears(
   birthIso: string | null | undefined,
   options?: {
     deathIso?: string | null;
-    /** По умолчанию — локальная дата `new Date()` пользователя/среды. */
+    /** Defaults to local calendar date from `new Date()`. */
     asOf?: Date;
   },
 ): number | null {

@@ -1,41 +1,41 @@
-# 07 -- Авторизация
+# 07 — Authentication
 
 ---
 
-## Механизм
+## Mechanism
 
-JWT-токены. Без OAuth, без email, без регистрации. Администратор создает пользователей вручную.
+JWT tokens. No OAuth, no email, no self-registration. Admins create users manually.
 
-## Роли
+## Roles
 
-| Роль | Количество | Возможности |
+| Role | Count | Capabilities |
 |------|-----------|------------|
-| admin | ровно 1 | Полный CRUD: карточки, связи, фото, альбомы, пользователи, настройки, бэкапы |
-| viewer | неограниченно | Только просмотр: дерево, карточки, фотоальбомы. Нет кнопок редактирования в DOM |
+| admin | exactly 1 | Full CRUD: cards, links, photos, albums, users, settings, backups |
+| viewer | unlimited | Read-only: tree, person cards, photo albums. No edit controls in the DOM |
 
 ## JWT
 
-Библиотека: `jose` (чистый JS, без native dependencies).
+Library: `jose` (pure JS, no native dependencies).
 
 Payload:
 ```typescript
 {
-  sub: "user-uuid",          // ID пользователя
-  role: "admin" | "viewer",  // Роль
+  sub: "user-uuid",          // User ID
+  role: "admin" | "viewer",  // Role
   iat: 1713000000,           // Issued at
   exp: 1715592000            // Expiration
 }
 ```
 
 TTL:
-- "Запомнить меня" = true: `SESSION_TTL_DAYS` дней (default 30)
-- "Запомнить меня" = false: 24 часа (сессия на время работы браузера)
+- “Remember me” = true: `SESSION_TTL_DAYS` (default 30)
+- “Remember me” = false: 24 hours (session for the browser session)
 
-Секрет: env `JWT_SECRET` (минимум 32 символа, генерировать через `openssl rand -hex 32`).
+Secret: env `JWT_SECRET` (at least 32 characters; generate with `openssl rand -hex 32`).
 
-## Хэширование паролей
+## Password hashing
 
-Библиотека: **`bcryptjs`** (совместима с bcrypt-хэшами), cost factor 12. Реализация в `auth.service.ts` — `hashSync` / `compareSync` внутри async-обёрток.
+Library: **`bcryptjs`** (bcrypt-compatible hashes), cost factor 12. Implementation in `auth.service.ts` — `hashSync` / `compareSync` inside async wrappers.
 
 ```typescript
 import bcrypt from "bcryptjs";
@@ -45,69 +45,69 @@ const valid = bcrypt.compareSync(password, hash);
 
 ## Rate limiting
 
-Таблица `login_attempts`. При каждой попытке логина:
-1. Проверить количество неудачных попыток с данного IP за последние `RATE_LIMIT_WINDOW_MINUTES` минут (default 15)
-2. Если >= `RATE_LIMIT_MAX_ATTEMPTS` (default 5) -- ответ 429
-3. Записать попытку (success = true/false)
-4. Периодически чистить старые записи (старше 24 часов)
+Table `login_attempts`. On each login attempt:
+1. Count failed attempts from this IP in the last `RATE_LIMIT_WINDOW_MINUTES` (default 15)
+2. If >= `RATE_LIMIT_MAX_ATTEMPTS` (default 5) — respond 429
+3. Record the attempt (success = true/false)
+4. Periodically purge old rows (older than 24 hours)
 
 ## Middleware
 
 ```
-Запрос --> Authorization: Bearer <token>?
+Request --> Authorization: Bearer <token>?
   |
-  +-- Нет --> 401 "Требуется авторизация"
+  +-- No --> 401 "Authentication required"
   |
-  +-- Есть --> jwtVerify(token, secret)
+  +-- Yes --> jwtVerify(token, secret)
                 |
-                +-- Невалидный --> 401 "Невалидный токен"
+                +-- Invalid --> 401 "Invalid token"
                 |
-                +-- Валидный --> db.users.findById(payload.sub)
+                +-- Valid --> db.users.findById(payload.sub)
                                   |
-                                  +-- Не найден --> 401
-                                  +-- status=disabled --> 403 "Доступ приостановлен"
+                                  +-- Not found --> 401
+                                  +-- status=disabled --> 403 "Access suspended"
                                   +-- OK --> c.set('user', { id, login, role })
 ```
 
-Admin-only middleware -- дополнительная проверка `user.role === 'admin'`, иначе 403.
+Admin-only middleware — extra check `user.role === 'admin'`, else 403.
 
-## Заголовки безопасности (HTTP)
+## Security headers (HTTP)
 
-Глобально (`middleware/security-headers.ts`, подключение в `index.ts` — **`app.use('*', securityHeaders)`**):
+Globally (`middleware/security-headers.ts`, wired in `index.ts` — **`app.use('*', securityHeaders)`**):
 
-- **`Content-Security-Policy`** — SPA того же origin: `default-src 'self'`, `script-src 'self'`, стили и шрифты Google как в `packages/client/index.html`, `img-src` с **`data:`** и **`blob:`**, **`connect-src 'self'`** (при API на другом origin см. **`CSP_CONNECT_SRC_EXTRA`** в `.env.example`), **`object-src 'none'`**, **`worker-src 'none'`**, **`frame-ancestors 'none'`**, **`base-uri`**, **`form-action`**.
+- **`Content-Security-Policy`** — SPA same origin: `default-src 'self'`, `script-src 'self'`, Google styles/fonts as in `packages/client/index.html`, `img-src` with **`data:`** and **`blob:`**, **`connect-src 'self'`** (for API on another origin see **`CSP_CONNECT_SRC_EXTRA`** in `.env.example`), **`object-src 'none'`**, **`worker-src 'none'`**, **`frame-ancestors 'none'`**, **`base-uri`**, **`form-action`**.
 - **`X-Content-Type-Options: nosniff`**
 - **`Referrer-Policy: strict-origin-when-cross-origin`**
-- **`Permissions-Policy`** — камера/микрофон/геолокация/payment API отключены
+- **`Permissions-Policy`** — camera/mic/geolocation/payment API disabled
 - **`X-Frame-Options: DENY`**
 
-## Хранение токена на клиенте
+## Token storage on the client
 
-1. JWT хранится в переменной в памяти (`tokenInMemory`)
-2. При "Запомнить меня" -- дублируется в `localStorage` ключ `ft_token`
-3. При загрузке SPA -- проверка `localStorage`, если есть -- восстановление сессии через `GET /api/auth/me`
-4. При logout -- очистка обоих хранилищ
-5. При 401 от любого запроса -- автоматический редирект на `/login`
-6. При 403 "Доступ приостановлен" -- редирект на `/disabled`
+1. JWT kept in memory (`tokenInMemory`)
+2. With “Remember me” — also `localStorage` key `ft_token`
+3. On SPA load — check `localStorage`; if present — restore session via `GET /api/auth/me`
+4. On logout — clear both stores
+5. On 401 from any request — redirect to `/login`
+6. On 403 “Access suspended” — redirect to `/disabled`
 
-**Риски и смягчения:** любой XSS на origin может прочитать `localStorage` — держите CSP строгим, не подключайте сторонние скрипты, в проде только **HTTPS** (`window.isSecureContext`). Для «Запомнить» при старте вне secure context в консоль пишется предупреждение. Событие **`storage`** используется, чтобы при выходе в одной вкладке сбросить сессию в остальных (удаление `ft_token`).
+**Risks and mitigations:** any XSS on the origin can read `localStorage` — keep CSP strict, do not load third-party scripts, use **HTTPS** in production (`window.isSecureContext`). For “Remember me” outside a secure context a warning is logged. The **`storage`** event clears session in other tabs when one tab logs out (removes `ft_token`).
 
-Полный отказ от `localStorage` в пользу **httpOnly**-cookie потребует доработки API и клиента (`credentials`, CSRF/SameSite) — отдельный этап, если понадобится.
+Dropping `localStorage` for **httpOnly** cookies would require API and client changes (`credentials`, CSRF/SameSite) — a separate phase if needed.
 
-## Страница логина
+## Login page
 
-Минимальная:
-- Заголовок (название сервиса из settings или default)
-- `md-outlined-text-field` label="Логин"
-- `md-outlined-text-field` type="password" label="Пароль"
-- `md-checkbox` "Запомнить меня"
-- `md-filled-button` "Войти"
-- При ошибке: "Неверный логин или пароль" (не раскрывать что именно)
-- При rate limit: "Слишком много попыток. Попробуйте через N минут."
+Minimal:
+- Title (service name from settings or default)
+- `md-outlined-text-field` label="Login"
+- `md-outlined-text-field` type="password" label="Password"
+- `md-checkbox` “Remember me”
+- `md-filled-button` “Sign in”
+- On error: “Invalid login or password” (do not reveal which field failed)
+- On rate limit: “Too many attempts. Try again in N minutes.”
 
-## Сброс пароля (аварийный)
+## Password reset (emergency)
 
-Через CLI/прямой доступ к БД:
+Via CLI / direct DB access:
 ```bash
 docker compose exec family-tree node -e "
   const Database = require('better-sqlite3');

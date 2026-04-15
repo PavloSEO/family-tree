@@ -69,7 +69,7 @@ function pickGpsJson(tags: Record<string, unknown> | undefined): string | null {
 }
 
 /**
- * Загрузка фото в альбом: MIME + Sharp, превью, EXIF дата, GPS (exifr), пути `album/{albumId}/{id}.jpg`.
+ * Upload photo to album: MIME + Sharp, preview, EXIF date, GPS (exifr), paths `album/{albumId}/{id}.jpg`.
  */
 export async function uploadAlbumPhoto(
   albumId: string,

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { Context, Hono } from "hono";
 import type { AuthUser } from "./middleware/auth.js";
 
-/** `Cache-Control` для файлов из Vite `dist/` (см. аудит п. 29). */
+/** `Cache-Control` for files from Vite `dist/` (audit item 29). */
 function applyStaticCacheHeaders(fsPath: string, c: Context): void {
   const normalized = fsPath.replace(/\\/g, "/").toLowerCase();
   if (normalized.endsWith("/index.html") || normalized.endsWith("index.html")) {
@@ -27,8 +27,8 @@ function resolveClientDistDir(): string {
 }
 
 /**
- * В production отдаёт Vite-сборку клиента и SPA-fallback на `index.html`.
- * API и `/health` не трогает.
+ * In production, serve the Vite client build and SPA fallback to `index.html`.
+ * Does not handle API or `/health`.
  */
 export function registerClientSpaIfProd(
   app: Hono<{ Variables: { user: AuthUser } }>,
@@ -40,7 +40,7 @@ export function registerClientSpaIfProd(
   const indexFile = path.join(root, "index.html");
   if (!existsSync(indexFile)) {
     console.warn(
-      `[static] пропуск: нет ${indexFile} (соберите client: pnpm --filter @family-tree/client build)`,
+      `[static] skip: missing ${indexFile} (build client: pnpm --filter @family-tree/client build)`,
     );
     return;
   }

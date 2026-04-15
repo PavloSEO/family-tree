@@ -260,8 +260,8 @@ export async function deletePerson(id: string): Promise<void> {
 }
 
 /**
- * Группы с одинаковыми (без учёта регистра) именем, фамилией и датой рождения,
- * где больше одной записи (`docs/06-api.md`: GET `/persons/duplicates`).
+ * Groups with the same (case-insensitive) first name, last name, and birth date
+ * where more than one row exists (`docs/06-api.md`: GET `/persons/duplicates`).
  */
 export async function findPersonDuplicates(): Promise<PersonDuplicateGroup[]> {
   const all = await db.select().from(persons);

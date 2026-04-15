@@ -1,86 +1,86 @@
-# 04 -- Маппинг компонентов на UI
+# 04 — Component to UI mapping
 
 ---
 
-Каждый элемент интерфейса привязан к конкретному MW-компоненту или помечен как кастомный.
+Each UI element maps to a specific MW component or is marked custom.
 
-## Страница логина
+## Login page
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Поле логина | `md-outlined-text-field` label="Логин" |
-| Поле пароля | `md-outlined-text-field` type="password" label="Пароль" |
-| Чекбокс "Запомнить" | `md-checkbox` + `<label>` |
-| Кнопка "Войти" | `md-filled-button` |
-| Иконка в кнопке | `md-icon` slot="icon" -- `login` |
-| Сообщение об ошибке | `md-outlined-text-field` error + error-text |
-| Заголовок | CSS-класс `md-typescale-headline-medium` |
+| Login field | `md-outlined-text-field` label="Login" |
+| Password field | `md-outlined-text-field` type="password" label="Password" |
+| “Remember me” checkbox | `md-checkbox` + `<label>` |
+| “Sign in” button | `md-filled-button` |
+| Icon in button | `md-icon` slot="icon" — `login` |
+| Error message | `md-outlined-text-field` error + error-text |
+| Title | CSS class `md-typescale-headline-medium` |
 
-## Sidebar (боковая навигация)
+## Sidebar
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Контейнер | `md-navigation-drawer` (labs) |
-| Список пунктов | `md-list` |
-| Пункт меню | `md-list-item` type="button" + `md-icon` slot="start" |
-| Разделитель | `md-divider` |
-| Активный пункт | CSS: фон `--md-sys-color-secondary-container` |
-| Имя пользователя | CSS-класс `md-typescale-label-medium` |
-| Кнопка "Выйти" | `md-text-button` |
+| Container | `md-navigation-drawer` (labs) |
+| Menu list | `md-list` |
+| Menu item | `md-list-item` type="button" + `md-icon` slot="start" |
+| Divider | `md-divider` |
+| Active item | CSS: background `--md-sys-color-secondary-container` |
+| User name | CSS class `md-typescale-label-medium` |
+| “Sign out” button | `md-text-button` |
 
-### Иконки для пунктов меню
+### Menu item icons
 
-| Пункт | Material Symbol |
+| Item | Material Symbol |
 |-------|----------------|
-| Дерево | `account_tree` |
-| Карточки | `person` |
-| Связи | `link` |
-| Фотоальбомы | `photo_library` |
-| Пользователи | `group` |
-| Настройки | `settings` |
-| Бэкапы | `backup` |
+| Tree | `account_tree` |
+| Cards | `person` |
+| Links | `link` |
+| Photo albums | `photo_library` |
+| Users | `group` |
+| Settings | `settings` |
+| Backups | `backup` |
 
-## Дерево (TreePage)
+## Tree (TreePage)
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Canvas графа | `@xyflow/react` ReactFlow |
-| Нода (человек) | Кастомный React Flow node (см. `docs/08-tree-visualization.md`) |
-| Ребро (parent) | React Flow default edge, сплошная линия |
-| Ребро (spouse) | Кастомный React Flow edge, двойная линия |
-| Панель режимов | `md-outlined-segmented-button-set` (labs) |
-| Кнопка режима | `md-outlined-segmented-button` (labs) |
-| Фильтр по стране | `md-outlined-select` |
-| Фильтр по статусу | `md-outlined-select` |
-| Поиск по имени | `md-outlined-text-field` с иконкой `search` |
-| Ползунок глубины | `md-slider` labeled |
-| Кнопка "Сбросить" | `md-icon-button` -- `restart_alt` |
-| Мини-карта | React Flow MiniMap |
-| Зум-контролы | React Flow Controls |
+| Graph canvas | `@xyflow/react` ReactFlow |
+| Node (person) | Custom React Flow node (see `docs/08-tree-visualization.md`) |
+| Edge (parent) | React Flow default edge, solid line |
+| Edge (spouse) | Custom React Flow edge, double line |
+| Mode panel | `md-outlined-segmented-button-set` (labs) |
+| Mode button | `md-outlined-segmented-button` (labs) |
+| Country filter | `md-outlined-select` |
+| Status filter | `md-outlined-select` |
+| Name search | `md-outlined-text-field` with `search` icon |
+| Depth slider | `md-slider` labeled |
+| “Reset” button | `md-icon-button` — `restart_alt` |
+| Mini map | React Flow MiniMap |
+| Zoom controls | React Flow Controls |
 
-## Карточка (PersonPage)
+## Person card (PersonPage)
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Контейнер карточки | `md-elevated-card` (labs) |
-| Фото (аватар) | `<img>` с CSS `border-radius: 50%` |
-| Имя и фамилия | CSS `md-typescale-headline-medium` |
-| Даты жизни | CSS `md-typescale-body-medium` |
-| Разделитель секций | `md-divider` |
-| Заголовок секции | CSS `md-typescale-title-medium` |
-| Хобби-теги | `md-chip-set` + `md-filter-chip` (read-only) |
-| Соц-ссылки | `md-icon-button` с иконками платформ |
-| Ссылка на родственника | `md-list-item` type="link" с аватаром |
-| Кнопка "Редактировать" | `md-fab` size="small" -- `edit` (admin only) |
+| Card container | `md-elevated-card` (labs) |
+| Photo (avatar) | `<img>` with CSS `border-radius: 50%` |
+| First and last name | CSS `md-typescale-headline-medium` |
+| Life dates | CSS `md-typescale-body-medium` |
+| Section divider | `md-divider` |
+| Section title | CSS `md-typescale-title-medium` |
+| Hobby tags | `md-chip-set` + `md-filter-chip` (read-only) |
+| Social links | `md-icon-button` with platform icons |
+| Relative link | `md-list-item` type="link" with avatar |
+| “Edit” button | `md-fab` size="small" — `edit` (admin only) |
 
-### Иконки соцсетей (Lucide, т.к. нет в Material Symbols)
+### Social icons (Lucide — not in Material Symbols)
 
-| Платформа | Lucide icon |
+| Platform | Lucide icon |
 |-----------|-------------|
 | telegram | `Send` |
 | facebook | `Facebook` |
 | instagram | `Instagram` |
-| vk | Кастомная SVG |
+| vk | Custom SVG |
 | linkedin | `Linkedin` |
 | whatsapp | `MessageCircle` |
 | tiktok | `Music2` |
@@ -88,60 +88,60 @@
 | email | Material Symbol `mail` |
 | website | Material Symbol `language` |
 
-## Админ: таблицы данных
+## Admin: data tables
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Таблица | Кастомный `DataTable` (TanStack Table + M3 стили, см. `docs/16-custom-components.md`) |
-| Заголовок столбца | Кастомный, CSS `md-typescale-title-small` |
-| Ячейка | Кастомный, CSS `md-typescale-body-medium` |
-| Сортировка | `md-icon-button` -- `arrow_upward` / `arrow_downward` |
-| Пагинация | Кастомный блок: `md-icon-button` (prev/next) + текст |
-| Пустое состояние | Кастомный: `md-icon` (large) + текст |
-| Кнопка "Создать" | `md-fab` (primary, fixed bottom-right) -- `add` |
-| Кнопка "Редактировать" | `md-icon-button` -- `edit` |
-| Кнопка "Удалить" | `md-icon-button` -- `delete` |
-| Строка поиска | `md-outlined-text-field` -- `search` |
+| Table | Custom `DataTable` (TanStack Table + M3 styles, see `docs/16-custom-components.md`) |
+| Column header | Custom, CSS `md-typescale-title-small` |
+| Cell | Custom, CSS `md-typescale-body-medium` |
+| Sort | `md-icon-button` — `arrow_upward` / `arrow_downward` |
+| Pagination | Custom block: `md-icon-button` (prev/next) + text |
+| Empty state | Custom: `md-icon` (large) + text |
+| “Create” button | `md-fab` (primary, fixed bottom-right) — `add` |
+| “Edit” button | `md-icon-button` — `edit` |
+| “Delete” button | `md-icon-button` — `delete` |
+| Search row | `md-outlined-text-field` — `search` |
 
-## Админ: формы
+## Admin: forms
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Текстовое поле | `md-outlined-text-field` |
+| Text field | `md-outlined-text-field` |
 | Textarea | `md-outlined-text-field` type="textarea" rows="4" |
-| Выпадающий список | `md-outlined-select` + `md-select-option` |
-| Радио-кнопки (пол) | `md-radio` + `<label>` |
-| Чекбокс | `md-checkbox` |
-| Тоггл | `md-switch` |
-| Ползунок | `md-slider` |
-| Теги (хобби) | `md-chip-set` + `md-input-chip` (removable) |
-| Кнопка "Сохранить" | `md-filled-button` |
-| Кнопка "Отмена" | `md-outlined-button` |
-| Аккордеон секции | Кастомный (см. `docs/16-custom-components.md`) |
-| Загрузка файла | Кастомный `FileDropzone` (см. `docs/16-custom-components.md`) |
-| Прогресс загрузки | `md-linear-progress` |
+| Dropdown | `md-outlined-select` + `md-select-option` |
+| Radio (gender) | `md-radio` + `<label>` |
+| Checkbox | `md-checkbox` |
+| Toggle | `md-switch` |
+| Slider | `md-slider` |
+| Tags (hobbies) | `md-chip-set` + `md-input-chip` (removable) |
+| “Save” button | `md-filled-button` |
+| “Cancel” button | `md-outlined-button` |
+| Section accordion | Custom (see `docs/16-custom-components.md`) |
+| File upload | Custom `FileDropzone` (see `docs/16-custom-components.md`) |
+| Upload progress | `md-linear-progress` |
 
-## Диалоги
+## Dialogs
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Подтверждение удаления | `md-dialog` с slot="headline", slot="content", slot="actions" |
-| Создание пользователя | `md-dialog` с формой внутри |
-| Предупреждение (валидация) | `md-dialog` |
+| Delete confirmation | `md-dialog` with slot="headline", slot="content", slot="actions" |
+| Create user | `md-dialog` with form inside |
+| Validation warning | `md-dialog` |
 
-## Уведомления (Toast)
+## Notifications (Toast)
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Успех | sonner (стилизованный под M3: `--md-sys-color-primary-container`) |
-| Ошибка | sonner (стилизованный: `--md-sys-color-error-container`) |
+| Success | sonner (M3-styled: `--md-sys-color-primary-container`) |
+| Error | sonner (styled: `--md-sys-color-error-container`) |
 
-## Фотогалерея
+## Photo gallery
 
-| Элемент | Компонент |
+| Element | Component |
 |---------|----------|
-| Сетка альбомов | CSS Grid + `md-elevated-card` (labs) |
-| Лайтбокс | yet-another-react-lightbox |
-| Разметка людей | Canvas overlay (кастомный) |
-| Иконка закрытия | `md-icon-button` -- `close` |
-| Навигация | `md-icon-button` -- `chevron_left` / `chevron_right` |
+| Album grid | CSS Grid + `md-elevated-card` (labs) |
+| Lightbox | yet-another-react-lightbox |
+| People overlay | Canvas overlay (custom) |
+| Close icon | `md-icon-button` — `close` |
+| Navigation | `md-icon-button` — `chevron_left` / `chevron_right` |

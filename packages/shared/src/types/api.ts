@@ -1,13 +1,13 @@
 /**
- * JSON shapes from `docs/06-api.md` (успех, пагинация, ошибка, предупреждения).
+ * JSON shapes from `docs/06-api.md` (success, pagination, error, warnings).
  */
 
-/** Успешный ответ: `{ "data": T }` */
+/** Success: `{ "data": T }` */
 export type ApiResponse<T> = {
   data: T;
 };
 
-/** Список с пагинацией */
+/** Paginated list */
 export type PaginatedResponse<T> = {
   data: T[];
   total: number;
@@ -15,12 +15,12 @@ export type PaginatedResponse<T> = {
   limit: number;
 };
 
-/** Тело ошибки: `{ "error": string }` */
+/** Error body: `{ "error": string }` */
 export type ApiErrorBody = {
   error: string;
 };
 
-/** Успех с необязательными предупреждениями (например валидация связей) */
+/** Success with optional warnings (e.g. relationship validation) */
 export type ApiResponseWithWarnings<T> = {
   data: T;
   warnings?: string[];

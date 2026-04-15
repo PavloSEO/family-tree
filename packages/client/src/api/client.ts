@@ -22,13 +22,15 @@ function loginPathname(url: string): string {
 const isLoginRequest = (url: string) =>
   loginPathname(url).endsWith("/api/auth/login");
 
-const isDisabledMessage = (errorText: string) =>
-  errorText.toLowerCase().includes("приостановлен");
+const isDisabledMessage = (errorText: string) => {
+  const lower = errorText.toLowerCase();
+  return lower.includes("приостановлен") || lower.includes("suspended");
+};
 
 export const api = ky.create({
   prefixUrl: import.meta.env.VITE_API_BASE_URL ?? "",
   hooks: {
-    /** EN UI: wrap Russian `body.error` for display (see `errors` namespace, plan §16). */
+    /** EN UI: prefix Cyrillic `body.error` for display (see `errors` namespace). */
     beforeError: [
       async (error) => {
         if (error instanceof HTTPError) {
@@ -62,7 +64,7 @@ export const api = ky.create({
               window.location.assign("/disabled");
             }
           } catch {
-            /* не JSON */
+            /* not JSON */
           }
         }
       },

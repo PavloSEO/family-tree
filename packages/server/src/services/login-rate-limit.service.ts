@@ -15,7 +15,7 @@ export function getRateLimitWindowMinutes(): number {
   return Number.isFinite(n) && n > 0 ? Math.min(1440, n) : 15;
 }
 
-/** IP клиента (прокси или сокет). */
+/** Client IP (proxy headers or socket). */
 export function getRequestIp(c: Context): string {
   const xff = c.req.header("x-forwarded-for");
   if (xff) {
@@ -47,7 +47,7 @@ function sqliteCutoffIso(): string {
   return row.t;
 }
 
-/** Число неудачных попыток с данного IP за окно (`docs/07-auth.md`). */
+/** Failed login attempts from this IP in the window (`docs/07-auth.md`). */
 export function countRecentFailedLogins(ip: string): number {
   const cutoff = sqliteCutoffIso();
   const rows = db
@@ -85,7 +85,7 @@ export function recordLoginAttempt(params: {
     .run();
 }
 
-/** Удаляет записи старше 24 часов (`docs/07-auth.md`). */
+/** Delete rows older than 24 hours (`docs/07-auth.md`). */
 export function purgeOldLoginAttempts(): void {
   sqlite
     .prepare(

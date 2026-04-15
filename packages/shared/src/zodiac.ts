@@ -1,6 +1,6 @@
 import { parseIsoDateParts } from "./date-format.js";
 
-/** Названия тропического зодиака (рус.). */
+/** Tropical zodiac sign names (Russian product default; see `to-do/english-migration-notes.md`). */
 export const WESTERN_ZODIAC_SIGNS_RU = [
   "Овен",
   "Телец",
@@ -20,7 +20,7 @@ export type WesternZodiacSignRu = (typeof WESTERN_ZODIAC_SIGNS_RU)[number];
 
 type Span = { fromM: number; fromD: number; toM: number; toD: number };
 
-/** Интервалы [from, to] по месяцу/дню (инклюзив), порядок в массиве = индекс знака. */
+/** Inclusive [from, to] month/day spans; array order = sign index. */
 const SPANS: Span[] = [
   { fromM: 3, fromD: 21, toM: 4, toD: 19 },
   { fromM: 4, fromD: 20, toM: 5, toD: 20 },
@@ -50,7 +50,7 @@ function inSpan(m: number, d: number, s: Span): boolean {
   return key >= from || key <= to;
 }
 
-/** Западный (тропический) знак по дате рождения `YYYY-MM-DD`. */
+/** Western (tropical) sign from birth date `YYYY-MM-DD`. */
 export function westernZodiacFromIso(
   isoDate: string | null | undefined,
 ): WesternZodiacSignRu | null {

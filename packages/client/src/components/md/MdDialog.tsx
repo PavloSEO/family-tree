@@ -9,7 +9,7 @@ export type MdDialogProps = {
 };
 
 /**
- * Управляемый `md-dialog`: закрытие по scrim / Escape через события `closed` и `cancel`.
+ * Controlled `md-dialog`: close on scrim / Escape via `closed` and `cancel` events.
  */
 export function MdDialog({
   open,

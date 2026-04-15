@@ -13,7 +13,7 @@ Built with **React 19**, **Material Design 3** ([`@material/web`](https://github
 ## Features
 
 - **Interactive tree** — zoomable, pannable graph powered by React Flow + ELK layout. Seven viewing modes (full tree, ancestors only, descendants only, direct line, family group, paternal line, maternal line).
-- **Smart relationship labels** — only `parent` and `spouse` links are stored; everything else (siblings, uncles, cousins, in-laws) is computed automatically via BFS with correct Russian kinship terms.
+- **Smart relationship labels** — only `parent` and `spouse` links are stored; everything else (siblings, uncles, cousins, in-laws) is computed automatically via BFS with kinship labels (default strings follow the Russian product locale; see `to-do/english-migration-notes.md` for EN/i18n follow-up).
 - **Profile cards** — full personal profiles with infographics (zodiac, Chinese year, age), contacts, social links, custom fields. Empty sections are hidden automatically.
 - **Photo albums** — upload with EXIF parsing (date, GPS), auto-thumbnails via Sharp, and face tagging with normalized coordinates.
 - **Role-based access** — one admin (full CRUD) + unlimited viewers (read-only, no edit buttons in DOM). JWT auth, bcrypt-compatible hashing (**bcryptjs**), rate limiting.
@@ -31,7 +31,7 @@ family-tree/
     server/    Hono 4 REST API, Drizzle ORM + SQLite, Sharp
 ```
 
-In Docker Compose, **Hono** serves the built SPA and `/api/*`; **`nginx`** (see `docker-compose.yml`) reverse-proxies host port **8080** to the app. For HTTPS on a VPS you can put **Caddy** in front instead or terminate TLS on nginx — see [`docs/11-deployment.md`](docs/11-deployment.md).
+In Docker Compose, **Hono** serves the built SPA and `/api/*`; **`nginx`** (see `docker-compose.yml`) reverse-proxies host port **8080** to the app. For **HTTPS** with Docker, see **[`docker/nginx/README.md`](docker/nginx/README.md)** (Caddy, certs on nginx, or external TLS) and [`docs/11-deployment.md`](docs/11-deployment.md).
 
 ## Tech Stack
 
@@ -116,7 +116,7 @@ docker compose up -d --build
 curl http://localhost:8080/health
 ```
 
-Compose starts **two** containers: **`family-tree`** (Hono listens on **3000** inside the Docker network only) and **`nginx`** (host **http://localhost:8080** → app). Nginx config: **`docker/nginx/family-tree.conf`** (reverse proxy; full **`nginx.zip`** is a Next/Strapi reference — **`docker/nginx/README.md`**).
+Compose starts **two** containers: **`family-tree`** (Hono listens on **3000** inside the Docker network only) and **`nginx`** (host **http://localhost:8080** → app). Nginx sends **301** from **`www.`** host to the same host **without** `www`, merges duplicate slashes, then proxies to the app (**`docker/nginx/README.md`**).
 
 To expose **3000** on the host as well (e.g. debugging), add under `family-tree`: `ports: ["3000:3000"]` in your local override file.
 
@@ -132,7 +132,7 @@ See [`docs/11-deployment.md`](docs/11-deployment.md) for details.
 
 ## Documentation
 
-Полный указатель файлов: **[`docs/README.md`](docs/README.md)**.
+Full documentation index: **[`docs/README.md`](docs/README.md)**.
 
 | Document | Contents |
 |----------|----------|

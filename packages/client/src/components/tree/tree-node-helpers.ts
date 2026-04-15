@@ -1,8 +1,8 @@
-/** M3 elevation-2 для корневой ноды (`docs/08-tree-visualization.md`). */
+/** M3 elevation-2 for the root node (`docs/08-tree-visualization.md`). */
 export const treeRootNodeBoxShadow =
   "0px 1px 2px 0px color-mix(in srgb, var(--md-sys-color-shadow) 30%, transparent), 0px 2px 6px 2px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent)";
 
-/** Год из ISO-даты или префикса `YYYY-MM-DD`. */
+/** Year from ISO date or `YYYY-MM-DD` prefix. */
 function yearPart(value: string | null | undefined): string | null {
   if (value == null) {
     return null;
@@ -30,7 +30,7 @@ export function formatYearsLabel(
   return "(—)";
 }
 
-/** Флаг-эмодзи по ISO 3166-1 alpha-2 (если известен). */
+/** Flag emoji for ISO 3166-1 alpha-2 (when known). */
 export function countryFlagEmoji(country: string | null): string {
   if (country == null || country.length !== 2) {
     return "";

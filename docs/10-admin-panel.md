@@ -1,229 +1,229 @@
-# 10 -- Админ-панель
+# 10 — Admin panel
 
 ---
 
-## Навигация
+## Navigation
 
-Admin видит полный sidebar:
+Admin sees the full sidebar:
 
-| Пункт | Иконка (Material Symbol) | Путь |
+| Item | Icon (Material Symbol) | Path |
 |-------|--------------------------|------|
-| Дерево | `account_tree` | /tree |
-| Карточки | `person` | /admin/persons |
-| Связи | `link` | /admin/relationships |
-| Фотоальбомы | `photo_library` | /admin/albums |
-| Пользователи | `group` | /admin/users |
-| Настройки | `settings` | /admin/settings |
-| Бэкапы | `backup` | /admin/backup |
+| Tree | `account_tree` | /tree |
+| Cards | `person` | /admin/persons |
+| Links | `link` | /admin/relationships |
+| Photo albums | `photo_library` | /admin/albums |
+| Users | `group` | /admin/users |
+| Settings | `settings` | /admin/settings |
+| Backups | `backup` | /admin/backup |
 
-Viewer видит:
+Viewer sees:
 
-| Пункт | Иконка | Путь |
+| Item | Icon | Path |
 |-------|--------|------|
-| Дерево | `account_tree` | /tree |
-| Фотоальбомы | `photo_library` | /albums |
+| Tree | `account_tree` | /tree |
+| Photo albums | `photo_library` | /albums |
 
-Viewer НЕ видит admin-разделов. Кнопки редактирования отсутствуют в DOM (не disabled, а отсутствуют).
+Viewer does **not** see admin sections. Edit controls are absent from the DOM (not merely disabled).
 
 ---
 
-## Карточки (AdminPersonsPage)
+## Cards (AdminPersonsPage)
 
-### Таблица
+### Table
 
-Компонент: `DataTable` (кастомный, TanStack Table + M3 стили).
+Component: `DataTable` (custom, TanStack Table + M3 styles).
 
-Колонки:
+Columns:
 
-| Колонка | Ширина | Содержание |
+| Column | Width | Content |
 |---------|--------|-----------|
-| Фото | 48px | Круглый thumbnail или заглушка |
-| Имя | auto | firstName + lastName |
-| Пол | 80px | Material Symbol `male` / `female` |
-| Дата рождения | 120px | Форматированная дата или "--" |
-| Страна | 80px | Emoji-флаг или "--" |
-| Статус | 80px | "жив" / год смерти |
-| Действия | 96px | `md-icon-button` edit + delete |
+| Photo | 48px | Round thumbnail or placeholder |
+| Name | auto | firstName + lastName |
+| Sex | 80px | Material Symbol `male` / `female` |
+| Birth date | 120px | Formatted date or “--” |
+| Country | 80px | Emoji flag or “--” |
+| Status | 80px | “living” / year of death |
+| Actions | 96px | `md-icon-button` edit + delete |
 
-Над таблицей:
-- `md-outlined-text-field` с иконкой `search` -- поиск по имени
-- `md-outlined-select` -- фильтр по стране
-- `md-outlined-select` -- фильтр по статусу (все / живые / умершие)
+Above the table:
+- `md-outlined-text-field` with `search` icon — name search
+- `md-outlined-select` — country filter
+- `md-outlined-select` — status filter (all / living / deceased)
 
-FAB (правый нижний угол, fixed): `md-fab` с иконкой `add` -- "Создать карточку".
+FAB (bottom-right, fixed): `md-fab` with `add` — “Create card”.
 
-Пустое состояние: Material Symbol `person_off` (большой) + текст "Нет карточек. Создайте первую.".
+Empty state: Material Symbol `person_off` (large) + “No cards yet. Create the first one.”
 
-### Форма (AdminPersonEditPage)
+### Form (AdminPersonEditPage)
 
-URL: `/admin/persons/new` (создание) или `/admin/persons/:id/edit` (редактирование).
+URL: `/admin/persons/new` (create) or `/admin/persons/:id/edit` (edit).
 
-React Hook Form + Zod. Одна форма для обоих режимов.
+React Hook Form + Zod. One form for both modes.
 
-Структура:
+Structure:
 
 ```
-[Заголовок: "Создание карточки" / "Редактирование: Иван Петров"]
+[Title: "Create card" / "Edit: John Smith"]
 
-=== ОСНОВНОЕ (всегда видно) ===
-[md-outlined-text-field: Имя *]
-[md-outlined-text-field: Фамилия *]
-[md-radio: Мужской]  [md-radio: Женский]   <- Пол *
+=== MAIN (always visible) ===
+[md-outlined-text-field: First name *]
+[md-outlined-text-field: Last name *]
+[md-radio: Male]  [md-radio: Female]   <- Sex *
 
-=== v Дополнительное имя (аккордеон, свернут) ===
-[md-outlined-text-field: Отчество]
-[md-outlined-text-field: Девичья фамилия]
-+ Локализованные имена:
-  [md-outlined-text-field: Язык (en)]  [Имя]  [Фамилия]
-  [md-text-button: + Добавить язык]
+=== v Extra name (accordion, collapsed) ===
+[md-outlined-text-field: Patronymic]
+[md-outlined-text-field: Maiden name]
++ Localized names:
+  [md-outlined-text-field: Language (en)]  [First]  [Last]
+  [md-text-button: + Add language]
 
-=== v Даты и места (аккордеон) ===
-[md-outlined-text-field type=date: Дата рождения]
-[md-outlined-text-field type=date: Дата смерти]
-[md-outlined-text-field: Место рождения]
-[md-outlined-text-field: Текущее место]
-[md-outlined-select: Страна (ISO list)]
+=== v Dates and places (accordion) ===
+[md-outlined-text-field type=date: Birth date]
+[md-outlined-text-field type=date: Death date]
+[md-outlined-text-field: Birth place]
+[md-outlined-text-field: Current location]
+[md-outlined-select: Country (ISO list)]
 
-=== v Фото (аккордеон) ===
-[FileDropzone: Перетащите фото или нажмите для выбора]
-[Превью текущего фото, если есть]
-[md-text-button: Удалить фото]
+=== v Photo (accordion) ===
+[FileDropzone: Drop photo or click to choose]
+[Preview of current photo if any]
+[md-text-button: Remove photo]
 
-=== v Контакты (аккордеон) ===
-[md-outlined-text-field: Телефон]
+=== v Contacts (accordion) ===
+[md-outlined-text-field: Phone]
 [md-outlined-text-field: Email]
-Соцсети:
-  [md-outlined-select: Платформа]  [md-outlined-text-field: URL]  [md-icon-button: delete]
-  [md-text-button: + Добавить соцсеть]
+Social:
+  [md-outlined-select: Platform]  [md-outlined-text-field: URL]  [md-icon-button: delete]
+  [md-text-button: + Add social link]
 
-=== v О человеке (аккордеон) ===
-[md-outlined-text-field type=textarea rows=4: Биография]
-[md-outlined-text-field: Род занятий]
-Хобби:
-  [md-chip-set: md-input-chip для каждого хобби, removable]
-  [md-outlined-text-field: Новое хобби]  [md-icon-button: add]
+=== v About (accordion) ===
+[md-outlined-text-field type=textarea rows=4: Bio]
+[md-outlined-text-field: Occupation]
+Hobbies:
+  [md-chip-set: md-input-chip per hobby, removable]
+  [md-outlined-text-field: New hobby]  [md-icon-button: add]
 
-=== v Медицинское (аккордеон) ===
-[md-outlined-select: Группа крови (A+, A-, B+, B-, AB+, AB-, O+, O-)]
+=== v Medical (accordion) ===
+[md-outlined-select: Blood type (A+, A-, B+, B-, AB+, AB-, O+, O-)]
 
-=== v Дополнительные поля (аккордеон) ===
-[md-outlined-text-field: Ключ]  [md-outlined-text-field: Значение]  [md-icon-button: delete]
-[md-text-button: + Добавить поле]
+=== v Custom fields (accordion) ===
+[md-outlined-text-field: Key]  [md-outlined-text-field: Value]  [md-icon-button: delete]
+[md-text-button: + Add field]
 
-=== Действия ===
-[md-filled-button: Сохранить]  [md-outlined-button: Отмена]
+=== Actions ===
+[md-filled-button: Save]  [md-outlined-button: Cancel]
 ```
 
-При создании после сохранения: `md-dialog` "Добавить связи?" с вариантами "Да" (переход к RelationshipForm) / "Позже".
+After create on save: `md-dialog` “Add relationships?” with “Yes” (go to RelationshipForm) / “Later”.
 
 ---
 
-## Связи (AdminRelationshipsPage)
+## Links (AdminRelationshipsPage)
 
-### Таблица
+### Table
 
-Колонки:
+Columns:
 
-| Колонка | Содержание |
+| Column | Content |
 |---------|-----------|
-| Тип | "Родитель" / "Супруги" |
-| Человек A | Имя + фамилия + мини-аватар |
-| Человек B | Имя + фамилия + мини-аватар |
-| Дата свадьбы | Для spouse, иначе "--" |
-| Статус | "Текущий брак" / "Бывший" / "--" |
-| Действия | edit (spouse meta) + delete |
+| Type | “Parent” / “Spouse” |
+| Person A | Name + mini avatar |
+| Person B | Name + mini avatar |
+| Wedding date | For spouse, else “--” |
+| Status | “Current marriage” / “Former” / “--” |
+| Actions | edit (spouse meta) + delete |
 
-FAB: `md-fab` + `add` -- "Создать связь".
+FAB: `md-fab` + `add` — “Create link”.
 
-### Визуальный помощник (RelationshipForm)
-
-```
-=== Шаг 1: Первый человек ===
-[md-outlined-text-field: Поиск по имени...]
-  -> md-menu с результатами
-  -> Выбран: [аватар] Иван Петров
-
-=== Шаг 2: Тип связи ===
-[md-radio name=type: Родитель -> Ребенок]
-[md-radio name=type: Супруги]
-
-=== Шаг 3: Второй человек ===
-[md-outlined-text-field: Поиск по имени...]
-  -> Выбран: [аватар] Ольга Иванова
-
-=== Для parent ===
-Кто родитель?
-[md-radio: Иван]  [md-radio: Ольга]
-
-=== Для spouse ===
-[md-outlined-text-field type=date: Дата свадьбы]
-[md-outlined-text-field type=date: Дата развода]
-[md-checkbox: Текущий брак]
-[md-outlined-text-field: Комментарий]
-
-=== Предупреждения (если есть) ===
-md-icon warning + "У Ольги уже указан отец"
-
-[md-filled-button: Создать связь]  [md-outlined-button: Отмена]
-```
-
----
-
-## Пользователи (AdminUsersPage)
-
-### Таблица
-
-Колонки: Логин, Роль, Статус, Привязанная карточка, Создан, Последний вход, Действия.
-
-### Создание (md-dialog)
+### Visual helper (RelationshipForm)
 
 ```
-[md-outlined-text-field: Логин *]
-[md-outlined-text-field type=password: Пароль *]
-[md-outlined-select: Привязать к карточке (опционально)]
--> Роль: всегда viewer (admin только один)
-[md-filled-button: Создать]
-```
+=== Step 1: First person ===
+[md-outlined-text-field: Search by name...]
+  -> md-menu with results
+  -> Selected: [avatar] John Smith
 
-### Действия
+=== Step 2: Link type ===
+[md-radio name=type: Parent -> Child]
+[md-radio name=type: Spouses]
 
-- Сменить пароль (md-dialog с полем нового пароля)
-- Деактивировать / Активировать (md-switch в строке таблицы)
-- Удалить (md-dialog подтверждения)
+=== Step 3: Second person ===
+[md-outlined-text-field: Search by name...]
+  -> Selected: [avatar] Jane Smith
 
----
+=== For parent ===
+Who is the parent?
+[md-radio: John]  [md-radio: Jane]
 
-## Настройки (AdminSettingsPage)
+=== For spouse ===
+[md-outlined-text-field type=date: Wedding date]
+[md-outlined-text-field type=date: Divorce date]
+[md-checkbox: Current marriage]
+[md-outlined-text-field: Comment]
 
-```
-[md-outlined-text-field: Название сервиса]
-[md-outlined-text-field + autocomplete: Корневой человек (по умолчанию)]
+=== Warnings (if any) ===
+md-icon warning + "Jane already has a father listed"
 
-=== Дерево ===
-[md-slider labeled: Глубина вверх (1-10, default 3)]
-[md-slider labeled: Глубина вниз (1-10, default 3)]
-[md-switch: Показывать внешние ветки по умолчанию]
-[md-slider labeled: Глубина внешних веток (1-5, default 2)]
-
-=== Безопасность ===
-[md-slider labeled: Время жизни сессии, дней (1-90, default 30)]
-
-=== Оформление ===
-[Color picker: Акцентный цвет (default #3B82F6)]
-
-[md-filled-button: Сохранить]
+[md-filled-button: Create link]  [md-outlined-button: Cancel]
 ```
 
 ---
 
-## Бэкапы (AdminBackupPage)
+## Users (AdminUsersPage)
+
+### Table
+
+Columns: Login, Role, Status, Linked card, Created, Last login, Actions.
+
+### Create (md-dialog)
 
 ```
-[md-fab: Создать бэкап]  <- При клике: md-linear-progress, затем toast "Бэкап создан"
-
-Таблица:
-| Файл | Размер | Дата создания | Действия |
-| backup-2026-04-13_03-00-00.tar.gz | 45 МБ | 13.04.2026 03:00 | [download] [delete] |
+[md-outlined-text-field: Login *]
+[md-outlined-text-field type=password: Password *]
+[md-outlined-select: Link to card (optional)]
+-> Role: always viewer (only one admin)
+[md-filled-button: Create]
 ```
 
-Автобэкап: cron в Docker, ежедневно 03:00, хранение 30 штук.
+### Actions
+
+- Change password (md-dialog with new password field)
+- Deactivate / Activate (`md-switch` in table row)
+- Delete (md-dialog confirmation)
+
+---
+
+## Settings (AdminSettingsPage)
+
+```
+[md-outlined-text-field: Service name]
+[md-outlined-text-field + autocomplete: Default root person]
+
+=== Tree ===
+[md-slider labeled: Depth up (1-10, default 3)]
+[md-slider labeled: Depth down (1-10, default 3)]
+[md-switch: Show external branches by default]
+[md-slider labeled: External branch depth (1-5, default 2)]
+
+=== Security ===
+[md-slider labeled: Session lifetime, days (1-90, default 30)]
+
+=== Appearance ===
+[Color picker: Accent color (default #3B82F6)]
+
+[md-filled-button: Save]
+```
+
+---
+
+## Backups (AdminBackupPage)
+
+```
+[md-fab: Create backup]  <- On click: md-linear-progress, then toast "Backup created"
+
+Table:
+| File | Size | Created | Actions |
+| backup-2026-04-13_03-00-00.tar.gz | 45 MB | 2026-04-13 03:00 | [download] [delete] |
+```
+
+Automatic backup: cron in Docker, daily at 03:00, keep 30 files.

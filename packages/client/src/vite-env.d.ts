@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** Базовый URL API (пусто = тот же origin, в dev — proxy `/api`). */
+  /** API base URL (empty = same origin; in dev, Vite proxies `/api`). */
   readonly VITE_API_BASE_URL?: string;
 }
 

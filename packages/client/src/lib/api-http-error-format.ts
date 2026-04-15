@@ -1,7 +1,7 @@
 import { HTTPError } from "ky";
 import i18n from "../i18n.js";
 
-/** Cyrillic (server messages are expected in Russian). */
+/** Cyrillic in API error text (default product locale). */
 const CYRILLIC = /[\u0400-\u04FF]/;
 
 function isEnUi(): boolean {
@@ -12,7 +12,7 @@ function isEnUi(): boolean {
 /**
  * When UI is English and the API message contains Russian text, prefix it so
  * the user sees a labeled string instead of raw RU (i18n plan §16).
- * Russian UI: leave `error.message` unchanged (typically `body.error` from server).
+ * RU UI: leave `error.message` unchanged (typically `body.error` from server).
  */
 export async function localizeApiHttpError(error: HTTPError): Promise<HTTPError> {
   if (!isEnUi()) {

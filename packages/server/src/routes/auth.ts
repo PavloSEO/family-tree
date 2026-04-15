@@ -41,7 +41,7 @@ function toPublicUser(row: UserRow) {
 
 export const authRoutes = new Hono<{ Variables: { user: AuthUser } }>();
 
-/** POST /api/auth/login — см. ROADMAP 08, `docs/06-api.md` (ответ `{ token, user }`). */
+/** POST /api/auth/login — ROADMAP 08, `docs/06-api.md` (response `{ token, user }`). */
 authRoutes.post("/login", async (c) => {
   let body: unknown;
   try {
@@ -118,7 +118,7 @@ authRoutes.post("/login", async (c) => {
   });
 });
 
-/** GET /api/auth/me — через `requireAuth`, ответ `{ user }`. */
+/** GET /api/auth/me — via `requireAuth`, response `{ user }`. */
 authRoutes.get("/me", requireAuth, (c) => {
   return c.json({ user: c.get("user") });
 });

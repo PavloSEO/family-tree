@@ -42,9 +42,9 @@ export type PersonFormProps = {
   mode: "create" | "edit";
   personId?: string;
   person?: Person;
-  /** При создании: периодически сохранять значения в `sessionStorage` (черновик при обрыве сессии). */
+  /** When creating: periodically save values to `sessionStorage` (draft if session ends). */
   sessionStorageDraftKey?: string;
-  /** Toast после успешного сохранения (только админ-редактор; Welcome не трогает). */
+  /** Toast after successful save (admin editor only; Welcome flow unchanged). */
   showAdminSaveToast?: boolean;
   onSuccess: () => void;
   onCancel: () => void;
@@ -124,7 +124,7 @@ export function PersonForm({
         try {
           sessionStorage.setItem(sessionStorageDraftKey, JSON.stringify(value));
         } catch {
-          /* квота / приватный режим */
+          /* quota / private mode */
         }
       }, 500);
     });

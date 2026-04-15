@@ -1,40 +1,40 @@
-# 03 -- Интеграция @material/web с React 19
+# 03 — Integrating @material/web with React 19
 
 ---
 
-## Что такое @material/web
+## What is @material/web
 
-`@material/web` -- библиотека Web Components (Custom Elements) от Google. Построена на Lit. Каждый компонент -- это HTML custom element (`<md-filled-button>`, `<md-outlined-text-field>` и т.д.).
+`@material/web` is a Web Components (Custom Elements) library from Google. Built on Lit. Each component is an HTML custom element (`<md-filled-button>`, `<md-outlined-text-field>`, etc.).
 
-Web Components работают в любом фреймворке. React 19 имеет нативную поддержку custom elements: правильно передает properties (не только attributes) и обрабатывает события.
+Web Components work in any framework. React 19 has native custom element support: it passes properties (not only attributes) and handles events correctly.
 
-**Важно:** `@material/web` находится в maintenance mode (новые фичи не добавляются, но баги фиксятся). Для нашего проекта это не проблема -- набор компонентов стабилен и достаточен.
+**Note:** `@material/web` is in maintenance mode (no new features, bugs are fixed). For this project that is fine — the component set is stable and sufficient.
 
 ---
 
-## Установка
+## Install
 
 ```bash
 pnpm add @material/web
 ```
 
-## Подключение в index.html
+## Wire-up in index.html
 
 ```html
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Family Tree</title>
 
-  <!-- Roboto (обязательный шрифт для M3) -->
+  <!-- Roboto (required M3 font) -->
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
     rel="stylesheet"
   />
 
-  <!-- Material Symbols (иконки) -->
+  <!-- Material Symbols (icons) -->
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     rel="stylesheet"
@@ -47,12 +47,12 @@ pnpm add @material/web
 </html>
 ```
 
-## Импорт компонентов
+## Importing components
 
-Каждый компонент импортируется отдельно (tree-shakeable):
+Each component is imported separately (tree-shakeable):
 
 ```typescript
-// main.tsx или отдельный файл material-imports.ts
+// main.tsx or material-imports.ts
 import '@material/web/button/filled-button.js';
 import '@material/web/button/outlined-button.js';
 import '@material/web/button/text-button.js';
@@ -86,7 +86,7 @@ import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/textfield/filled-text-field.js';
 import '@material/web/ripple/ripple.js';
 
-// Labs (экспериментальные)
+// Labs (experimental)
 import '@material/web/labs/card/elevated-card.js';
 import '@material/web/labs/card/filled-card.js';
 import '@material/web/labs/card/outlined-card.js';
@@ -96,7 +96,7 @@ import '@material/web/labs/segmentedbutton/outlined-segmented-button.js';
 import '@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js';
 ```
 
-## Использование в JSX
+## Usage in JSX
 
 ```tsx
 function LoginForm() {
@@ -106,13 +106,13 @@ function LoginForm() {
   return (
     <div className="flex flex-col gap-4 w-80">
       <md-outlined-text-field
-        label="Логин"
+        label="Login"
         value={login}
         onInput={(e: any) => setLogin(e.target.value)}
       />
 
       <md-outlined-text-field
-        label="Пароль"
+        label="Password"
         type="password"
         value={password}
         onInput={(e: any) => setPassword(e.target.value)}
@@ -120,25 +120,25 @@ function LoginForm() {
 
       <label className="flex items-center gap-2">
         <md-checkbox />
-        <span>Запомнить меня</span>
+        <span>Remember me</span>
       </label>
 
       <md-filled-button onClick={handleLogin}>
         <md-icon slot="icon">login</md-icon>
-        Войти
+        Sign in
       </md-filled-button>
     </div>
   );
 }
 ```
 
-## TypeScript: декларации custom elements
+## TypeScript: custom element declarations
 
-Файл: `packages/client/src/types/material-web.d.ts`
+File: `packages/client/src/types/material-web.d.ts`
 
 ```typescript
-// Минимальные декларации для JSX.
-// Расширяем IntrinsicElements чтобы TypeScript не ругался на <md-*> теги.
+// Minimal declarations for JSX.
+// Extend IntrinsicElements so TypeScript accepts <md-*> tags.
 
 declare namespace JSX {
   interface IntrinsicElements {
@@ -315,21 +315,21 @@ declare namespace JSX {
 }
 ```
 
-## Обработка событий
+## Event handling
 
-Material Web компоненты используют стандартные DOM-события. В React 19 custom element события обрабатываются через `on*` props:
+Material Web components use standard DOM events. In React 19, custom element events use `on*` props:
 
 ```tsx
-// Текстовое поле -- событие "input"
+// Text field — "input" event
 <md-outlined-text-field
-  label="Имя"
+  label="Name"
   onInput={(e: Event) => {
     const target = e.target as HTMLInputElement;
     setName(target.value);
   }}
 />
 
-// Checkbox -- событие "change"
+// Checkbox — "change" event
 <md-checkbox
   onChange={(e: Event) => {
     const target = e.target as HTMLInputElement;
@@ -337,67 +337,67 @@ Material Web компоненты используют стандартные DO
   }}
 />
 
-// Dialog -- событие "close"
+// Dialog — "close" event
 <md-dialog
   open={isOpen}
   onClose={() => setIsOpen(false)}
 >
-  <div slot="headline">Подтверждение</div>
-  <div slot="content">Удалить карточку?</div>
+  <div slot="headline">Confirm</div>
+  <div slot="content">Delete this card?</div>
   <div slot="actions">
-    <md-text-button onClick={() => setIsOpen(false)}>Отмена</md-text-button>
-    <md-filled-button onClick={handleDelete}>Удалить</md-filled-button>
+    <md-text-button onClick={() => setIsOpen(false)}>Cancel</md-text-button>
+    <md-filled-button onClick={handleDelete}>Delete</md-filled-button>
   </div>
 </md-dialog>
 
-// Select -- событие "change"
+// Select — "change" event
 <md-outlined-select
-  label="Страна"
+  label="Country"
   onChange={(e: Event) => {
     const target = e.target as HTMLSelectElement;
     setCountry(target.value);
   }}
 >
-  <md-select-option value="BY" headline="Беларусь" />
-  <md-select-option value="PL" headline="Польша" />
-  <md-select-option value="DE" headline="Германия" />
+  <md-select-option value="BY" headline="Belarus" />
+  <md-select-option value="PL" headline="Poland" />
+  <md-select-option value="DE" headline="Germany" />
 </md-outlined-select>
 ```
 
-## Slots (слоты)
+## Slots
 
-MW-компоненты используют Web Component slots для размещения контента:
+MW components use Web Component slots for content:
 
 ```tsx
-// Иконка в кнопке
+// Icon in button
 <md-filled-button>
   <md-icon slot="icon">add</md-icon>
-  Создать карточку
+  Create card
 </md-filled-button>
 
-// List item с иконкой
+// List item with icon
 <md-list-item>
   <md-icon slot="start">person</md-icon>
-  <span slot="headline">Карточки</span>
-  <span slot="supporting-text">42 записи</span>
+  <span slot="headline">Cards</span>
+  <span slot="supporting-text">42 records</span>
 </md-list-item>
 ```
 
-## Стилизация через CSS-токены
+## Styling via CSS tokens
 
-Компоненты стилизуются через CSS custom properties:
+Components are styled with CSS custom properties:
 
 ```css
-/* Глобально: поменять primary цвет всех компонентов */
+/* Global: change primary for all components */
 :root {
   --md-sys-color-primary: #3B82F6;
 }
 
-/* Локально: поменять стиль конкретного компонента */
+/* Local: style one component */
 .danger-button {
   --md-filled-button-container-color: var(--md-sys-color-error);
   --md-filled-button-label-text-color: var(--md-sys-color-on-error);
 }
 ```
 
-Полный список токенов -- в документации каждого компонента в `material-web/docs/components/`.
+Full token lists are in each component’s docs under `material-web/docs/components/`.

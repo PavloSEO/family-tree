@@ -25,7 +25,7 @@ function queryBooleanDefaultFalse(v: unknown): boolean {
   return s === "true" || s === "1" || s === "yes";
 }
 
-/** Query `GET /api/tree/:personId` — см. `docs/06-api.md`. */
+/** Query `GET /api/tree/:personId` — see `docs/06-api.md`. */
 export const treeQuerySchema = z.object({
   mode: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : String(v)),

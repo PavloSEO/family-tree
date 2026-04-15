@@ -1,10 +1,11 @@
-# To-do (локальные заметки)
+# To-do (local notes)
 
-Файлы здесь **не обязательны** для сборки приложения. Актуальные этапы и хвост работ — в корневом **`ROADMAP.md`** и в **`docs/dev-log.md`**.
+Files here are **not** required to build the app. Current milestones and backlog live in root **`ROADMAP.md`** and **`docs/dev-log.md`**.
 
-| Файл | Назначение |
-|------|------------|
-| **`i18n-ru-en.md`** | Краткий статус двуязычия; детали — **`docs/i18n-client.md`**. |
-| **`files.zip`** | Вспомогательные ассеты/заготовки (если есть); при отсутствии нужды можно не коммитить. |
+| File | Purpose |
+|------|---------|
+| **`i18n-ru-en.md`** | Short bilingual UI status; details in **`docs/i18n-client.md`**. |
+| **`english-migration-notes.md`** | Deferred English migration for kinship strings, API errors, etc. |
+| **`files.zip`** | Helper assets/templates (if present); omit from git if not needed. |
 
-Каталог **`log/`** в репозиторий не кладём (см. **`.gitignore`**): это были поэтапные черновики, их заменил **`docs/dev-log.md`**.
+Do not commit the **`log/`** directory (see **`.gitignore`**): step drafts were replaced by **`docs/dev-log.md`**.

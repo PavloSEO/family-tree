@@ -1,42 +1,42 @@
-# Двуязычный интерфейс клиента (ru / en)
+# Bilingual client UI (ru / en)
 
-Клиент: **`packages/client`**. Стек: **i18next** + **react-i18next**, ресурсы — статический `import` JSON (без `i18next-http-backend`).
+Client: **`packages/client`**. Stack: **i18next** + **react-i18next**, resources are static `import` JSON (no `i18next-http-backend`).
 
-## Где лежат строки
+## Where strings live
 
-- Каталог: **`packages/client/src/locales/<язык>/`**, языки: **`ru`**, **`en`**.
-- Один файл = один **namespace** (имя файла = имя namespace), например `common.json` → namespace `common`.
-- Для каждого ключа должны совпасть структуры в **`ru/...`** и **`en/...`** (одинаковая вложенность ключей).
+- Directory: **`packages/client/src/locales/<lang>/`**, languages: **`ru`**, **`en`**.
+- One file = one **namespace** (filename = namespace), e.g. `common.json` → namespace `common`.
+- For each key, structures in **`ru/...`** and **`en/...`** must match (same nesting).
 
-Список namespace подключается в **`packages/client/src/i18n.ts`** (массив **`I18N_NAMESPACES`** и блок `resources`). Новый файл перевода нужно импортировать туда для **`ru`** и **`en`**, добавить в **`ns`** и при необходимости в **`I18N_NAMESPACES`**.
+The list of namespaces is wired in **`packages/client/src/i18n.ts`** (array **`I18N_NAMESPACES`** and the `resources` block). For a new translation file, import it there for **`ru`** and **`en`**, add to **`ns`** and to **`I18N_NAMESPACES`** if needed.
 
-## Как добавить ключ
+## How to add a key
 
-1. Добавьте ключ в **`locales/ru/<namespace>.json`** и зеркально в **`locales/en/<namespace>.json`**.
-2. В компоненте: `useTranslation("<namespace>")`, вызов `t("ключ")` или `t("раздел.ключ")`. Несколько namespace: `useTranslation(["admin", "common"])`.
-3. Плейсхолдеры: `t("path", { name: value })` в JSON — **`{{name}}`**.
-4. Язык UI сохраняется в **`localStorage`** (ключ **`ft_ui_lang`**, значения **`ru`** / **`en`**); см. **`lib/ui-lang-storage.ts`** и **`changeAppUiLanguage`** в **`i18n.ts`**.
+1. Add the key in **`locales/ru/<namespace>.json`** and mirror it in **`locales/en/<namespace>.json`**.
+2. In a component: `useTranslation("<namespace>")`, then `t("key")` or `t("section.key")`. Multiple namespaces: `useTranslation(["admin", "common"])`.
+3. Placeholders: `t("path", { name: value })` — in JSON use **`{{name}}`**.
+4. UI language is stored in **`localStorage`** (key **`ft_ui_lang`**, values **`ru`** / **`en`**); see **`lib/ui-lang-storage.ts`** and **`changeAppUiLanguage`** in **`i18n.ts`**.
 
-Даты, общая сортировка строк и отдельная политика для **ФИО** описаны в коде: **`hooks/useAppLocale.ts`**, **`lib/app-locale.ts`** (в т.ч. **`comparePersonNames`**).
+Dates, general string sorting, and the **name** policy are described in code: **`hooks/useAppLocale.ts`**, **`lib/app-locale.ts`** (including **`comparePersonNames`**).
 
-## Проверка
+## Check
 
-Из корня репозитория:
+From the repo root:
 
 ```bash
 pnpm --filter @family-tree/client run typecheck
 ```
 
-Скрипта **`lint`** у клиента сейчас нет; при добавлении ESLint его можно вызывать тем же способом через **`pnpm --filter`**.
+The client has no **`lint`** script yet; if you add ESLint, invoke it the same way via **`pnpm --filter`**.
 
-## Контроль «забытых» русских строк в страницах
+## Finding leftover Russian in pages
 
-Иногда полезно пройтись по страницам и найти кириллицу вне JSON (остатки непереведённого UI):
+Sometimes it helps to scan pages for Cyrillic outside JSON (untranslated UI remnants):
 
 ```bash
 rg "[\u0400-\u04FF]" packages/client/src/pages --glob "*.tsx"
 ```
 
-То же для **`components/`** при необходимости. Комментарии и осознанные исключения (например, проверка текста ошибки сервера) отфильтруйте вручную.
+Same for **`components/`** if needed. Filter out comments and intentional cases (e.g. server error text checks) manually.
 
-Полный чеклист ручной регрессии — в **`to-do/i18n-ru-en.md`** (п. 19).
+Short status and a manual regression checklist — **`to-do/i18n-ru-en.md`**.

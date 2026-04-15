@@ -25,8 +25,8 @@ function displayName(p: Person): string {
 }
 
 /**
- * Список родственников в компоненте связности графа (parent + spouse),
- * с русской подписью по кратчайшему пути от `subjectId`.
+ * Relatives in the same connected component (parent + spouse edges),
+ * with default-locale kinship label via shortest path from `subjectId`.
  */
 export async function listRelativesForPerson(
   subjectId: string,

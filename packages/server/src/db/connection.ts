@@ -20,7 +20,7 @@ function resolveDbFilePath(): string {
 
 const dbFilePath = resolveDbFilePath();
 
-/** Абсолютный путь к файлу SQLite (для бэкапов и диагностики). */
+/** Absolute path to the SQLite file (backups / diagnostics). */
 export function getDatabaseFilePath(): string {
   return dbFilePath;
 }

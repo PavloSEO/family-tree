@@ -14,7 +14,7 @@ export const albumSchema = z.object({
 
 export type Album = z.infer<typeof albumSchema>;
 
-/** Элемент списка альбомов (обложка из фото по `coverPhotoIndex`). */
+/** Album list row (cover from photo at `coverPhotoIndex`). */
 export const albumListItemSchema = albumSchema.extend({
   coverThumbnail: z.string().nullable(),
 });

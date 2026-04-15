@@ -1,6 +1,6 @@
 import { BaseEdge, getSmoothStepPath, type EdgeProps } from "@xyflow/react";
 
-/** Внешняя ветка: пунктир (`docs/08-tree-visualization.md`). */
+/** External branch: dashed edge (`docs/08-tree-visualization.md`). */
 export function ExternalTreeEdge({
   id,
   sourceX,
