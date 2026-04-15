@@ -1,5 +1,6 @@
 import type { TreeEdge, TreeNode, TreeResponse } from "@family-tree/shared";
 import type { Edge, Node } from "@xyflow/react";
+import { comparePersonNames } from "../../lib/app-locale.js";
 
 export const NODE_W = 160;
 export const NODE_H = 120;
@@ -43,7 +44,7 @@ function assignSpouseRanks(rank: Map<string, number>, edges: TreeEdge[]): void {
   }
 }
 
-function isDeadPerson(n: TreeNode): boolean {
+export function isDeadPerson(n: TreeNode): boolean {
   return Boolean(n.dateOfDeath && String(n.dateOfDeath).trim().length > 0);
 }
 
@@ -86,11 +87,7 @@ export function simpleRankPositionMap(data: TreeResponse): Map<string, { x: numb
   const pos = new Map<string, { x: number; y: number }>();
 
   for (const r of ranks) {
-    const list = (byRank.get(r) ?? []).sort((a, b) =>
-      a.lastName !== b.lastName
-        ? a.lastName.localeCompare(b.lastName, "ru")
-        : a.firstName.localeCompare(b.firstName, "ru"),
-    );
+    const list = (byRank.get(r) ?? []).sort((a, b) => comparePersonNames(a, b));
     list.forEach((n, i) => {
       pos.set(n.id, {
         x: i * SIMPLE_GAP_X,
@@ -117,6 +114,8 @@ export function buildTreeNodes(
       data: {
         firstName: n.firstName,
         lastName: n.lastName,
+        gender: n.gender,
+        isDead: isDeadPerson(n),
         dateOfBirth: n.dateOfBirth,
         dateOfDeath: n.dateOfDeath,
         mainPhoto: n.mainPhoto,

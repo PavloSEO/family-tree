@@ -1,1 +1,25 @@
-{}
+{
+  "common": {
+    "unknownError": "Unknown error"
+  },
+  "title": "Backups",
+  "subtitleBefore": "tar.gz archives (database and photo directory). In Docker on a schedule — see",
+  "subtitleAfter": ".",
+  "creating": "Creating backup…",
+  "searchPlaceholder": "File name…",
+  "emptyTitle": "No backups",
+  "emptyDescription": "Create a copy or wait for the nightly job in Docker.",
+  "fabCreate": "Create backup",
+  "colFile": "File",
+  "colSize": "Size",
+  "colCreated": "Created",
+  "colActions": "Actions",
+  "downloadTitle": "Download",
+  "deleteTitle": "Delete",
+  "deleteConfirm": "Delete backup?",
+  "toastCreated": "Backup created",
+  "toastDeleted": "Backup deleted",
+  "bytesB": "{{n}} B",
+  "bytesKB": "{{n}} KB",
+  "bytesMB": "{{n}} MB"
+}

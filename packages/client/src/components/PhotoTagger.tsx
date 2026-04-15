@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { createPhotoTag, deletePhotoTag } from "../api/photos.js";
 import { fetchPersonsList } from "../api/persons.js";
 import { MdButton, MdTextField } from "./md/index.js";
@@ -340,6 +341,7 @@ export function PhotoTagger({
       });
       onTagsChange((prev) => [...prev, created]);
       cancelDraft();
+      toast.success(t("tagger.toastTagCreated"));
     } catch (err) {
       setActionError(errorMessage(err, t("common.unknownError")));
     } finally {
@@ -353,6 +355,7 @@ export function PhotoTagger({
     try {
       await deletePhotoTag(photoId, tagId);
       onTagsChange((prev) => prev.filter((x) => x.id !== tagId));
+      toast.success(t("tagger.toastTagRemoved"));
     } catch (err) {
       setActionError(errorMessage(err, t("common.unknownError")));
     } finally {

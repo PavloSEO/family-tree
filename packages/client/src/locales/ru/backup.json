@@ -1,1 +1,25 @@
-{}
+{
+  "common": {
+    "unknownError": "Неизвестная ошибка"
+  },
+  "title": "Резервные копии",
+  "subtitleBefore": "Архивы tar.gz (база и каталог фото). В Docker по расписанию — см.",
+  "subtitleAfter": ".",
+  "creating": "Создание бэкапа…",
+  "searchPlaceholder": "Имя файла…",
+  "emptyTitle": "Нет бэкапов",
+  "emptyDescription": "Создайте копию или дождитесь ночного задания в Docker.",
+  "fabCreate": "Создать бэкап",
+  "colFile": "Файл",
+  "colSize": "Размер",
+  "colCreated": "Создан",
+  "colActions": "Действия",
+  "downloadTitle": "Скачать",
+  "deleteTitle": "Удалить",
+  "deleteConfirm": "Удалить бэкап?",
+  "toastCreated": "Резервная копия создана",
+  "toastDeleted": "Резервная копия удалена",
+  "bytesB": "{{n}} Б",
+  "bytesKB": "{{n}} КБ",
+  "bytesMB": "{{n}} МБ"
+}

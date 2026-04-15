@@ -1,8 +1,20 @@
 {
   "name": "family-tree",
   "private": true,
+  "description": "Family tree web app: Vite + React client, Hono + SQLite server, shared Zod types.",
   "packageManager": "pnpm@9.15.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PavloSEO/family-tree.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PavloSEO/family-tree/issues"
+  },
+  "homepage": "https://github.com/PavloSEO/family-tree#readme",
   "scripts": {
-    "build": "pnpm --filter @family-tree/client build && pnpm --filter @family-tree/server build"
+    "build": "corepack pnpm --filter @family-tree/client build && corepack pnpm --filter @family-tree/server build",
+    "dev:server": "corepack pnpm --filter @family-tree/server dev",
+    "dev:client": "corepack pnpm --filter @family-tree/client dev",
+    "typecheck": "corepack pnpm -r run typecheck"
   }
 }

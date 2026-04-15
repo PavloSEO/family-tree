@@ -1,4 +1,5 @@
 import type { TreeNode } from "@family-tree/shared";
+import { comparePersonNames } from "../../lib/app-locale.js";
 
 /** Первое совпадение по подстроке в «Имя Фамилия» (детерминированный порядок). */
 export function findFirstMatchingPersonId(
@@ -9,11 +10,7 @@ export function findFirstMatchingPersonId(
   if (!q) {
     return null;
   }
-  const sorted = [...nodes].sort(
-    (a, b) =>
-      a.lastName.localeCompare(b.lastName, "ru") ||
-      a.firstName.localeCompare(b.firstName, "ru"),
-  );
+  const sorted = [...nodes].sort((a, b) => comparePersonNames(a, b));
   for (const n of sorted) {
     const hay = `${n.firstName} ${n.lastName}`.toLowerCase();
     if (hay.includes(q)) {

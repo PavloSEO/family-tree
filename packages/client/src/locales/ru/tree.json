@@ -18,7 +18,8 @@
   "showExternalAncestors": "Показать внешних предков",
   "controls": {
     "viewModeAria": "Режим просмотра дерева",
-    "depthLabel": "Глубина (вверх и вниз): {{value}}",
+    "depthUpLabel": "Глубина вверх (предки): {{value}}",
+    "depthDownLabel": "Глубина вниз (потомки): {{value}}",
     "resetView": "Сбросить вид",
     "mode": {
       "full": "Полное",

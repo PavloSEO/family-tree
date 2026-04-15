@@ -3,6 +3,7 @@ import { appSettingsSchema } from "@family-tree/shared";
 import { HTTPError } from "ky";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { fetchAppSettings, updateAppSettings } from "../api/settings.js";
 import { fetchPersonsList } from "../api/persons.js";
 import {
@@ -11,6 +12,7 @@ import {
   MdSelectOption,
   MdTextField,
 } from "../components/md/index.js";
+import { getFamilyNameSortLocale } from "../lib/app-locale.js";
 
 function baseErrorMessage(e: unknown, unknownLabel: string): string {
   if (e instanceof HTTPError) {
@@ -47,9 +49,8 @@ function clampInt(n: number, min: number, max: number): number {
 }
 
 export function AdminSettingsPage() {
-  const { t, i18n } = useTranslation("admin");
+  const { t } = useTranslation("admin");
   const { t: tc } = useTranslation("common");
-  const sortLocale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const dash = t("common.dash");
 
   const [draft, setDraft] = useState<AppSettings | null>(null);
@@ -98,10 +99,10 @@ export function AdminSettingsPage() {
       [...persons].sort((a, b) =>
         `${a.lastName} ${a.firstName}`.localeCompare(
           `${b.lastName} ${b.firstName}`,
-          sortLocale,
+          getFamilyNameSortLocale(),
         ),
       ),
-    [persons, sortLocale],
+    [persons],
   );
 
   const rootSelectValue = draft?.defaultRootPersonId ?? "";
@@ -122,6 +123,7 @@ export function AdminSettingsPage() {
     try {
       const next = await updateAppSettings(parsed.data);
       setDraft(next);
+      toast.success(t("toast.settingsSaved"));
     } catch (e) {
       setSaveError(await errorMessage(e, t("common.unknownError")));
     } finally {

@@ -94,6 +94,7 @@ export function AdminPersonEditPage() {
           mode="edit"
           personId={id}
           person={person}
+          showAdminSaveToast
           onSuccess={goBack}
           onCancel={goBack}
         />
@@ -102,6 +103,7 @@ export function AdminPersonEditPage() {
       {isCreate ? (
         <PersonForm
           mode="create"
+          showAdminSaveToast
           onSuccess={goBack}
           onCancel={goBack}
         />

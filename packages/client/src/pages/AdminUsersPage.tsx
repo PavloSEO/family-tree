@@ -3,6 +3,7 @@ import type { Person, User, UserCreate, UserUpdate } from "@family-tree/shared";
 import { HTTPError } from "ky";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { fetchPersonsList } from "../api/persons.js";
 import {
@@ -19,6 +20,8 @@ import {
   MdSelectOption,
   MdTextField,
 } from "../components/md/index.js";
+import { getFamilyNameSortLocale } from "../lib/app-locale.js";
+import { useAppLocale } from "../hooks/useAppLocale.js";
 import { useAuth } from "../hooks/useAuth.js";
 
 function errorMessage(e: unknown, unknownLabel: string): string {
@@ -65,11 +68,11 @@ function statusLabel(
 }
 
 export function AdminUsersPage() {
-  const { t, i18n } = useTranslation("admin");
+  const { t } = useTranslation("admin");
   const { t: tc } = useTranslation("common");
+  const { collatorLocale } = useAppLocale();
   const { user: authUser } = useAuth();
   const selfId = authUser?.id ?? "";
-  const sortLocale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const dash = t("common.dash");
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -163,36 +166,36 @@ export function AdminUsersPage() {
       let cmp = 0;
       switch (sortColumnId) {
         case "login":
-          cmp = a.login.localeCompare(b.login, sortLocale);
+          cmp = a.login.localeCompare(b.login, collatorLocale);
           break;
         case "role":
-          cmp = a.role.localeCompare(b.role);
+          cmp = a.role.localeCompare(b.role, collatorLocale);
           break;
         case "status":
-          cmp = a.status.localeCompare(b.status);
+          cmp = a.status.localeCompare(b.status, collatorLocale);
           break;
         case "linkedPerson": {
           const na = personName(a.linkedPersonId);
           const nb = personName(b.linkedPersonId);
-          cmp = na.localeCompare(nb, sortLocale);
+          cmp = na.localeCompare(nb, getFamilyNameSortLocale());
           break;
         }
         case "createdAt":
-          cmp = String(a.createdAt).localeCompare(String(b.createdAt));
+          cmp = String(a.createdAt).localeCompare(String(b.createdAt), collatorLocale);
           break;
         case "lastLoginAt": {
           const la = a.lastLoginAt ?? "";
           const lb = b.lastLoginAt ?? "";
-          cmp = la.localeCompare(lb);
+          cmp = la.localeCompare(lb, collatorLocale);
           break;
         }
         default:
-          cmp = a.login.localeCompare(b.login, sortLocale);
+          cmp = a.login.localeCompare(b.login, collatorLocale);
       }
       return cmp * dir;
     });
     return copy;
-  }, [filtered, sortColumnId, sortOrder, personName, sortLocale]);
+  }, [filtered, sortColumnId, sortOrder, personName, collatorLocale]);
 
   const total = sorted.length;
   const rows = useMemo(() => {
@@ -256,6 +259,7 @@ export function AdminUsersPage() {
           body.password = formPassword.trim();
         }
         await updateUser(editing.id, body);
+        toast.success(t("toast.userUpdated"));
       } else {
         const body: UserCreate = {
           login,
@@ -266,6 +270,7 @@ export function AdminUsersPage() {
             formPersonId === "" ? undefined : (formPersonId as UserCreate["linkedPersonId"]),
         };
         await createUser(body);
+        toast.success(t("toast.userCreated"));
       }
       setFormOpen(false);
       setEditing(null);
@@ -289,6 +294,7 @@ export function AdminUsersPage() {
       setDelOpen(false);
       setDelTarget(null);
       await load();
+      toast.success(t("toast.userDeleted"));
     } catch (e) {
       setError(errorMessage(e, t("common.unknownError")));
     } finally {
@@ -361,6 +367,7 @@ export function AdminUsersPage() {
             <div className="flex flex-wrap gap-1">
               <md-icon-button
                 title={t("users.editTitle")}
+                aria-label={t("users.editTitle")}
                 onClick={() => {
                   openEdit(u);
                 }}
@@ -369,6 +376,7 @@ export function AdminUsersPage() {
               </md-icon-button>
               <md-icon-button
                 title={isSelf ? t("users.cannotDeleteSelf") : t("users.deleteTitle")}
+                aria-label={isSelf ? t("users.cannotDeleteSelf") : t("users.deleteTitle")}
                 disabled={isSelf}
                 onClick={() => {
                   if (!isSelf) {

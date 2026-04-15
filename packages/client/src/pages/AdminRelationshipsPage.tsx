@@ -3,11 +3,13 @@ import type { Person, Relationship } from "@family-tree/shared";
 import { HTTPError } from "ky";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { deleteRelationship, fetchRelationships } from "../api/relationships.js";
 import { fetchPersonsList } from "../api/persons.js";
 import { DataTable } from "../components/data-table/index.js";
 import { MdButton, MdDialog } from "../components/md/index.js";
+import { useAppLocale } from "../hooks/useAppLocale.js";
 
 function formatIsoDate(
   value: string | null | undefined,
@@ -120,18 +122,18 @@ function compareRel(
   b: Relationship,
   col: string,
   desc: boolean,
-  sortLocale: string,
+  collatorLocale: string,
 ): number {
   const va = sortKeyFor(a, col);
   const vb = sortKeyFor(b, col);
-  const base = va.localeCompare(vb, sortLocale, { sensitivity: "base" });
+  const base = va.localeCompare(vb, collatorLocale, { sensitivity: "base" });
   return desc ? -base : base;
 }
 
 export function AdminRelationshipsPage() {
-  const { t, i18n } = useTranslation("admin");
+  const { t } = useTranslation("admin");
   const { t: tc } = useTranslation("common");
-  const sortLocale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const { collatorLocale } = useAppLocale();
   const dash = t("common.dash");
   const navigate = useNavigate();
   const [rawRows, setRawRows] = useState<Relationship[]>([]);
@@ -208,9 +210,9 @@ export function AdminRelationshipsPage() {
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) =>
-      compareRel(a, b, sortColumnId, sortOrder === "desc", sortLocale),
+      compareRel(a, b, sortColumnId, sortOrder === "desc", collatorLocale),
     );
-  }, [filtered, sortColumnId, sortOrder, sortLocale]);
+  }, [filtered, sortColumnId, sortOrder, collatorLocale]);
 
   const total = sorted.length;
   const pageRows = useMemo(() => {
@@ -284,6 +286,7 @@ export function AdminRelationshipsPage() {
           return (
             <md-icon-button
               title={t("relationships.deleteTitle")}
+              aria-label={t("relationships.deleteTitle")}
               onClick={() => {
                 setDelTarget(r);
                 setDelOpen(true);
@@ -309,6 +312,7 @@ export function AdminRelationshipsPage() {
       setDelOpen(false);
       setDelTarget(null);
       await load();
+      toast.success(t("toast.relationshipDeleted"));
     } catch (e) {
       setError(errorMessage(e, t("common.unknownError")));
     } finally {

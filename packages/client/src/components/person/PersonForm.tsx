@@ -4,6 +4,7 @@ import { HTTPError } from "ky";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { z } from "zod";
 import { createPerson, updatePerson } from "../../api/persons.js";
 import { Accordion } from "../Accordion.js";
@@ -19,7 +20,7 @@ import {
   type PersonFormInput,
 } from "../../forms/person-form.js";
 import { loadWelcomePersonDraft } from "../../lib/welcome-person-draft.js";
-import { COUNTRY_SELECT_OPTIONS } from "../../lib/country-select-options.js";
+import { COUNTRY_SELECT_CODES } from "../../lib/country-select-options.js";
 import {
   formInputToPersonCreate,
   formInputToPersonUpdate,
@@ -43,6 +44,8 @@ export type PersonFormProps = {
   person?: Person;
   /** При создании: периодически сохранять значения в `sessionStorage` (черновик при обрыве сессии). */
   sessionStorageDraftKey?: string;
+  /** Toast после успешного сохранения (только админ-редактор; Welcome не трогает). */
+  showAdminSaveToast?: boolean;
   onSuccess: () => void;
   onCancel: () => void;
 };
@@ -52,11 +55,13 @@ export function PersonForm({
   personId,
   person,
   sessionStorageDraftKey,
+  showAdminSaveToast = false,
   onSuccess,
   onCancel,
 }: PersonFormProps) {
   const { t } = useTranslation("person");
   const { t: tc } = useTranslation("common");
+  const { t: ta } = useTranslation("admin");
   const personSchema = useMemo(() => createPersonFormFieldsSchema(t), [t]);
   const bloodOptions = useMemo(
     () => [
@@ -177,6 +182,13 @@ export function PersonForm({
             } catch {
               /* */
             }
+          }
+          if (showAdminSaveToast) {
+            toast.success(
+              mode === "edit"
+                ? ta("toast.personUpdated")
+                : ta("toast.personCreated"),
+            );
           }
           onSuccess();
         } catch (e) {
@@ -360,11 +372,15 @@ export function PersonForm({
                     field.onChange(v.toUpperCase().slice(0, 2));
                   }}
                 >
-                  {COUNTRY_SELECT_OPTIONS.map((c) => (
+                  {COUNTRY_SELECT_CODES.map((code) => (
                     <MdSelectOption
-                      key={c.code || "none"}
-                      value={c.code}
-                      headline={c.label}
+                      key={code || "none"}
+                      value={code}
+                      headline={
+                        code === ""
+                          ? tc("countries.notSpecified")
+                          : tc(`countries.${code}`)
+                      }
                     />
                   ))}
                 </MdSelect>

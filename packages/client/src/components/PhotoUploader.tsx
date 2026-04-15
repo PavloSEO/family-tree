@@ -6,6 +6,7 @@ import type {
 } from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { uploadAlbumPhoto } from "../api/photos.js";
 import { MdButton } from "./md/index.js";
 
@@ -149,6 +150,7 @@ export function PhotoUploader({
         onUploaded?.(photo);
         setQueue((q) => q.filter((x) => x.key !== item.key));
       }
+      toast.success(t("uploader.toastAllUploaded"));
     } catch (e) {
       const text =
         e instanceof Error ? e.message : t("uploader.errUploadFailed");
@@ -257,6 +259,7 @@ export function PhotoUploader({
                   <div className="absolute right-1 top-1">
                     <md-icon-button
                       title={t("uploader.removeFromQueueTitle")}
+                      aria-label={t("uploader.removeFromQueueTitle")}
                       onClick={(ev) => {
                         ev.stopPropagation();
                         removeQueued(item.key);

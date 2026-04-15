@@ -24,7 +24,8 @@ import {
 import { MdChip } from "../components/md/index.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { albumCoverSrc } from "../lib/album-cover-src.js";
-import { mainPhotoSrc } from "../lib/person-main-photo-src.js";
+import { personAvatarSrc } from "../lib/person-avatar-src.js";
+import { genderToPlaceholderGender } from "../lib/person-placeholder.js";
 
 function formatIsoDateRu(
   value: string | null | undefined,
@@ -72,7 +73,15 @@ function hasExtraSection(p: Person): boolean {
 function PersonHeader({ person }: { person: Person }) {
   const { t } = useTranslation("person");
   const [broken, setBroken] = useState(false);
-  const src = mainPhotoSrc(person.mainPhoto);
+  const isDead = Boolean(
+    person.dateOfDeath && String(person.dateOfDeath).trim().length > 0,
+  );
+  const avatarSrc = personAvatarSrc({
+    mainPhoto: person.mainPhoto,
+    gender: genderToPlaceholderGender(person.gender),
+    dead: isDead,
+    photoBroken: broken,
+  });
   const patronymic = hasText(person.patronymic)
     ? ` ${person.patronymic as string}`
     : "";
@@ -84,22 +93,14 @@ function PersonHeader({ person }: { person: Person }) {
     <md-elevated-card className="person-page__card block">
       <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-start">
         <div className="flex shrink-0 justify-center sm:justify-start">
-          {!src || broken ? (
-            <div className="flex h-28 w-28 items-center justify-center rounded-[var(--md-sys-shape-corner-medium)] bg-[var(--md-sys-color-surface-container-high)]">
-              <md-icon className="material-symbols-outlined text-5xl text-[var(--md-sys-color-on-surface-variant)]">
-                person
-              </md-icon>
-            </div>
-          ) : (
-            <img
-              src={src}
-              alt=""
-              className="h-28 w-28 rounded-[var(--md-sys-shape-corner-medium)] object-cover"
-              onError={() => {
-                setBroken(true);
-              }}
-            />
-          )}
+          <img
+            src={avatarSrc}
+            alt=""
+            className="h-28 w-28 rounded-[var(--md-sys-shape-corner-medium)] object-cover"
+            onError={() => {
+              setBroken(true);
+            }}
+          />
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="md-typescale-headline-medium m-0 text-[var(--md-sys-color-on-surface)]">

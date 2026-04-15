@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-table";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { MdButton, MdTextField } from "../md/index.js";
 import "./DataTable.css";
 
@@ -50,10 +51,12 @@ export function DataTable<TData>({
   emptyDescription,
   globalFilter = "",
   onGlobalFilterChange,
-  searchPlaceholder = "Поиск…",
+  searchPlaceholder,
   filters,
   toolbarActions,
 }: DataTableProps<TData>) {
+  const { t } = useTranslation("common");
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t("searchPlaceholder");
   const sorting: SortingState = useMemo(() => {
     if (!sortColumnId || !sortOrder) {
       return [];
@@ -116,10 +119,10 @@ export function DataTable<TData>({
           {onGlobalFilterChange ? (
             <div className="data-table-toolbar__grow">
               <MdTextField
-                label="Поиск"
+                label={t("dataTable.searchFieldLabel")}
                 value={globalFilter}
                 onValueChange={onGlobalFilterChange}
-                placeholder={searchPlaceholder}
+                placeholder={resolvedSearchPlaceholder}
               />
             </div>
           ) : null}
@@ -207,6 +210,7 @@ export function DataTable<TData>({
           <div className="data-table-pagination__nav">
             <md-icon-button
               disabled={!canPrev || isLoading}
+              aria-label={t("dataTable.ariaFirstPage")}
               onClick={() => {
                 onPageChange(1);
               }}
@@ -215,6 +219,7 @@ export function DataTable<TData>({
             </md-icon-button>
             <md-icon-button
               disabled={!canPrev || isLoading}
+              aria-label={t("dataTable.ariaPrevPage")}
               onClick={() => {
                 onPageChange(page - 1);
               }}
@@ -222,10 +227,11 @@ export function DataTable<TData>({
               <md-icon className="material-symbols-outlined">chevron_left</md-icon>
             </md-icon-button>
             <span className="px-2">
-              Страница {page} из {pageCount}
+              {t("dataTable.pageOf", { page, pageCount })}
             </span>
             <md-icon-button
               disabled={!canNext || isLoading}
+              aria-label={t("dataTable.ariaNextPage")}
               onClick={() => {
                 onPageChange(page + 1);
               }}
@@ -234,6 +240,7 @@ export function DataTable<TData>({
             </md-icon-button>
             <md-icon-button
               disabled={!canNext || isLoading}
+              aria-label={t("dataTable.ariaLastPage")}
               onClick={() => {
                 onPageChange(pageCount);
               }}
@@ -241,7 +248,7 @@ export function DataTable<TData>({
               <md-icon className="material-symbols-outlined">last_page</md-icon>
             </md-icon-button>
           </div>
-          <span>Всего: {total}</span>
+          <span>{t("dataTable.total", { total })}</span>
         </div>
       ) : null}
     </div>

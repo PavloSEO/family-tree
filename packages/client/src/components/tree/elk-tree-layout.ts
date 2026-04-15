@@ -1,5 +1,4 @@
 import type { TreeEdge, TreeResponse } from "@family-tree/shared";
-import ELK from "elkjs/lib/elk.bundled.js";
 import type { ElkExtendedEdge, ElkNode } from "elkjs/lib/elk-api";
 import { NODE_H, NODE_W } from "./tree-graph-build.js";
 
@@ -160,6 +159,7 @@ export async function runElkPersonLayout(
   data: TreeResponse,
 ): Promise<Map<string, { x: number; y: number }>> {
   const graph = buildElkGraph(data);
+  const { default: ELK } = await import("elkjs/lib/elk.bundled.js");
   const elk = new ELK();
   const laidOut = await elk.layout(graph);
   const out = new Map<string, { x: number; y: number }>();

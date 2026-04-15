@@ -1,7 +1,7 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { mainPhotoSrc } from "../../../lib/person-main-photo-src.js";
+import { personAvatarSrc } from "../../../lib/person-avatar-src.js";
 import type { TreePersonNodeData } from "../tree-node-data.js";
 import {
   countryFlagEmoji,
@@ -13,7 +13,12 @@ export function ExternalNode(props: NodeProps) {
   const { t } = useTranslation("tree");
   const d = props.data as TreePersonNodeData;
   const [broken, setBroken] = useState(false);
-  const src = mainPhotoSrc(d.mainPhoto);
+  const avatarSrc = personAvatarSrc({
+    mainPhoto: d.mainPhoto,
+    gender: d.gender,
+    dead: d.isDead,
+    photoBroken: broken,
+  });
   const flag = countryFlagEmoji(d.country);
   const border = d.isRoot
     ? "2px solid var(--md-sys-color-primary)"
@@ -33,22 +38,14 @@ export function ExternalNode(props: NodeProps) {
       <Handle type="source" position={Position.Right} id="sr" className="!opacity-0" />
 
       <div className="flex justify-center">
-        {!src || broken ? (
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--md-sys-color-surface-container-high)]">
-            <md-icon className="material-symbols-outlined text-2xl text-[var(--md-sys-color-on-surface-variant)]">
-              person
-            </md-icon>
-          </div>
-        ) : (
-          <img
-            src={src}
-            alt=""
-            className="h-12 w-12 rounded-full object-cover"
-            onError={() => {
-              setBroken(true);
-            }}
-          />
-        )}
+        <img
+          src={avatarSrc}
+          alt=""
+          className="h-12 w-12 rounded-full object-cover"
+          onError={() => {
+            setBroken(true);
+          }}
+        />
       </div>
       <p className="md-typescale-label-large m-0 text-center leading-tight text-[var(--md-sys-color-on-surface)]">
         {d.firstName}

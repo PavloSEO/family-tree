@@ -1,5 +1,5 @@
 import type { Person } from "@family-tree/shared";
-import { useTranslation } from "react-i18next";
+import { useAppLocale } from "../../hooks/useAppLocale.js";
 
 export function hasCustomFieldsContent(person: Person): boolean {
   const cf = person.customFields;
@@ -7,14 +7,13 @@ export function hasCustomFieldsContent(person: Person): boolean {
 }
 
 export function CustomFieldsBlock({ person }: { person: Person }) {
-  const { i18n } = useTranslation();
+  const { collatorLocale } = useAppLocale();
   const cf = person.customFields;
   if (!cf || typeof cf !== "object") {
     return null;
   }
-  const collatorLang = i18n.language.startsWith("en") ? "en" : "ru";
   const entries = Object.entries(cf).sort(([a], [b]) =>
-    a.localeCompare(b, collatorLang),
+    a.localeCompare(b, collatorLocale),
   );
 
   return (

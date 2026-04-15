@@ -3,9 +3,11 @@ import { HTTPError } from "ky";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import type { Person } from "@family-tree/shared";
 import { deletePerson, fetchPersonsList } from "../api/persons.js";
-import { mainPhotoSrc } from "../lib/person-main-photo-src.js";
+import { personAvatarSrc } from "../lib/person-avatar-src.js";
+import { genderToPlaceholderGender } from "../lib/person-placeholder.js";
 import { DataTable } from "../components/data-table/index.js";
 import {
   MdButton,
@@ -51,19 +53,18 @@ function statusLabel(
 
 function PhotoCell({ person }: { person: Person }) {
   const [broken, setBroken] = useState(false);
-  const src = mainPhotoSrc(person.mainPhoto);
-  if (!src || broken) {
-    return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[var(--md-sys-color-surface-container)]">
-        <md-icon className="material-symbols-outlined text-[var(--md-sys-color-on-surface-variant)]">
-          person
-        </md-icon>
-      </div>
-    );
-  }
+  const isDead = Boolean(
+    person.dateOfDeath && String(person.dateOfDeath).trim().length > 0,
+  );
+  const avatarSrc = personAvatarSrc({
+    mainPhoto: person.mainPhoto,
+    gender: genderToPlaceholderGender(person.gender),
+    dead: isDead,
+    photoBroken: broken,
+  });
   return (
     <img
-      src={src}
+      src={avatarSrc}
       alt=""
       className="h-10 w-10 rounded-sm object-cover"
       onError={() => {
@@ -222,6 +223,7 @@ export function AdminPersonsPage() {
             <div className="flex flex-wrap gap-1">
               <md-icon-button
                 title={t("persons.editTitle")}
+                aria-label={t("persons.editTitle")}
                 onClick={() => {
                   navigate(`/admin/persons/${p.id}/edit`);
                 }}
@@ -230,6 +232,7 @@ export function AdminPersonsPage() {
               </md-icon-button>
               <md-icon-button
                 title={t("persons.deleteTitle")}
+                aria-label={t("persons.deleteTitle")}
                 onClick={() => {
                   setDelTarget(p);
                   setDelOpen(true);
@@ -256,6 +259,7 @@ export function AdminPersonsPage() {
       setDelOpen(false);
       setDelTarget(null);
       await load();
+      toast.success(t("toast.personDeleted"));
     } catch (e) {
       setError(errorMessage(e, t("common.unknownError")));
     } finally {

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { userCreateSchema } from "@family-tree/shared";
 import { eq } from "drizzle-orm";
 import { db } from "./connection.js";

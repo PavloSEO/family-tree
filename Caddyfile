@@ -1,0 +1,8 @@
+# Reverse proxy + автоматический HTTPS (Let's Encrypt) при указании домена.
+# Замените `tree.example.com` на ваш домен. Сервис приложения в compose — `family-tree:3000`.
+# Локально без TLS можно использовать блок `:80 { reverse_proxy host.docker.internal:3000 }`
+# (см. docs/11-deployment.md).
+
+tree.example.com {
+	reverse_proxy family-tree:3000
+}

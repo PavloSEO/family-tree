@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { fetchPersonsList } from "../api/persons.js";
 import { useAuth } from "../hooks/useAuth.js";
 
 export function HomePage() {
+  const { t } = useTranslation("layout");
+  const { t: tc } = useTranslation("common");
   const { user } = useAuth();
   const [emptyDb, setEmptyDb] = useState<boolean | null>(null);
 
@@ -37,7 +40,7 @@ export function HomePage() {
           className="md-typescale-body-large m-0"
           style={{ color: "var(--md-sys-color-on-surface-variant)" }}
         >
-          Загрузка…
+          {tc("loading")}
         </p>
       </div>
     );
@@ -49,15 +52,15 @@ export function HomePage() {
 
   return (
     <div className="p-6">
-      <h1 className="md-typescale-display-small m-0">Главная</h1>
+      <h1 className="md-typescale-display-small m-0">{t("home.title")}</h1>
       <p className="md-typescale-body-large mt-4 max-w-prose">
-        Вы вошли как <strong>{user?.login}</strong> ({user?.role}).
+        {t("home.loggedIn", { login: user?.login ?? "", role: user?.role ?? "" })}
       </p>
       <p
         className="md-typescale-body-medium mt-2 max-w-prose"
         style={{ color: "var(--md-sys-color-on-surface-variant)" }}
       >
-        Выберите раздел в боковой панели. Выход — внизу слева.
+        {t("home.hintNav")}
       </p>
     </div>
   );

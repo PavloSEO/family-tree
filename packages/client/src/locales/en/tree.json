@@ -18,7 +18,8 @@
   "showExternalAncestors": "Show external ancestors",
   "controls": {
     "viewModeAria": "Tree view mode",
-    "depthLabel": "Depth (up and down): {{value}}",
+    "depthUpLabel": "Depth up (ancestors): {{value}}",
+    "depthDownLabel": "Depth down (descendants): {{value}}",
     "resetView": "Reset view",
     "mode": {
       "full": "Full",

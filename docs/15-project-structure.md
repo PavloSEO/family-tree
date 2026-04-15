@@ -69,7 +69,7 @@ family-tree/
 |   |       |   |-- rate-limit.ts      Лимит попыток логина
 |   |       |   |-- upload.ts          Multipart, MIME-валидация
 |   |       |-- services/
-|   |       |   |-- auth.service.ts    JWT sign/verify, bcrypt
+|   |       |   |-- auth.service.ts    JWT sign/verify, bcryptjs
 |   |       |   |-- person.service.ts  CRUD + поиск дубликатов
 |   |       |   |-- relationship.service.ts  CRUD + валидация + BFS
 |   |       |   |-- tree.service.ts    Построение подграфа

@@ -3,6 +3,11 @@
   "navCaption": "Navigation",
   "sectionAdmin": "Administration",
   "logout": "Sign out",
+  "home": {
+    "title": "Home",
+    "loggedIn": "You are signed in as {{login}} ({{role}}).",
+    "hintNav": "Choose a section in the sidebar. Sign out is at the bottom left."
+  },
   "nav": {
     "tree": "Tree",
     "albums": "Photo albums",

@@ -40,7 +40,13 @@
     "errAllTooBig": "Files over {{mb}} MB are not queued (same limit as on the server).",
     "errMimeOnly": "Only JPEG, PNG, and WebP are supported.",
     "errSomeTooBig": "Files over {{mb}} MB not queued: {{count}}.",
-    "errUploadFailed": "Could not upload photo"
+    "errUploadFailed": "Could not upload photo",
+    "xhr401": "Sign in required",
+    "xhr403": "Not enough permissions",
+    "xhrStatus": "Upload failed (HTTP {{status}})",
+    "xhrNetwork": "Network error",
+    "xhrBadResponse": "Invalid server response",
+    "toastAllUploaded": "All photos in the queue were uploaded"
   },
   "gallery": {
     "close": "Close",
@@ -55,6 +61,8 @@
     "hintDraw": "Draw a rectangle on the photo, then pick a person from search.",
     "tagsHeading": "Tags",
     "noTags": "No tags yet.",
-    "deleting": "Removing…"
+    "deleting": "Removing…",
+    "toastTagCreated": "Tag added",
+    "toastTagRemoved": "Tag removed"
   }
 }

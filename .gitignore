@@ -8,3 +8,8 @@ pnpm-debug.log
 data/
 .DS_Store
 Thumbs.db
+
+# Не коммитить: архивы логов, каталог этапов, локальная копия material-web (справка; в коде — npm-пакет @material/web)
+log/
+log.zip
+material-web-main/

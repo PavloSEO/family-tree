@@ -17,7 +17,7 @@
 
 ## Phase 2: Авторизация (этапы 7-12)
 
-- [x] **07** Сервер: auth service -- функции `hashPassword`, `verifyPassword` (bcrypt, cost 12), `signToken`, `verifyToken` (jose). JWT payload: `{ sub: userId, role: "admin"|"viewer", iat, exp }`
+- [x] **07** Сервер: auth service -- функции `hashPassword`, `verifyPassword` (bcryptjs, cost 12), `signToken`, `verifyToken` (jose). JWT payload: `{ sub: userId, role: "admin"|"viewer", iat, exp }`
 - [x] **08** Сервер: route `POST /api/auth/login` -- принимает `{ login, password, remember }`, проверяет credentials, возвращает JWT + user object. Route `GET /api/auth/me` -- возвращает текущего пользователя по JWT
 - [x] **09** Сервер: auth middleware -- проверка `Authorization: Bearer <token>`, извлечение user из БД, проверка статуса `active`. Admin-only middleware для защиты admin-роутов
 - [x] **10** Сервер: rate limiting -- таблица `login_attempts`, проверка 5 попыток / 15 минут по IP, ответ 429 при превышении
@@ -101,3 +101,19 @@
 - [x] **48** Клиент: `AdminBackupPage` -- список бэкапов в DataTable, кнопка "Создать бэкап" (FAB), скачивание, удаление. `md-linear-progress` при создании. Docker: cron-скрипт для ежедневного автобэкапа (3:00 AM), хранение 30 дней
 - [x] **49** Клиент: `WelcomePage` -- экран для пустой базы ("Начните с создания своей карточки"). Автосохранение черновика формы в sessionStorage при истечении сессии. `md-snackbar`-подобные toast-уведомления (sonner, стилизованный под M3)
 - [x] **50** Финальная сборка: `docker compose up --build`, smoke-тест всех страниц, проверка auth flow, проверка CRUD, проверка дерева с тестовыми данными, деплой на VPS. Документирование процедуры сброса пароля через CLI
+
+---
+
+## Остаток по аудиту (вне 50 этапов)
+
+Следующие пункты перенесены из `to-do/AUDIT.md` (файл удалён после закрытия части задач).
+
+- **Docker smoke** — подтвердить `docker compose up --build` в среде с запущенным daemon; health, SPA, login.
+- **mainPhoto** — сохранять оригинал на диск (`original.{ext}`) плюс сжатый `main.jpg` / `main_thumb.jpg` по ТЗ.
+- **Персоны на клиенте** — `GET /api/persons/search` и замена массовой подгрузки в формах и на `AdminRelationshipsPage` (имена в ответе API связей).
+- **gender: "other"** — схема shared, Drizzle, миграция, UI, `tree-compute`, placeholder-neutral.
+- **Responsive** — ручной проход по ключевым экранам (sidebar, таблицы, дерево, формы).
+- **Китайский зодиак** — при необходимости: даты CNY вместо «только год».
+- **HTTPS** — при деплое без Caddy: явный редирект или документация под выбранный прокси.
+
+Сделано в ходе аудита (кратко): Lucide в `ContactsBlock`, два слайдера `depthUp` / `depthDown` в `TreeControls`, динамический import ELK, пример `Caddyfile`, toasts (sonner) на основных admin-страницах и в `PhotoTagger` / `PhotoUploader`, проверка `archiver` в бандле backup-cli.

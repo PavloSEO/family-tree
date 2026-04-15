@@ -8,5 +8,29 @@
   "loading": "Загрузка…",
   "optionalPlaceholder": "Необязательно",
   "searchPlaceholder": "Поиск…",
-  "interfaceLanguage": "Язык интерфейса"
+  "interfaceLanguage": "Язык интерфейса",
+  "countries": {
+    "notSpecified": "Не указано",
+    "RU": "Россия (RU)",
+    "BY": "Беларусь (BY)",
+    "KZ": "Казахстан (KZ)",
+    "UA": "Украина (UA)",
+    "US": "США (US)",
+    "GB": "Великобритания (GB)",
+    "DE": "Германия (DE)",
+    "FR": "Франция (FR)",
+    "ES": "Испания (ES)",
+    "IT": "Италия (IT)",
+    "PL": "Польша (PL)",
+    "TJ": "Таджикистан (TJ)"
+  },
+  "dataTable": {
+    "searchFieldLabel": "Поиск",
+    "pageOf": "Страница {{page}} из {{pageCount}}",
+    "total": "Всего: {{total}}",
+    "ariaFirstPage": "Первая страница",
+    "ariaPrevPage": "Предыдущая страница",
+    "ariaNextPage": "Следующая страница",
+    "ariaLastPage": "Последняя страница"
+  }
 }

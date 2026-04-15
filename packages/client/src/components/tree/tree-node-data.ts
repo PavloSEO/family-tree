@@ -2,6 +2,9 @@
 export type TreePersonNodeData = {
   firstName: string;
   lastName: string;
+  gender: "male" | "female";
+  /** Есть дата смерти — для заглушки «умерший» и для внешних нод. */
+  isDead: boolean;
   dateOfBirth: string | null;
   dateOfDeath: string | null;
   mainPhoto: string | null;

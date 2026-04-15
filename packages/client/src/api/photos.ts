@@ -1,6 +1,7 @@
 import type { Photo, PhotoTag, PhotoTagCreate } from "@family-tree/shared";
 import { photoSchema, photoTagSchema } from "@family-tree/shared";
 import { z } from "zod";
+import i18n from "../i18n.js";
 import { api } from "./client.js";
 import { getMemoryToken } from "../lib/auth-token-store.js";
 
@@ -55,12 +56,14 @@ function xhrErrorMessage(xhr: XMLHttpRequest): string {
     /* ignore */
   }
   if (xhr.status === 401) {
-    return "Требуется вход";
+    return i18n.t("albums:uploader.xhr401");
   }
   if (xhr.status === 403) {
-    return "Недостаточно прав";
+    return i18n.t("albums:uploader.xhr403");
   }
-  return `Ошибка загрузки (${String(xhr.status)})`;
+  return i18n.t("albums:uploader.xhrStatus", {
+    status: String(xhr.status),
+  });
 }
 
 /**
@@ -90,7 +93,7 @@ export function uploadAlbumPhoto(
       }
     };
     xhr.onerror = () => {
-      reject(new Error("Ошибка сети"));
+      reject(new Error(i18n.t("albums:uploader.xhrNetwork")));
     };
     xhr.onload = () => {
       if (xhr.status === 201) {
@@ -99,7 +102,7 @@ export function uploadAlbumPhoto(
           const env = z.object({ data: z.unknown() }).parse(raw);
           resolve(photoSchema.parse(env.data as never) as Photo);
         } catch {
-          reject(new Error("Некорректный ответ сервера"));
+          reject(new Error(i18n.t("albums:uploader.xhrBadResponse")));
         }
         return;
       }

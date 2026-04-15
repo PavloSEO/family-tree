@@ -1,9 +1,11 @@
+import { HTTPError } from "ky";
 import ky from "ky";
 import {
   getMemoryToken,
   LS_TOKEN_KEY,
   setMemoryToken,
 } from "../lib/auth-token-store.js";
+import { localizeApiHttpError } from "../lib/api-http-error-format.js";
 
 function loginPathname(url: string): string {
   try {
@@ -26,6 +28,15 @@ const isDisabledMessage = (errorText: string) =>
 export const api = ky.create({
   prefixUrl: import.meta.env.VITE_API_BASE_URL ?? "",
   hooks: {
+    /** EN UI: wrap Russian `body.error` for display (see `errors` namespace, plan §16). */
+    beforeError: [
+      async (error) => {
+        if (error instanceof HTTPError) {
+          return localizeApiHttpError(error);
+        }
+        return error;
+      },
+    ],
     beforeRequest: [
       (request) => {
         const t = getMemoryToken();

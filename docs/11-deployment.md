@@ -33,6 +33,12 @@ Stage 3 (runner):   node:22-alpine + apk add vips-dev (для sharp)
 - **`index.html`** (как файл) и **SPA fallback** — **`Cache-Control: no-cache`** и **`Pragma: no-cache`**, чтобы после деплоя подтянулась новая оболочка;
 - остальное из **`dist`** (например, favicon) — по умолчанию сутки.
 
+### Заголовки безопасности (CSP, nosniff)
+
+Приложение Hono выставляет ответам заголовки из **`packages/server/src/middleware/security-headers.ts`**: в том числе **`Content-Security-Policy`** и **`X-Content-Type-Options: nosniff`**. Подробный разбор и **`CSP_CONNECT_SRC_EXTRA`** (если статика и API на разных origin) — в **`docs/07-auth.md`** (раздел «Заголовки безопасности»).
+
+Если перед Node стоит reverse proxy (Caddy, nginx), не дублируйте конфликтующий CSP без необходимости: либо оставьте политику на приложении, либо перенесите на прокси и отключите на приложении отдельной задачей.
+
 ### Остановка процесса (SIGINT / SIGTERM)
 
 В **`serve.ts`**: по **SIGINT** / **SIGTERM** вызывается **`server.close()`**, затем **`sqlite.close()`**; при зависании закрытия — принудительный выход через **10 с**. Повторный сигнал во время остановки завершает процесс сразу.
@@ -87,6 +93,8 @@ volumes:
 ```
 
 ### Caddyfile
+
+В корне репозитория лежит файл **`Caddyfile`** (тот же пример, что ниже); при монтировании в контейнер Caddy подставьте свой домен.
 
 ```
 tree.example.com {

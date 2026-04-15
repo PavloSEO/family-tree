@@ -10,6 +10,18 @@
     "noAccess": "Недостаточно прав для раздела администрирования.",
     "goHome": "На главную"
   },
+  "toast": {
+    "personDeleted": "Карточка удалена",
+    "personCreated": "Карточка создана",
+    "personUpdated": "Карточка обновлена",
+    "settingsSaved": "Настройки сохранены",
+    "relationshipCreated": "Связь создана",
+    "relationshipDeleted": "Связь удалена",
+    "userCreated": "Пользователь создан",
+    "userUpdated": "Пользователь обновлён",
+    "userDeleted": "Пользователь удалён",
+    "albumCreated": "Альбом создан"
+  },
   "persons": {
     "title": "Карточки",
     "searchPlaceholder": "Имя или фамилия…",
@@ -102,26 +114,6 @@
     "sessionTtlHint": "От 1 до 365",
     "save": "Сохранить",
     "resetFromServer": "Сбросить с сервера"
-  },
-  "backup": {
-    "title": "Резервные копии",
-    "subtitleBefore": "Архивы tar.gz (база и каталог фото). В Docker по расписанию — см.",
-    "subtitleAfter": ".",
-    "creating": "Создание бэкапа…",
-    "searchPlaceholder": "Имя файла…",
-    "emptyTitle": "Нет бэкапов",
-    "emptyDescription": "Создайте копию или дождитесь ночного задания в Docker.",
-    "fabCreate": "Создать бэкап",
-    "colFile": "Файл",
-    "colSize": "Размер",
-    "colCreated": "Создан",
-    "colActions": "Действия",
-    "downloadTitle": "Скачать",
-    "deleteTitle": "Удалить",
-    "deleteConfirm": "Удалить бэкап?",
-    "bytesB": "{{n}} Б",
-    "bytesKB": "{{n}} КБ",
-    "bytesMB": "{{n}} МБ"
   },
   "albums": {
     "title": "Альбомы",

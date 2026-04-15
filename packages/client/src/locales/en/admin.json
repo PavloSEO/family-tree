@@ -10,6 +10,18 @@
     "noAccess": "You do not have access to the administration area.",
     "goHome": "Go to home"
   },
+  "toast": {
+    "personDeleted": "Person record deleted",
+    "personCreated": "Person record created",
+    "personUpdated": "Person record updated",
+    "settingsSaved": "Settings saved",
+    "relationshipCreated": "Relationship created",
+    "relationshipDeleted": "Relationship deleted",
+    "userCreated": "User created",
+    "userUpdated": "User updated",
+    "userDeleted": "User deleted",
+    "albumCreated": "Album created"
+  },
   "persons": {
     "title": "People",
     "searchPlaceholder": "First or last name…",
@@ -102,26 +114,6 @@
     "sessionTtlHint": "From 1 to 365",
     "save": "Save",
     "resetFromServer": "Reset from server"
-  },
-  "backup": {
-    "title": "Backups",
-    "subtitleBefore": "tar.gz archives (database and photo directory). In Docker on a schedule — see",
-    "subtitleAfter": ".",
-    "creating": "Creating backup…",
-    "searchPlaceholder": "File name…",
-    "emptyTitle": "No backups",
-    "emptyDescription": "Create a copy or wait for the nightly job in Docker.",
-    "fabCreate": "Create backup",
-    "colFile": "File",
-    "colSize": "Size",
-    "colCreated": "Created",
-    "colActions": "Actions",
-    "downloadTitle": "Download",
-    "deleteTitle": "Delete",
-    "deleteConfirm": "Delete backup?",
-    "bytesB": "{{n}} B",
-    "bytesKB": "{{n}} KB",
-    "bytesMB": "{{n}} MB"
   },
   "albums": {
     "title": "Albums",

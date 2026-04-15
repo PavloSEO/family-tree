@@ -8,5 +8,29 @@
   "loading": "Loading…",
   "optionalPlaceholder": "Optional",
   "searchPlaceholder": "Search…",
-  "interfaceLanguage": "Interface language"
+  "interfaceLanguage": "Interface language",
+  "countries": {
+    "notSpecified": "Not specified",
+    "RU": "Russia (RU)",
+    "BY": "Belarus (BY)",
+    "KZ": "Kazakhstan (KZ)",
+    "UA": "Ukraine (UA)",
+    "US": "United States (US)",
+    "GB": "United Kingdom (GB)",
+    "DE": "Germany (DE)",
+    "FR": "France (FR)",
+    "ES": "Spain (ES)",
+    "IT": "Italy (IT)",
+    "PL": "Poland (PL)",
+    "TJ": "Tajikistan (TJ)"
+  },
+  "dataTable": {
+    "searchFieldLabel": "Search",
+    "pageOf": "Page {{page}} of {{pageCount}}",
+    "total": "Total: {{total}}",
+    "ariaFirstPage": "First page",
+    "ariaPrevPage": "Previous page",
+    "ariaNextPage": "Next page",
+    "ariaLastPage": "Last page"
+  }
 }

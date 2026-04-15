@@ -8,7 +8,7 @@
  * `NEW_ADMIN_PASSWORD='...' node dist/admin-password-cli.js --login viewer1`
  */
 import "./bootstrap.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "./db/connection.js";
 import { users } from "./db/schema.js";

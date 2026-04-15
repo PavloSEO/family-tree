@@ -2,6 +2,7 @@ import type { AlbumCreate, AlbumListItem, Person } from "@family-tree/shared";
 import { HTTPError } from "ky";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createAlbum, fetchAlbumsList } from "../api/albums.js";
 import { fetchPersonsList } from "../api/persons.js";
@@ -149,6 +150,7 @@ export function AdminAlbumsPage() {
       setCreateOpen(false);
       resetCreateForm();
       await loadAlbums();
+      toast.success(t("toast.albumCreated"));
     } catch (e) {
       setCreateError(errorMessage(e, t("common.unknownError")));
     } finally {

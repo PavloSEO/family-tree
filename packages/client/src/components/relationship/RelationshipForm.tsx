@@ -2,6 +2,7 @@ import type { Person, RelationshipCreate } from "@family-tree/shared";
 import { HTTPError } from "ky";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { createRelationship } from "../../api/relationships.js";
 import { fetchPersonsList } from "../../api/persons.js";
 import { MdButton, MdDialog, MdTextField } from "../md/index.js";
@@ -213,6 +214,7 @@ export function RelationshipForm({ onSuccess, onCancel }: RelationshipFormProps)
         warnNavigateAfterClose.current = true;
         setWarnOpen(true);
       } else {
+        toast.success(t("toast.relationshipCreated"));
         onSuccess();
       }
     } catch (e) {
@@ -378,6 +380,7 @@ export function RelationshipForm({ onSuccess, onCancel }: RelationshipFormProps)
           if (!open && warnNavigateAfterClose.current) {
             warnNavigateAfterClose.current = false;
             setWarnMessages([]);
+            toast.success(t("toast.relationshipCreated"));
             onSuccess();
           }
         }}

@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { MdSelect, MdSelectOption, MdTextField } from "../md/index.js";
-import { COUNTRY_SELECT_OPTIONS } from "../../lib/country-select-options.js";
+import { COUNTRY_SELECT_CODES } from "../../lib/country-select-options.js";
 
 const FIND_DEBOUNCE_MS = 400;
 
 export function TreeFilters() {
   const { t } = useTranslation("tree");
+  const { t: tc } = useTranslation("common");
   const branchOptions = useMemo(
     () => [
       { value: "", headline: t("filters.coreOnly") },
@@ -112,11 +113,15 @@ export function TreeFilters() {
             }
           }}
         >
-          {COUNTRY_SELECT_OPTIONS.map((c) => (
+          {COUNTRY_SELECT_CODES.map((code) => (
             <MdSelectOption
-              key={c.code || "all"}
-              value={c.code}
-              headline={c.code === "" ? t("filters.allCountries") : c.label}
+              key={code || "all"}
+              value={code}
+              headline={
+                code === ""
+                  ? t("filters.allCountries")
+                  : tc(`countries.${code}`)
+              }
             />
           ))}
         </MdSelect>

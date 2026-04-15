@@ -27,17 +27,21 @@ export function TreeControls() {
   const { t } = useTranslation("tree");
   const { fitView } = useReactFlow();
   const [searchParams, setSearchParams] = useSearchParams();
-  const depthRef = useRef<HTMLElement | null>(null);
+  const depthUpRef = useRef<HTMLElement | null>(null);
+  const depthDownRef = useRef<HTMLElement | null>(null);
 
   const mode = useMemo(
     () => parseMode(searchParams.get("mode")),
     [searchParams],
   );
-  const depthValue = useMemo(() => {
-    const up = parseDepth(searchParams.get("depthUp"), 3);
-    const down = parseDepth(searchParams.get("depthDown"), 3);
-    return Math.max(up, down);
-  }, [searchParams]);
+  const depthUp = useMemo(
+    () => parseDepth(searchParams.get("depthUp"), 3),
+    [searchParams],
+  );
+  const depthDown = useMemo(
+    () => parseDepth(searchParams.get("depthDown"), 3),
+    [searchParams],
+  );
 
   const patchParams = useCallback(
     (patch: Record<string, string | undefined>) => {
@@ -98,21 +102,27 @@ export function TreeControls() {
   }, [onSegmentedSelection]);
 
   useEffect(() => {
-    const el = depthRef.current;
-    if (!el) {
-      return;
-    }
-    const onInput = () => {
+    const upEl = depthUpRef.current;
+    const downEl = depthDownRef.current;
+    const read = (el: HTMLElement | null) => {
       const v = Math.round(Number((el as { value?: number }).value));
-      const clamped = Math.min(20, Math.max(0, Number.isFinite(v) ? v : 3));
-      patchParams({
-        depthUp: String(clamped),
-        depthDown: String(clamped),
-      });
+      return Math.min(20, Math.max(0, Number.isFinite(v) ? v : 3));
     };
-    el.addEventListener("input", onInput);
+    const onUpInput = () => {
+      if (upEl) {
+        patchParams({ depthUp: String(read(upEl)) });
+      }
+    };
+    const onDownInput = () => {
+      if (downEl) {
+        patchParams({ depthDown: String(read(downEl)) });
+      }
+    };
+    upEl?.addEventListener("input", onUpInput);
+    downEl?.addEventListener("input", onDownInput);
     return () => {
-      el.removeEventListener("input", onInput);
+      upEl?.removeEventListener("input", onUpInput);
+      downEl?.removeEventListener("input", onDownInput);
     };
   }, [patchParams]);
 
@@ -141,14 +151,28 @@ export function TreeControls() {
 
       <label className="flex min-w-0 flex-col gap-1">
         <span className="md-typescale-label-large text-[var(--md-sys-color-on-surface-variant)]">
-          {t("controls.depthLabel", { value: depthValue })}
+          {t("controls.depthUpLabel", { value: depthUp })}
         </span>
         <md-slider
-          ref={depthRef}
+          ref={depthUpRef}
           min={0}
           max={20}
           step={1}
-          value={depthValue}
+          value={depthUp}
+          labeled
+        />
+      </label>
+
+      <label className="flex min-w-0 flex-col gap-1">
+        <span className="md-typescale-label-large text-[var(--md-sys-color-on-surface-variant)]">
+          {t("controls.depthDownLabel", { value: depthDown })}
+        </span>
+        <md-slider
+          ref={depthDownRef}
+          min={0}
+          max={20}
+          step={1}
+          value={depthDown}
           labeled
         />
       </label>

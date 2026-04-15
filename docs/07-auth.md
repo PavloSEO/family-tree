@@ -35,12 +35,12 @@ TTL:
 
 ## Хэширование паролей
 
-Библиотека: `bcrypt`, cost factor 12.
+Библиотека: **`bcryptjs`** (совместима с bcrypt-хэшами), cost factor 12. Реализация в `auth.service.ts` — `hashSync` / `compareSync` внутри async-обёрток.
 
 ```typescript
-import bcrypt from 'bcrypt';
-const hash = await bcrypt.hash(password, 12);
-const valid = await bcrypt.compare(password, hash);
+import bcrypt from "bcryptjs";
+const hash = bcrypt.hashSync(password, 12);
+const valid = bcrypt.compareSync(password, hash);
 ```
 
 ## Rate limiting
@@ -73,7 +73,13 @@ Admin-only middleware -- дополнительная проверка `user.rol
 
 ## Заголовки безопасности (HTTP)
 
-Глобально (`middleware/security-headers.ts`): **`Content-Security-Policy`**, **`X-Content-Type-Options: nosniff`**, **`Referrer-Policy: strict-origin-when-cross-origin`**, **`Permissions-Policy`** (отключены камера/микрофон/геолокация/платежи API браузера), **`X-Frame-Options: DENY`** (в т.ч. для клиентов без полноценного CSP).
+Глобально (`middleware/security-headers.ts`, подключение в `index.ts` — **`app.use('*', securityHeaders)`**):
+
+- **`Content-Security-Policy`** — SPA того же origin: `default-src 'self'`, `script-src 'self'`, стили и шрифты Google как в `packages/client/index.html`, `img-src` с **`data:`** и **`blob:`**, **`connect-src 'self'`** (при API на другом origin см. **`CSP_CONNECT_SRC_EXTRA`** в `.env.example`), **`object-src 'none'`**, **`worker-src 'none'`**, **`frame-ancestors 'none'`**, **`base-uri`**, **`form-action`**.
+- **`X-Content-Type-Options: nosniff`**
+- **`Referrer-Policy: strict-origin-when-cross-origin`**
+- **`Permissions-Policy`** — камера/микрофон/геолокация/payment API отключены
+- **`X-Frame-Options: DENY`**
 
 ## Хранение токена на клиенте
 
@@ -105,7 +111,7 @@ Admin-only middleware -- дополнительная проверка `user.rol
 ```bash
 docker compose exec family-tree node -e "
   const Database = require('better-sqlite3');
-  const bcrypt = require('bcrypt');
+  const bcrypt = require('bcryptjs');
   const db = new Database('/data/db/family-tree.db');
   const hash = bcrypt.hashSync('NEW_PASSWORD', 12);
   db.prepare('UPDATE users SET password_hash = ? WHERE role = ?').run(hash, 'admin');

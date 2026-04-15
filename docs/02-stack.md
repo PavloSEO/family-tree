@@ -28,9 +28,9 @@
 |-------|--------|-----------|-----------|
 | hono | 4.x | HTTP-фреймворк | `pnpm add hono @hono/node-server` |
 | drizzle-orm | 0.38.x | ORM (типизированный SQL) | `pnpm add drizzle-orm` |
-| better-sqlite3 | 11.x | SQLite-драйвер | `pnpm add better-sqlite3` |
-| jose | 6.x | JWT (sign, verify) | `pnpm add jose` |
-| bcrypt | 5.x | Хэширование паролей | `pnpm add bcrypt` |
+| better-sqlite3 | 12.x | SQLite-драйвер | `pnpm add better-sqlite3` |
+| jose | 5.x | JWT (sign, verify) | `pnpm add jose` |
+| bcryptjs | 3.x | Хэширование паролей (без нативного модуля) | `pnpm add bcryptjs` |
 | sharp | 0.33.x | Обработка изображений | `pnpm add sharp` |
 | exifr | 7.x | Парсинг EXIF-данных | `pnpm add exifr` |
 | archiver | 7.x | Создание zip/tar.gz бэкапов | `pnpm add archiver` |
@@ -45,7 +45,7 @@
 | @types/react | 19.x |
 | @types/react-dom | 19.x |
 | @types/better-sqlite3 | 7.x |
-| @types/bcrypt | 5.x |
+| @types/bcryptjs | 2.x |
 | concurrently | Параллельный запуск dev-серверов |
 
 ## Что НЕ используем

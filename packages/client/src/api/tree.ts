@@ -1,6 +1,7 @@
 import type { TreeResponse } from "@family-tree/shared";
 import { treeResponseSchema } from "@family-tree/shared";
 import { z } from "zod";
+import { getAppCollatorLocale } from "../lib/app-locale.js";
 import { api } from "./client.js";
 
 const treeEnvelopeLooseSchema = z.object({
@@ -46,7 +47,7 @@ export function treeQueryCacheKey(sp: URLSearchParams): string {
   const q = treeQueryParamsFromSearchParams(sp);
   return Object.entries(q)
     .filter(([, v]) => v !== undefined && v !== "")
-    .sort(([a], [b]) => a.localeCompare(b))
+    .sort(([a], [b]) => a.localeCompare(b, getAppCollatorLocale()))
     .map(([k, v]) => `${k}=${v}`)
     .join("&");
 }

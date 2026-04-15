@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { HTTPError } from "ky";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
   createBackup,
   deleteBackup,
@@ -11,6 +12,7 @@ import {
 } from "../api/backup.js";
 import { DataTable } from "../components/data-table/index.js";
 import { MdButton, MdDialog } from "../components/md/index.js";
+import { useAppLocale } from "../hooks/useAppLocale.js";
 
 function errorMessage(e: unknown, unknownLabel: string): string {
   if (e instanceof HTTPError) {
@@ -44,12 +46,12 @@ function formatBytes(
   tr: (key: string, opts?: { n: string }) => string,
 ): string {
   if (n < 1024) {
-    return tr("backup.bytesB", { n: String(n) });
+    return tr("bytesB", { n: String(n) });
   }
   if (n < 1024 * 1024) {
-    return tr("backup.bytesKB", { n: (n / 1024).toFixed(1) });
+    return tr("bytesKB", { n: (n / 1024).toFixed(1) });
   }
-  return tr("backup.bytesMB", { n: (n / (1024 * 1024)).toFixed(1) });
+  return tr("bytesMB", { n: (n / (1024 * 1024)).toFixed(1) });
 }
 
 function formatDateTime(iso: string, locale: string): string {
@@ -67,10 +69,9 @@ function formatDateTime(iso: string, locale: string): string {
 }
 
 export function AdminBackupPage() {
-  const { t, i18n } = useTranslation("admin");
+  const { t } = useTranslation("backup");
   const { t: tc } = useTranslation("common");
-  const dateLocale = i18n.language?.startsWith("ru") ? "ru-RU" : "en-US";
-  const sortLocale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const { dateLocale, collatorLocale } = useAppLocale();
 
   const [allRows, setAllRows] = useState<BackupListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,11 +107,11 @@ export function AdminBackupPage() {
   }, [load]);
 
   useEffect(() => {
-    const t = window.setTimeout(() => {
+    const handle = window.setTimeout(() => {
       setSearch(searchDraft.trim().toLowerCase());
     }, 300);
     return () => {
-      window.clearTimeout(t);
+      window.clearTimeout(handle);
     };
   }, [searchDraft]);
 
@@ -133,11 +134,11 @@ export function AdminBackupPage() {
         return (a.sizeBytes - b.sizeBytes) * mult;
       }
       if (col === "filename") {
-        return a.filename.localeCompare(b.filename, sortLocale) * mult;
+        return a.filename.localeCompare(b.filename, collatorLocale) * mult;
       }
       return (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0) * mult;
     });
-  }, [filtered, sortColumnId, sortOrder, sortLocale]);
+  }, [filtered, sortColumnId, sortOrder, collatorLocale]);
 
   const total = sorted.length;
   const rows = useMemo(() => {
@@ -151,6 +152,7 @@ export function AdminBackupPage() {
     try {
       await createBackup();
       await load();
+      toast.success(t("toastCreated"));
     } catch (e) {
       setCreateError(await httpErrorDetail(e, t("common.unknownError")));
     } finally {
@@ -169,6 +171,7 @@ export function AdminBackupPage() {
       setDelOpen(false);
       setDelTarget(null);
       await load();
+      toast.success(t("toastDeleted"));
     } catch (e) {
       setError(await httpErrorDetail(e, t("common.unknownError")));
     } finally {
@@ -180,32 +183,33 @@ export function AdminBackupPage() {
     () => [
       {
         accessorKey: "filename",
-        header: t("backup.colFile"),
+        header: t("colFile"),
         cell: ({ getValue }) => (
           <span className="font-mono text-sm">{getValue() as string}</span>
         ),
       },
       {
         accessorKey: "sizeBytes",
-        header: t("backup.colSize"),
+        header: t("colSize"),
         cell: ({ getValue }) => formatBytes(getValue() as number, t),
       },
       {
         accessorKey: "createdAt",
-        header: t("backup.colCreated"),
+        header: t("colCreated"),
         cell: ({ getValue }) =>
           formatDateTime(getValue() as string, dateLocale),
       },
       {
         id: "actions",
-        header: t("backup.colActions"),
+        header: t("colActions"),
         enableSorting: false,
         cell: ({ row }) => {
           const r = row.original;
           return (
             <div className="flex flex-wrap gap-1">
               <md-icon-button
-                title={t("backup.downloadTitle")}
+                title={t("downloadTitle")}
+                aria-label={t("downloadTitle")}
                 onClick={() => {
                   void downloadBackupFile(r.filename).catch(async (e) => {
                     setError(await httpErrorDetail(e, t("common.unknownError")));
@@ -215,7 +219,8 @@ export function AdminBackupPage() {
                 <md-icon className="material-symbols-outlined">download</md-icon>
               </md-icon-button>
               <md-icon-button
-                title={t("backup.deleteTitle")}
+                title={t("deleteTitle")}
+                aria-label={t("deleteTitle")}
                 onClick={() => {
                   setDelTarget(r);
                   setDelOpen(true);
@@ -235,21 +240,21 @@ export function AdminBackupPage() {
     <div className="flex flex-col gap-4 p-6">
       <div>
         <h1 className="md-typescale-headline-small m-0 text-[var(--md-sys-color-on-surface)]">
-          {t("backup.title")}
+          {t("title")}
         </h1>
         <p className="md-typescale-body-medium m-0 mt-1 text-[var(--md-sys-color-on-surface-variant)]">
-          {t("backup.subtitleBefore")}{" "}
+          {t("subtitleBefore")}{" "}
           <code className="rounded bg-[var(--md-sys-color-surface-container-high)] px-1 text-sm">
             docs/11-deployment.md
           </code>
-          {t("backup.subtitleAfter")}
+          {t("subtitleAfter")}
         </p>
       </div>
 
       {creating ? (
         <div className="flex flex-col gap-2">
           <p className="md-typescale-body-medium m-0 text-[var(--md-sys-color-on-surface-variant)]">
-            {t("backup.creating")}
+            {t("creating")}
           </p>
           <md-linear-progress indeterminate />
         </div>
@@ -282,15 +287,15 @@ export function AdminBackupPage() {
         isLoading={loading}
         globalFilter={searchDraft}
         onGlobalFilterChange={setSearchDraft}
-        searchPlaceholder={t("backup.searchPlaceholder")}
+        searchPlaceholder={t("searchPlaceholder")}
         emptyIcon="backup"
-        emptyText={t("backup.emptyTitle")}
-        emptyDescription={t("backup.emptyDescription")}
+        emptyText={t("emptyTitle")}
+        emptyDescription={t("emptyDescription")}
       />
 
       <md-fab
         className={`fixed bottom-8 right-8 z-20${creating ? " pointer-events-none opacity-50" : ""}`}
-        label={t("backup.fabCreate")}
+        label={t("fabCreate")}
         onClick={() => {
           if (!creating) {
             void onCreate();
@@ -313,7 +318,7 @@ export function AdminBackupPage() {
         className="min-w-[min(100vw-2rem,24rem)]"
       >
         <div className="flex flex-col gap-4 p-6">
-          <h2 className="md-typescale-title-large m-0">{t("backup.deleteConfirm")}</h2>
+          <h2 className="md-typescale-title-large m-0">{t("deleteConfirm")}</h2>
           <p className="md-typescale-body-medium m-0 text-[var(--md-sys-color-on-surface-variant)]">
             {delTarget?.filename ?? ""}
           </p>
