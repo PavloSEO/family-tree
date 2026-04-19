@@ -1,13 +1,30 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Person } from "@family-tree/shared";
 import { HTTPError } from "ky";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
-import { createPerson, updatePerson } from "../../api/persons.js";
+import { createRelationship } from "../../api/relationships.js";
+import {
+  createPerson,
+  updatePerson,
+  uploadPersonMainPhoto,
+} from "../../api/persons.js";
+import { mainPhotoSrc } from "../../lib/person-main-photo-src.js";
+import { personAvatarSrc } from "../../lib/person-avatar-src.js";
+import { genderToPlaceholderGender } from "../../lib/person-placeholder.js";
 import { Accordion } from "../Accordion.js";
+import { PersonPicker } from "../relationship/RelationshipForm.js";
 import {
   MdButton,
   MdSelect,
@@ -46,6 +63,8 @@ export type PersonFormProps = {
   sessionStorageDraftKey?: string;
   /** Toast after successful save (admin editor only; Welcome flow unchanged). */
   showAdminSaveToast?: boolean;
+  /** After a successful main-photo upload in edit mode (keeps parent `person` in sync). */
+  onPhotoUploaded?: (person: Person) => void;
   onSuccess: () => void;
   onCancel: () => void;
 };
@@ -56,12 +75,18 @@ export function PersonForm({
   person,
   sessionStorageDraftKey,
   showAdminSaveToast = false,
+  onPhotoUploaded,
   onSuccess,
   onCancel,
 }: PersonFormProps) {
   const { t } = useTranslation("person");
   const { t: tc } = useTranslation("common");
   const { t: ta } = useTranslation("admin");
+  const parentPickId = useId().replace(/:/g, "");
+  const anchorFather = `pf-${parentPickId}`;
+  const anchorMother = `pm-${parentPickId}`;
+  const [father, setFather] = useState<Person | null>(null);
+  const [mother, setMother] = useState<Person | null>(null);
   const personSchema = useMemo(() => createPersonFormFieldsSchema(t), [t]);
   const bloodOptions = useMemo(
     () => [
@@ -89,6 +114,28 @@ export function PersonForm({
     [t],
   );
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [serverMainPhoto, setServerMainPhoto] = useState<string | null>(
+    person?.mainPhoto ?? null,
+  );
+  const [blobPreviewUrl, setBlobPreviewUrl] = useState<string | null>(null);
+  const [pendingPhotoFile, setPendingPhotoFile] = useState<File | null>(null);
+  const [photoUploadBusy, setPhotoUploadBusy] = useState(false);
+  const [photoUploadError, setPhotoUploadError] = useState<string | null>(null);
+  const [photoBroken, setPhotoBroken] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setServerMainPhoto(person?.mainPhoto ?? null);
+    setPhotoBroken(false);
+  }, [person?.id, person?.mainPhoto]);
+
+  useEffect(() => {
+    return () => {
+      if (blobPreviewUrl) {
+        URL.revokeObjectURL(blobPreviewUrl);
+      }
+    };
+  }, [blobPreviewUrl]);
   const formValues = useMemo<PersonFormInput>(() => {
     if (person) {
       return personToFormInput(person);
@@ -107,6 +154,88 @@ export function PersonForm({
     defaultValues: PERSON_FORM_DEFAULTS,
     values: formValues,
   });
+
+  const genderWatch = useWatch({ control, name: "gender" });
+  const dateOfDeathWatch = useWatch({ control, name: "dateOfDeath" });
+
+  const previewSrc = useMemo(() => {
+    const g = genderWatch === "female" ? "female" : "male";
+    const dead =
+      Boolean(dateOfDeathWatch) &&
+      String(dateOfDeathWatch ?? "").trim().length > 0;
+    if (blobPreviewUrl) {
+      return blobPreviewUrl;
+    }
+    if (!photoBroken) {
+      const fromDb = mainPhotoSrc(serverMainPhoto);
+      if (fromDb) {
+        return fromDb;
+      }
+    }
+    return personAvatarSrc({
+      mainPhoto: null,
+      gender: genderToPlaceholderGender(g),
+      dead,
+      photoBroken: false,
+    });
+  }, [
+    blobPreviewUrl,
+    serverMainPhoto,
+    photoBroken,
+    genderWatch,
+    dateOfDeathWatch,
+  ]);
+
+  const handlePhotoFileSelected = useCallback(
+    async (ev: ChangeEvent<HTMLInputElement>) => {
+      const f = ev.target.files?.[0];
+      ev.target.value = "";
+      if (!f) {
+        return;
+      }
+      setPhotoUploadError(null);
+      if (mode === "edit" && personId) {
+        setPhotoUploadBusy(true);
+        try {
+          const updated = await uploadPersonMainPhoto(personId, f);
+          setServerMainPhoto(updated.mainPhoto ?? null);
+          setBlobPreviewUrl((prev) => {
+            if (prev) {
+              URL.revokeObjectURL(prev);
+            }
+            return null;
+          });
+          setPendingPhotoFile(null);
+          setPhotoBroken(false);
+          onPhotoUploaded?.(updated);
+          if (showAdminSaveToast) {
+            toast.success(ta("toast.personPhotoUpdated"));
+          }
+        } catch (e) {
+          setPhotoUploadError(apiErrorMessage(e));
+        } finally {
+          setPhotoUploadBusy(false);
+        }
+        return;
+      }
+      setPendingPhotoFile(f);
+      setBlobPreviewUrl((prev) => {
+        if (prev) {
+          URL.revokeObjectURL(prev);
+        }
+        return URL.createObjectURL(f);
+      });
+      setPhotoBroken(false);
+    },
+    [
+      mode,
+      personId,
+      apiErrorMessage,
+      onPhotoUploaded,
+      showAdminSaveToast,
+      ta,
+    ],
+  );
 
   const { errors, isSubmitting } = formState;
 
@@ -173,8 +302,61 @@ export function PersonForm({
             const body = formInputToPersonUpdate(values);
             await updatePerson(personId, body);
           } else {
+            if (father && mother && father.id === mother.id) {
+              setSubmitError(t("form.parentsSamePersonError"));
+              return;
+            }
             const body = formInputToPersonCreate(values);
-            await createPerson(body);
+            const created = await createPerson(body);
+            const parentPayload = {
+              type: "parent" as const,
+              toPersonId: created.id,
+            };
+            const linkErrors: string[] = [];
+            if (father) {
+              try {
+                await createRelationship({
+                  ...parentPayload,
+                  fromPersonId: father.id,
+                });
+              } catch (e) {
+                linkErrors.push(apiErrorMessage(e));
+              }
+            }
+            if (mother) {
+              try {
+                await createRelationship({
+                  ...parentPayload,
+                  fromPersonId: mother.id,
+                });
+              } catch (e) {
+                linkErrors.push(apiErrorMessage(e));
+              }
+            }
+            if (linkErrors.length > 0) {
+              toast.error(t("form.parentsLinkPartialError"), {
+                description: linkErrors.join(" · "),
+              });
+            }
+            if (pendingPhotoFile) {
+              try {
+                const updated = await uploadPersonMainPhoto(
+                  created.id,
+                  pendingPhotoFile,
+                );
+                setServerMainPhoto(updated.mainPhoto ?? null);
+                setBlobPreviewUrl((prev) => {
+                  if (prev) {
+                    URL.revokeObjectURL(prev);
+                  }
+                  return null;
+                });
+                setPendingPhotoFile(null);
+                setPhotoBroken(false);
+              } catch (photoErr) {
+                toast.error(apiErrorMessage(photoErr));
+              }
+            }
           }
           if (mode === "create" && sessionStorageDraftKey) {
             try {
@@ -203,6 +385,37 @@ export function PersonForm({
         >
           {submitError}
         </p>
+      ) : null}
+
+      {mode === "create" ? (
+        <fieldset className="m-0 rounded-[var(--md-sys-shape-corner-medium)] border border-[var(--md-sys-color-outline-variant)] p-4">
+          <legend className="md-typescale-title-small px-1 text-[var(--md-sys-color-on-surface)]">
+            {t("form.parentsLegend")}
+          </legend>
+          <p className="md-typescale-body-small m-0 mb-4 text-[var(--md-sys-color-on-surface-variant)]">
+            {t("form.parentsHint")}
+          </p>
+          <div className="flex flex-col gap-6">
+            <PersonPicker
+              anchorId={anchorFather}
+              label={t("form.parentFather")}
+              person={father}
+              onChange={setFather}
+              searchFieldLabel={ta("relationshipForm.searchLabel")}
+              searchingLabel={ta("relationshipForm.searching")}
+              changeLabel={ta("relationshipForm.change")}
+            />
+            <PersonPicker
+              anchorId={anchorMother}
+              label={t("form.parentMother")}
+              person={mother}
+              onChange={setMother}
+              searchFieldLabel={ta("relationshipForm.searchLabel")}
+              searchingLabel={ta("relationshipForm.searching")}
+              changeLabel={ta("relationshipForm.change")}
+            />
+          </div>
+        </fieldset>
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -236,7 +449,7 @@ export function PersonForm({
         />
       </div>
 
-      <fieldset className="m-0 border-0 p-0">
+      <fieldset className="person-form-gender m-0 border-0 p-0 [--md-icon-size:24px] [--md-radio-icon-size:24px]">
         <legend className="md-typescale-label-large mb-2 text-[var(--md-sys-color-on-surface-variant)]">
           {t("form.genderLegend")}
         </legend>
@@ -244,33 +457,65 @@ export function PersonForm({
           name="gender"
           control={control}
           render={({ field }) => (
-            <div className="flex flex-wrap gap-6">
-              <md-radio
-                name="person-gender"
-                value="male"
-                checked={field.value === "male"}
-                onInput={() => {
-                  field.onChange("male");
-                }}
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+              <label
+                className={
+                  "flex min-h-[52px] cursor-pointer items-center gap-3 rounded-full border-2 px-4 py-2 transition-colors " +
+                  (field.value === "male"
+                    ? "border-[var(--md-sys-color-primary)] bg-[var(--md-sys-color-secondary-container)] text-[var(--md-sys-color-on-secondary-container)]"
+                    : "border-transparent hover:bg-[var(--md-sys-color-surface-container-highest)] text-[var(--md-sys-color-on-surface)]")
+                }
               >
-                {t("gender.maleShort")}
-              </md-radio>
-              <md-radio
-                name="person-gender"
-                value="female"
-                checked={field.value === "female"}
-                onInput={() => {
-                  field.onChange("female");
-                }}
+                <md-icon
+                  className="material-symbols-outlined shrink-0 opacity-90"
+                  aria-hidden="true"
+                >
+                  man
+                </md-icon>
+                <md-radio
+                  name="person-gender"
+                  value="male"
+                  checked={field.value === "male"}
+                  onInput={() => {
+                    field.onChange("male");
+                  }}
+                />
+                <span className="md-typescale-body-large font-medium">
+                  {t("gender.maleShort")}
+                </span>
+              </label>
+              <label
+                className={
+                  "flex min-h-[52px] cursor-pointer items-center gap-3 rounded-full border-2 px-4 py-2 transition-colors " +
+                  (field.value === "female"
+                    ? "border-[var(--md-sys-color-primary)] bg-[var(--md-sys-color-secondary-container)] text-[var(--md-sys-color-on-secondary-container)]"
+                    : "border-transparent hover:bg-[var(--md-sys-color-surface-container-highest)] text-[var(--md-sys-color-on-surface)]")
+                }
               >
-                {t("gender.femaleShort")}
-              </md-radio>
+                <md-icon
+                  className="material-symbols-outlined shrink-0 opacity-90"
+                  aria-hidden="true"
+                >
+                  woman
+                </md-icon>
+                <md-radio
+                  name="person-gender"
+                  value="female"
+                  checked={field.value === "female"}
+                  onInput={() => {
+                    field.onChange("female");
+                  }}
+                />
+                <span className="md-typescale-body-large font-medium">
+                  {t("gender.femaleShort")}
+                </span>
+              </label>
             </div>
           )}
         />
       </fieldset>
 
-      <Accordion summary={t("form.accordionExtraName")}>
+      <Accordion summary={t("form.accordionExtraName")} icon="person">
         <div className="grid gap-4 sm:grid-cols-2">
           <Controller
             name="patronymic"
@@ -312,7 +557,7 @@ export function PersonForm({
         />
       </Accordion>
 
-      <Accordion summary={t("form.accordionDatesPlaces")}>
+      <Accordion summary={t("form.accordionDatesPlaces")} icon="calendar_today">
         <div className="grid gap-4 sm:grid-cols-2">
           <Controller
             name="dateOfBirth"
@@ -390,21 +635,76 @@ export function PersonForm({
         </div>
       </Accordion>
 
-      <Accordion summary={t("form.accordionPhoto")}>
-        <p className="md-typescale-body-medium m-0 text-[var(--md-sys-color-on-surface-variant)]">
-          {t("form.photoLine1")}{" "}
-          <code className="rounded bg-[var(--md-sys-color-surface-container-high)] px-1 text-sm">
-            POST /api/persons/:id/photo
-          </code>{" "}
-          {t("form.photoLine2")}{" "}
-          <code className="rounded bg-[var(--md-sys-color-surface-container-high)] px-1 text-sm">
-            file
-          </code>
-          {t("form.photoLine3")}
-        </p>
+      <Accordion summary={t("form.accordionPhoto")} icon="photo_camera">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+          <div className="shrink-0">
+            <img
+              src={previewSrc}
+              alt=""
+              className="h-36 w-36 rounded-lg border border-[var(--md-sys-color-outline-variant)] object-cover"
+              onError={() => {
+                if (blobPreviewUrl) {
+                  setPhotoUploadError(t("form.photoPreviewError"));
+                  setBlobPreviewUrl((prev) => {
+                    if (prev) {
+                      URL.revokeObjectURL(prev);
+                    }
+                    return null;
+                  });
+                  setPendingPhotoFile(null);
+                  return;
+                }
+                setPhotoBroken(true);
+              }}
+            />
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <p className="md-typescale-body-medium m-0 text-[var(--md-sys-color-on-surface-variant)]">
+              {t("form.photoHint")}
+            </p>
+            {mode === "create" ? (
+              <p className="md-typescale-body-small m-0 text-[var(--md-sys-color-on-surface-variant)]">
+                {t("form.photoWillApplyOnSave")}
+              </p>
+            ) : null}
+            <input
+              ref={photoInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif,image/tiff"
+              className="sr-only"
+              aria-hidden
+              disabled={photoUploadBusy || isSubmitting}
+              onChange={(ev) => {
+                void handlePhotoFileSelected(ev);
+              }}
+            />
+            <div className="flex flex-wrap items-center gap-2">
+              <MdButton
+                variant="outlined"
+                type="button"
+                disabled={photoUploadBusy || isSubmitting}
+                onClick={() => {
+                  photoInputRef.current?.click();
+                }}
+              >
+                {photoUploadBusy
+                  ? t("form.photoUploading")
+                  : t("form.photoChooseButton")}
+              </MdButton>
+            </div>
+            {photoUploadError ? (
+              <p
+                className="md-typescale-body-medium m-0"
+                style={{ color: "var(--md-sys-color-error)" }}
+              >
+                {photoUploadError}
+              </p>
+            ) : null}
+          </div>
+        </div>
       </Accordion>
 
-      <Accordion summary={t("form.accordionContacts")}>
+      <Accordion summary={t("form.accordionContacts")} icon="contact_mail">
         <div className="grid gap-4 sm:grid-cols-2">
           <Controller
             name="phone"
@@ -450,7 +750,7 @@ export function PersonForm({
         />
       </Accordion>
 
-      <Accordion summary={t("form.accordionAbout")}>
+      <Accordion summary={t("form.accordionAbout")} icon="description">
         <Controller
           name="bio"
           control={control}
@@ -491,7 +791,7 @@ export function PersonForm({
         />
       </Accordion>
 
-      <Accordion summary={t("form.accordionMedical")}>
+      <Accordion summary={t("form.accordionMedical")} icon="favorite">
         <Controller
           name="bloodType"
           control={control}
@@ -513,7 +813,7 @@ export function PersonForm({
         />
       </Accordion>
 
-      <Accordion summary={t("form.accordionCustom")}>
+      <Accordion summary={t("form.accordionCustom")} icon="tune">
         <Controller
           name="customFieldsJson"
           control={control}

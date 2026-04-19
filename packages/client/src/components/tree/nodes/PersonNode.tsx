@@ -13,22 +13,46 @@ export function PersonNode(props: NodeProps) {
   const { t } = useTranslation("tree");
   const d = props.data as TreePersonNodeData;
   const [broken, setBroken] = useState(false);
+
   const avatarSrc = personAvatarSrc({
     mainPhoto: d.mainPhoto,
     gender: d.gender,
     dead: false,
     photoBroken: broken,
   });
+
   const flag = countryFlagEmoji(d.country);
-  const border = d.isRoot
-    ? "2px solid var(--md-sys-color-primary)"
-    : "2px solid var(--md-sys-color-outline-variant)";
+  const isFemale = d.gender === "female";
+
+  /* Root gets primary border + elevation; others get outline-variant */
+  const borderColor = d.isRoot
+    ? "var(--md-sys-color-primary)"
+    : isFemale
+      ? "var(--md-sys-color-tertiary)"
+      : "var(--md-sys-color-outline-variant)";
+
+  /* Subtle tint on container for gender differentiation */
+  const bgColor = d.isRoot
+    ? "var(--md-sys-color-primary-container)"
+    : isFemale
+      ? "var(--md-sys-color-tertiary-container)"
+      : "var(--md-sys-color-surface)";
+
+  const nameColor = d.isRoot
+    ? "var(--md-sys-color-on-primary-container)"
+    : "var(--md-sys-color-on-surface)";
+
   return (
     <div
       title={t("nodeClickHint")}
-      className={`flex w-[160px] cursor-pointer flex-col gap-1 rounded-[var(--md-sys-shape-corner-large)] bg-[var(--md-sys-color-surface)] p-2 ${d.isHighlighted ? "outline outline-2 outline-offset-2 outline-[var(--md-sys-color-tertiary)]" : ""}`}
+      className={`flex w-[176px] cursor-pointer flex-row items-center gap-2 rounded-[var(--md-sys-shape-corner-extra-large)] p-2 pr-3 ${
+        d.isHighlighted
+          ? "outline outline-2 outline-offset-2 outline-[var(--md-sys-color-tertiary)]"
+          : ""
+      }`}
       style={{
-        border,
+        background: bgColor,
+        border: `${d.isRoot ? "2px" : "1.5px"} solid ${borderColor}`,
         ...(d.isRoot ? { boxShadow: treeRootNodeBoxShadow } : {}),
       }}
     >
@@ -37,30 +61,25 @@ export function PersonNode(props: NodeProps) {
       <Handle type="target" position={Position.Left} id="sl" className="!opacity-0" />
       <Handle type="source" position={Position.Right} id="sr" className="!opacity-0" />
 
-      <div className="flex justify-center">
-        <img
-          src={avatarSrc}
-          alt=""
-          className="h-12 w-12 rounded-full object-cover"
-          onError={() => {
-            setBroken(true);
-          }}
-        />
-      </div>
-      <p className="md-typescale-label-large m-0 text-center leading-tight text-[var(--md-sys-color-on-surface)]">
-        {d.firstName}
-      </p>
-      <p className="md-typescale-label-large m-0 text-center leading-tight text-[var(--md-sys-color-on-surface)]">
-        {d.lastName}
-      </p>
-      <p className="md-typescale-label-small m-0 text-center text-[var(--md-sys-color-on-surface-variant)]">
-        {formatYearsLabel(d.dateOfBirth, d.dateOfDeath)}
-      </p>
-      {flag ? (
-        <p className="md-typescale-body-medium m-0 text-center" aria-hidden>
-          {flag}
+      <img
+        src={avatarSrc}
+        alt=""
+        className="h-9 w-9 shrink-0 rounded-full object-cover"
+        onError={() => setBroken(true)}
+      />
+
+      <div className="min-w-0 flex-1">
+        <p
+          className="md-typescale-label-large m-0 truncate leading-tight"
+          style={{ color: nameColor }}
+        >
+          {d.firstName} {d.lastName}
         </p>
-      ) : null}
+        <p className="md-typescale-label-small m-0 leading-tight text-[var(--md-sys-color-on-surface-variant)]">
+          {formatYearsLabel(d.dateOfBirth, d.dateOfDeath)}
+          {flag ? ` ${flag}` : ""}
+        </p>
+      </div>
     </div>
   );
 }

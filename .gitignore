@@ -6,6 +6,7 @@ build
 pnpm-debug.log
 *.log
 data/
+packages/server/data/
 .DS_Store
 Thumbs.db
 
@@ -16,3 +17,6 @@ material-web-main/
 
 # Сертификаты для TLS у nginx (только на сервере, не в репозитории)
 docker/nginx/certs/
+
+# Распакованный handoff дизайн-системы (исходный zip храните у себя)
+.design-handoff-tmp/

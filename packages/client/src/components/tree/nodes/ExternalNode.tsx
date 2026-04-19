@@ -13,22 +13,32 @@ export function ExternalNode(props: NodeProps) {
   const { t } = useTranslation("tree");
   const d = props.data as TreePersonNodeData;
   const [broken, setBroken] = useState(false);
+
   const avatarSrc = personAvatarSrc({
     mainPhoto: d.mainPhoto,
     gender: d.gender,
     dead: d.isDead,
     photoBroken: broken,
   });
+
   const flag = countryFlagEmoji(d.country);
-  const border = d.isRoot
-    ? "2px solid var(--md-sys-color-primary)"
-    : "2px dashed var(--md-sys-color-outline)";
+
+  const borderColor = d.isRoot
+    ? "var(--md-sys-color-primary)"
+    : "var(--md-sys-color-outline-variant)";
+
   return (
     <div
       title={t("nodeClickHint")}
-      className={`flex w-[160px] cursor-pointer flex-col gap-1 rounded-[var(--md-sys-shape-corner-large)] bg-[var(--md-sys-color-surface-container-low)] p-2 ${d.isHighlighted ? "outline outline-2 outline-offset-2 outline-[var(--md-sys-color-tertiary)]" : ""}`}
+      className={`flex w-[176px] cursor-pointer flex-row items-center gap-2 rounded-[var(--md-sys-shape-corner-extra-large)] p-2 pr-3 ${
+        d.isHighlighted
+          ? "outline outline-2 outline-offset-2 outline-[var(--md-sys-color-tertiary)]"
+          : ""
+      }`}
       style={{
-        border,
+        background: "var(--md-sys-color-surface-container-low)",
+        border: `1.5px dashed ${borderColor}`,
+        opacity: d.isDead ? 0.75 : 1,
         ...(d.isRoot ? { boxShadow: treeRootNodeBoxShadow } : {}),
       }}
     >
@@ -37,33 +47,29 @@ export function ExternalNode(props: NodeProps) {
       <Handle type="target" position={Position.Left} id="sl" className="!opacity-0" />
       <Handle type="source" position={Position.Right} id="sr" className="!opacity-0" />
 
-      <div className="flex justify-center">
-        <img
-          src={avatarSrc}
-          alt=""
-          className="h-12 w-12 rounded-full object-cover"
-          onError={() => {
-            setBroken(true);
-          }}
-        />
-      </div>
-      <p className="md-typescale-label-large m-0 text-center leading-tight text-[var(--md-sys-color-on-surface)]">
-        {d.firstName}
-      </p>
-      <p className="md-typescale-label-large m-0 text-center leading-tight text-[var(--md-sys-color-on-surface)]">
-        {d.lastName}
-      </p>
-      <p className="md-typescale-label-small m-0 text-center text-[var(--md-sys-color-on-surface-variant)]">
-        {formatYearsLabel(d.dateOfBirth, d.dateOfDeath)}
-      </p>
-      {flag ? (
-        <p className="md-typescale-body-medium m-0 text-center" aria-hidden>
-          {flag}
+      <img
+        src={avatarSrc}
+        alt=""
+        className="h-9 w-9 shrink-0 rounded-full object-cover"
+        style={d.isDead ? { filter: "grayscale(0.5) brightness(0.9)" } : undefined}
+        onError={() => setBroken(true)}
+      />
+
+      <div className="min-w-0 flex-1">
+        <p className="md-typescale-label-large m-0 truncate leading-tight text-[var(--md-sys-color-on-surface-variant)]">
+          {d.firstName} {d.lastName}
         </p>
-      ) : null}
-      <p className="md-typescale-label-small m-0 text-center text-[var(--md-sys-color-on-surface-variant)]">
-        {t("externalBranchBadge")}
-      </p>
+        <p className="md-typescale-label-small m-0 leading-tight text-[var(--md-sys-color-on-surface-variant)]">
+          {formatYearsLabel(d.dateOfBirth, d.dateOfDeath)}
+          {flag ? ` ${flag}` : ""}
+        </p>
+        <p
+          className="md-typescale-label-small m-0 leading-tight"
+          style={{ color: "var(--md-sys-color-outline)" }}
+        >
+          {t("externalBranchBadge")}
+        </p>
+      </div>
     </div>
   );
 }

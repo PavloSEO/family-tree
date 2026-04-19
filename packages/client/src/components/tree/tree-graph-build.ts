@@ -2,8 +2,8 @@ import type { TreeEdge, TreeNode, TreeResponse } from "@family-tree/shared";
 import type { Edge, Node } from "@xyflow/react";
 import { comparePersonNames } from "../../lib/app-locale.js";
 
-export const NODE_W = 160;
-export const NODE_H = 120;
+export const NODE_W = 176;
+export const NODE_H = 72;
 
 const SIMPLE_GAP_X = 220;
 const SIMPLE_GAP_Y = 130;

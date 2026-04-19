@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
+@import "./roboto-local.css";
+@import "./brand-fonts.css";
 
 :root {
   /* === Reference tokens === */
@@ -59,14 +61,73 @@
   --md-sys-shape-corner-large: 16px;
   --md-sys-shape-corner-extra-large: 28px;
   --md-sys-shape-corner-full: 9999px;
+
+  /*
+   * Material Web defaults: outlined focus ring 3px, filled focus underline 3px,
+   * checkbox/switch outline 2px. One consistent 1px stroke for all field-like controls.
+   */
+  --md-outlined-text-field-outline-width: 1px;
+  --md-outlined-text-field-hover-outline-width: 1px;
+  --md-outlined-text-field-focus-outline-width: 1px;
+  --md-outlined-text-field-disabled-outline-width: 1px;
+
+  --md-outlined-select-text-field-outline-width: 1px;
+  --md-outlined-select-text-field-hover-outline-width: 1px;
+  --md-outlined-select-text-field-focus-outline-width: 1px;
+  --md-outlined-select-text-field-disabled-outline-width: 1px;
+
+  --md-filled-text-field-active-indicator-height: 1px;
+  --md-filled-text-field-hover-active-indicator-height: 1px;
+  --md-filled-text-field-focus-active-indicator-height: 1px;
+  --md-filled-text-field-disabled-active-indicator-height: 1px;
+
+  --md-checkbox-outline-width: 1px;
+  --md-checkbox-hover-outline-width: 1px;
+  --md-checkbox-focus-outline-width: 1px;
+  --md-checkbox-pressed-outline-width: 1px;
+  --md-checkbox-disabled-outline-width: 1px;
+
+  --md-switch-track-outline-width: 1px;
+
+  /*
+   * Icon buttons: MW defaults to a 40×40 state layer; M3 touch target is 48×48.
+   * Inherited by all `md-icon-button` (tables, tree, forms).
+   */
+  --md-icon-button-state-layer-width: 48px;
+  --md-icon-button-state-layer-height: 48px;
+  --md-icon-button-icon-size: 26px;
+
+  /* Design system handoff — elevation + semantic aliases */
+  --ft-elevation-1: 0 1px 2px rgb(0 0 0 / 12%), 0 1px 3px rgb(0 0 0 / 14%);
+  --ft-elevation-2: 0 1px 2px rgb(0 0 0 / 12%), 0 2px 6px rgb(0 0 0 / 14%);
+  --ft-elevation-3: 0 4px 8px rgb(0 0 0 / 12%), 0 1px 3px rgb(0 0 0 / 14%);
+
+  --color-fg-1: var(--md-sys-color-on-surface);
+  --color-fg-2: var(--md-sys-color-on-surface-variant);
+  --color-fg-brand: var(--md-sys-color-primary);
+  --color-bg: var(--md-sys-color-background);
+  --color-surface: var(--md-sys-color-surface);
+  --color-border: var(--md-sys-color-outline-variant);
+  --color-error: var(--md-sys-color-error);
 }
 
 .material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: normal;
   font-variation-settings:
     "FILL" 0,
     "wght" 400,
     "GRAD" 0,
     "opsz" 24;
+  display: inline-block;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Keep `md-icon` glyph box aligned with icon-button slotted size (avoids clip). */
+md-icon-button md-icon {
+  --md-icon-size: var(--md-icon-button-icon-size, 26px);
 }
 
 body {
@@ -74,17 +135,28 @@ body {
   background-color: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
   margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* AppShell: active item highlight (ripple on interactive md-list-item is built into MW) */
+/* AppShell: `md-ripple` uses `border-radius: inherit`; without radius on :host, hover is a gray rectangle. */
 .app-shell__list {
   --md-list-item-one-line-container-height: 48px;
+}
+
+.app-shell__list md-list-item {
+  border-radius: var(--md-sys-shape-corner-full);
+}
+
+.app-shell__nav-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .app-shell__nav-item--active {
   background-color: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
-  border-radius: var(--md-sys-shape-corner-full);
 }
 
 .app-shell__sidebar {
@@ -112,49 +184,47 @@ body {
   background-color: var(--md-sys-color-surface);
 }
 
-.accordion {
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-medium);
-  overflow: hidden;
+/*
+ * MW buttons size slotted icons to 18px, but `md-icon` defaults `--md-icon-size` to 24px
+ * in shadow (`overflow: hidden`) — glyphs clip. Bridge each button's theme token to `md-icon`.
+ */
+md-filled-button {
+  --md-icon-size: var(--md-filled-button-icon-size, 18px);
 }
 
-/* md-text-button (Accordion): full-width row, colors like former native button */
-.accordion-header {
-  width: 100%;
-  justify-content: space-between;
-  border-radius: 0;
-  padding: 0.75rem 1rem;
-  text-align: start;
-  --md-sys-color-primary: var(--md-sys-color-on-surface);
-  --md-text-button-label-text-color: var(--md-sys-color-on-surface);
-  --md-text-button-hover-label-text-color: var(--md-sys-color-on-surface);
-  --md-text-button-focus-label-text-color: var(--md-sys-color-on-surface);
-  --md-text-button-hover-state-layer-color: var(--md-sys-color-on-surface);
-  --md-text-button-focus-state-layer-color: var(--md-sys-color-on-surface);
-  --md-text-button-pressed-state-layer-color: var(--md-sys-color-on-surface);
-  background-color: var(--md-sys-color-surface-container-low);
+md-outlined-button {
+  --md-icon-size: var(--md-outlined-button-icon-size, 18px);
 }
 
-.accordion-header:hover {
-  background-color: var(--md-sys-color-surface-container);
+md-text-button {
+  --md-icon-size: var(--md-text-button-icon-size, 18px);
 }
 
-.accordion-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
+md-elevated-button {
+  --md-icon-size: var(--md-elevated-button-icon-size, 18px);
 }
 
-.accordion-chevron {
-  font-size: 1.25rem;
-  color: var(--md-sys-color-on-surface-variant);
+md-filled-tonal-button {
+  --md-icon-size: var(--md-filled-tonal-button-icon-size, 18px);
 }
 
-/* Sonner — close to M3 snackbar (light theme) */
+/*
+ * Sonner: larger toasts; neutral = M3 inverse snackbar.
+ * success/error/warning/info use Sonner `richColors` (green/red/…) — do not paint them inverse.
+ */
+[data-sonner-toaster] {
+  --width: min(calc(100vw - 2rem), 26rem);
+}
+
 .sonner-toast {
   border-radius: var(--md-sys-shape-corner-medium) !important;
+  padding: 1.125rem 1.35rem !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.45 !important;
+  min-height: 4.25rem;
+}
+
+.sonner-toast:not([data-type="success"]):not([data-type="error"]):not([data-type="warning"]):not([data-type="info"]) {
   background: var(--md-sys-color-inverse-surface) !important;
   color: var(--md-sys-color-inverse-on-surface) !important;
   border: none !important;
@@ -164,15 +234,42 @@ body {
     0 1px 18px 0 rgb(0 0 0 / 12%) !important;
 }
 
-.sonner-toast__title {
-  font-weight: 500 !important;
+.sonner-toast:is([data-type="success"], [data-type="error"], [data-type="warning"], [data-type="info"]) {
+  box-shadow:
+    0 3px 5px -1px rgb(0 0 0 / 12%),
+    0 6px 10px 0 rgb(0 0 0 / 8%),
+    0 1px 18px 0 rgb(0 0 0 / 8%) !important;
 }
 
-.sonner-toast__description {
+.sonner-toast [data-icon] svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.sonner-toast__title {
+  font-weight: 600 !important;
+  font-size: 1.0625rem !important;
+  line-height: 1.35 !important;
+}
+
+.sonner-toast:not([data-type="success"]):not([data-type="error"]):not([data-type="warning"]):not([data-type="info"])
+  .sonner-toast__description {
+  color: var(--md-sys-color-inverse-on-surface) !important;
   opacity: 0.92 !important;
+  font-size: 0.9375rem !important;
+}
+
+.sonner-toast:is([data-type="success"], [data-type="error"], [data-type="warning"], [data-type="info"])
+  .sonner-toast__description {
+  opacity: 1 !important;
+  font-size: 0.9375rem !important;
 }
 
 .sonner-toast__close {
-  color: var(--md-sys-color-inverse-on-surface) !important;
   border-color: transparent !important;
+}
+
+.sonner-toast:not([data-type="success"]):not([data-type="error"]):not([data-type="warning"]):not([data-type="info"])
+  .sonner-toast__close {
+  color: var(--md-sys-color-inverse-on-surface) !important;
 }
