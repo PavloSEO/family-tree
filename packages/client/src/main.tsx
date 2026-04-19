@@ -1,4 +1,3 @@
-import { styles as typescaleStyles } from "@material/web/typography/md-typescale-styles.js";
 import { StrictMode, Suspense } from "react";
 import "./i18n.js";
 import { createRoot } from "react-dom/client";
@@ -9,11 +8,6 @@ import { AppLoadingFallback } from "./components/layout/AppLoadingFallback.js";
 import "./material-imports.js";
 import { AuthProvider } from "./providers/AuthProvider.js";
 import "./styles/global.css";
-
-const typescaleSheet = typescaleStyles.styleSheet;
-if (typescaleSheet) {
-  document.adoptedStyleSheets = [...document.adoptedStyleSheets, typescaleSheet];
-}
 
 const root = document.getElementById("root");
 if (!root) {
@@ -31,6 +25,8 @@ createRoot(root).render(
           </Suspense>
           <Toaster
             position="bottom-center"
+            theme="light"
+            richColors
             closeButton
             toastOptions={{
               classNames: {
