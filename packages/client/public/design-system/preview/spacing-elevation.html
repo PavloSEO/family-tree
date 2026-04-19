@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+body { margin: 0; padding: 16px; background: var(--md-sys-color-background); font-family: var(--md-ref-typeface-plain); }
+.row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+.label { font-size: 10px; color: var(--md-sys-color-on-surface-variant); width: 100px; flex-shrink: 0; font-family: monospace; }
+.card { border-radius: var(--md-sys-shape-corner-medium); background: var(--md-sys-color-surface-container-low); padding: 12px 16px; }
+.e1 { box-shadow: var(--ft-elevation-1); }
+.e2 { box-shadow: var(--ft-elevation-2); }
+.e3 { box-shadow: var(--ft-elevation-3); }
+</style>
+</head>
+<body>
+<div class="row"><span class="label">Elevation 0</span><div class="card" style="width:160px;height:44px;background:var(--md-sys-color-surface);border:1px solid var(--md-sys-color-outline-variant)"></div></div>
+<div class="row"><span class="label">Elevation 1</span><div class="card e1" style="width:160px;height:44px;"></div></div>
+<div class="row"><span class="label">Elevation 2</span><div class="card e2" style="width:160px;height:44px;"></div></div>
+<div class="row"><span class="label">Elevation 3</span><div class="card e3" style="width:160px;height:44px;"></div></div>
+</body>
+</html>

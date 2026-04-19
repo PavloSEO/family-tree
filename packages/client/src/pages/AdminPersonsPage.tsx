@@ -1,13 +1,22 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { HTTPError } from "ky";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Person } from "@family-tree/shared";
-import { deletePerson, fetchPersonsList } from "../api/persons.js";
+import {
+  deletePerson,
+  fetchPersonsList,
+  importPersonsBulkJson,
+} from "../api/persons.js";
 import { personAvatarSrc } from "../lib/person-avatar-src.js";
 import { genderToPlaceholderGender } from "../lib/person-placeholder.js";
+import {
+  personTableAvatarGenderBgClass,
+  personTableAvatarLivingRingClass,
+  personTableAvatarTintClass,
+} from "../lib/person-table-avatar-style.js";
 import { DataTable } from "../components/data-table/index.js";
 import {
   MdButton,
@@ -62,20 +71,54 @@ function PhotoCell({ person }: { person: Person }) {
     dead: isDead,
     photoBroken: broken,
   });
+  const ringClass = personTableAvatarLivingRingClass(person);
+  const tintClass = personTableAvatarTintClass(person);
+  const genderPadClass = personTableAvatarGenderBgClass(person.gender);
   return (
-    <img
-      src={avatarSrc}
-      alt=""
-      className="h-10 w-10 rounded-sm object-cover"
-      onError={() => {
-        setBroken(true);
-      }}
-    />
+    <div className="person-table-avatar">
+      <div className={`person-table-avatar__wrap ${ringClass}`}>
+        <div className={`person-table-avatar__pad ${genderPadClass}`}>
+          <img
+            src={avatarSrc}
+            alt=""
+            className={`person-table-avatar__img ${tintClass}`}
+            onError={() => {
+              setBroken(true);
+            }}
+          />
+        </div>
+        <span
+          aria-hidden
+          className={`person-table-avatar__badge ${isDead ? "person-table-avatar__badge--dead" : "person-table-avatar__badge--living"}`}
+        />
+      </div>
+    </div>
   );
 }
 
 function errorMessage(e: unknown, unknownLabel: string): string {
   if (e instanceof HTTPError) {
+    return e.message;
+  }
+  if (e instanceof Error) {
+    return e.message;
+  }
+  return unknownLabel;
+}
+
+async function importApiErrorMessage(
+  e: unknown,
+  unknownLabel: string,
+): Promise<string> {
+  if (e instanceof HTTPError) {
+    try {
+      const body = (await e.response.json()) as { error?: string };
+      if (body.error) {
+        return body.error;
+      }
+    } catch {
+      /* ignore */
+    }
     return e.message;
   }
   if (e instanceof Error) {
@@ -105,6 +148,11 @@ export function AdminPersonsPage() {
   const [delOpen, setDelOpen] = useState(false);
   const [delTarget, setDelTarget] = useState<Person | null>(null);
   const [delBusy, setDelBusy] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importJsonText, setImportJsonText] = useState("");
+  const [importBusy, setImportBusy] = useState(false);
+  const [importLocalError, setImportLocalError] = useState<string | null>(null);
+  const importFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -206,12 +254,25 @@ export function AdminPersonsPage() {
         id: "status",
         header: t("persons.colStatus"),
         enableSorting: false,
-        cell: ({ row }) =>
-          statusLabel(
-            row.original,
+        cell: ({ row }) => {
+          const p = row.original;
+          const dead =
+            p.dateOfDeath != null &&
+            p.dateOfDeath !== "" &&
+            String(p.dateOfDeath).trim().length > 0;
+          const label = statusLabel(
+            p,
             t("persons.lifeStatusDead"),
             t("persons.lifeStatusAlive"),
-          ),
+          );
+          return (
+            <span
+              className={`person-table-status ${dead ? "person-table-status--dead" : "person-table-status--living"}`}
+            >
+              {label}
+            </span>
+          );
+        },
       },
       {
         id: "actions",
@@ -267,6 +328,31 @@ export function AdminPersonsPage() {
     }
   }
 
+  async function submitJsonImport() {
+    setImportLocalError(null);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(importJsonText) as unknown;
+    } catch {
+      setImportLocalError(t("persons.importJsonParseError"));
+      return;
+    }
+    setImportBusy(true);
+    try {
+      const n = await importPersonsBulkJson(parsed);
+      setImportOpen(false);
+      setImportJsonText("");
+      await load();
+      toast.success(t("toast.personsBulkImported", { count: n }));
+    } catch (e) {
+      setImportLocalError(
+        await importApiErrorMessage(e, t("common.unknownError")),
+      );
+    } finally {
+      setImportBusy(false);
+    }
+  }
+
   return (
     <div className="p-6">
       <h1 className="md-typescale-headline-large m-0 mb-4">{t("persons.title")}</h1>
@@ -303,6 +389,19 @@ export function AdminPersonsPage() {
         emptyIcon="badge"
         emptyText={t("persons.emptyTitle")}
         emptyDescription={t("persons.emptyDescription")}
+        toolbarActions={
+          <MdButton
+            variant="outlined"
+            type="button"
+            className="min-w-fit shrink-0"
+            onClick={() => {
+              setImportLocalError(null);
+              setImportOpen(true);
+            }}
+          >
+            {t("persons.importJson")}
+          </MdButton>
+        }
         filters={
           <div className="flex flex-wrap items-end gap-3">
             <div className="w-28">
@@ -343,6 +442,96 @@ export function AdminPersonsPage() {
       >
         <md-icon slot="icon" className="material-symbols-outlined">add</md-icon>
       </md-fab>
+
+      <MdDialog
+        open={importOpen}
+        quick
+        onOpenChange={(open) => {
+          setImportOpen(open);
+          if (!open) {
+            setImportLocalError(null);
+            setImportBusy(false);
+          }
+        }}
+      >
+        <div className="flex max-w-2xl flex-col gap-4 p-6">
+          <h2 className="md-typescale-title-large m-0">
+            {t("persons.importJsonTitle")}
+          </h2>
+          <p className="md-typescale-body-medium m-0 text-[var(--md-sys-color-on-surface-variant)]">
+            {t("persons.importJsonHint")}
+          </p>
+          <input
+            ref={importFileRef}
+            type="file"
+            accept="application/json,.json"
+            className="sr-only"
+            aria-hidden
+            onChange={(ev) => {
+              const f = ev.target.files?.[0];
+              ev.target.value = "";
+              if (!f) {
+                return;
+              }
+              void f.text().then(setImportJsonText).catch(() => {
+                setImportLocalError(t("persons.importJsonParseError"));
+              });
+            }}
+          />
+          <MdTextField
+            label={t("persons.importJsonFieldLabel")}
+            type="textarea"
+            rows={12}
+            value={importJsonText}
+            onValueChange={setImportJsonText}
+            placeholder={t("persons.importJsonPlaceholder")}
+            className="w-full font-mono text-sm"
+            disabled={importBusy}
+          />
+          {importLocalError ? (
+            <p
+              className="md-typescale-body-medium m-0"
+              style={{ color: "var(--md-sys-color-error)" }}
+            >
+              {importLocalError}
+            </p>
+          ) : null}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <MdButton
+              variant="text"
+              type="button"
+              disabled={importBusy}
+              onClick={() => {
+                importFileRef.current?.click();
+              }}
+            >
+              {t("persons.importJsonChooseFile")}
+            </MdButton>
+            <div className="flex gap-2">
+              <MdButton
+                variant="text"
+                type="button"
+                disabled={importBusy}
+                onClick={() => {
+                  setImportOpen(false);
+                }}
+              >
+                {tc("cancel")}
+              </MdButton>
+              <MdButton
+                variant="filled"
+                type="button"
+                disabled={importBusy}
+                onClick={() => {
+                  void submitJsonImport();
+                }}
+              >
+                {t("persons.importJsonSubmit")}
+              </MdButton>
+            </div>
+          </div>
+        </div>
+      </MdDialog>
 
       <MdDialog
         open={delOpen}

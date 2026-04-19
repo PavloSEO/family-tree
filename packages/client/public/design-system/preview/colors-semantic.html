@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+body { margin: 0; padding: 16px; background: var(--md-sys-color-background); font-family: var(--md-ref-typeface-plain); }
+.row { display: flex; gap: 8px; margin-bottom: 8px; }
+.swatch { flex: 1; border-radius: var(--md-sys-shape-corner-small); padding: 12px 10px; }
+.label { font-size: 10px; font-weight: 500; }
+.hex { font-size: 11px; font-family: monospace; font-weight: 700; }
+.inv { color: #fff; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="swatch inv" style="background:#BA1A1A; min-height:60px;">
+    <div class="label" style="opacity:.8">Error</div><div class="hex">#BA1A1A</div>
+  </div>
+  <div class="swatch" style="background:#FFDAD6;color:#410002; min-height:60px;">
+    <div class="label">Error Container</div><div class="hex">#FFDAD6</div>
+  </div>
+  <div class="swatch inv" style="background:#2F3036; min-height:60px;">
+    <div class="label" style="opacity:.8">Inverse Surface</div><div class="hex">#2F3036</div>
+  </div>
+  <div class="swatch" style="background:#A0CAFD;color:#001D36; min-height:60px;">
+    <div class="label">Inverse Primary</div><div class="hex">#A0CAFD</div>
+  </div>
+</div>
+<div class="row" style="gap:6px;flex-wrap:wrap;">
+  <div style="font-size:11px;color:#43474E;flex-basis:100%;margin-bottom:2px;font-weight:500;">Semantic aliases</div>
+  <div class="swatch" style="background:var(--color-fg-1);color:#fff;min-height:36px;flex:none;width:calc(25% - 5px);">
+    <div class="label" style="opacity:.8">fg-1</div>
+  </div>
+  <div class="swatch" style="background:var(--color-fg-2);color:#fff;min-height:36px;flex:none;width:calc(25% - 5px);">
+    <div class="label" style="opacity:.8">fg-2</div>
+  </div>
+  <div class="swatch" style="background:var(--color-fg-brand);color:#fff;min-height:36px;flex:none;width:calc(25% - 5px);">
+    <div class="label" style="opacity:.8">fg-brand</div>
+  </div>
+  <div class="swatch" style="background:var(--color-border);color:#1a1b1f;min-height:36px;flex:none;width:calc(25% - 5px);">
+    <div class="label">border</div>
+  </div>
+</div>
+</body>
+</html>

@@ -9,12 +9,14 @@ import "./material-imports.js";
 import { AuthProvider } from "./providers/AuthProvider.js";
 import "./styles/global.css";
 
-const root = document.getElementById("root");
-if (!root) {
+const rootEl = document.getElementById("root");
+if (!rootEl) {
   throw new Error("Missing #root");
 }
+/** Narrowing for async `mount` (TS does not carry `root` refinement into deferred callbacks). */
+const appRoot: HTMLElement = rootEl;
 
-createRoot(root).render(
+const app = (
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
@@ -40,5 +42,11 @@ createRoot(root).render(
         </>
       </AuthProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 );
+
+function mount() {
+  createRoot(appRoot).render(app);
+}
+
+void document.fonts.ready.then(mount).catch(mount);

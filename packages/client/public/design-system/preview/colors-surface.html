@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+body { margin: 0; padding: 16px; background: var(--md-sys-color-background); font-family: var(--md-ref-typeface-plain); }
+.row { display: flex; gap: 6px; margin-bottom: 8px; }
+.swatch { flex: 1; border-radius: var(--md-sys-shape-corner-small); padding: 10px 8px; border: 1px solid #e0e0e0; }
+.swatch-label { font-size: 9px; font-weight: 500; color: #43474E; }
+.swatch-hex { font-size: 10px; font-weight: 700; font-family: monospace; color: #1A1B1F; }
+.row2 { display: flex; gap: 6px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="swatch" style="background:#FFFFFF; min-height:44px;">
+    <div class="swatch-label">Lowest</div><div class="swatch-hex">#FFFFFF</div>
+  </div>
+  <div class="swatch" style="background:#F7F2FA; min-height:44px;">
+    <div class="swatch-label">Low</div><div class="swatch-hex">#F7F2FA</div>
+  </div>
+  <div class="swatch" style="background:#F3EDF7; min-height:44px;">
+    <div class="swatch-label">Container</div><div class="swatch-hex">#F3EDF7</div>
+  </div>
+  <div class="swatch" style="background:#ECE6F0; min-height:44px;">
+    <div class="swatch-label">High</div><div class="swatch-hex">#ECE6F0</div>
+  </div>
+  <div class="swatch" style="background:#E6E0E9; min-height:44px;">
+    <div class="swatch-label">Highest</div><div class="swatch-hex">#E6E0E9</div>
+  </div>
+  <div class="swatch" style="background:#DDD8E0; min-height:44px;">
+    <div class="swatch-label">Dim</div><div class="swatch-hex">#DDD8E0</div>
+  </div>
+</div>
+<div class="row2">
+  <div class="swatch" style="background:#FDFCFF; min-height:40px;">
+    <div class="swatch-label">Background / Surface</div><div class="swatch-hex">#FDFCFF</div>
+  </div>
+  <div class="swatch" style="background:#DFE2EB; min-height:40px;">
+    <div class="swatch-label">Surface Variant</div><div class="swatch-hex">#DFE2EB</div>
+  </div>
+  <div class="swatch" style="background:#73777F;color:#fff; min-height:40px;">
+    <div class="swatch-label" style="opacity:.8">Outline</div><div class="swatch-hex">#73777F</div>
+  </div>
+  <div class="swatch" style="background:#C3C6CF; min-height:40px;">
+    <div class="swatch-label">Outline Variant</div><div class="swatch-hex">#C3C6CF</div>
+  </div>
+</div>
+</body>
+</html>

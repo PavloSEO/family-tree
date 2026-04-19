@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Family Tree — Web App UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<style>
+  /* Ensure icon font is declared even if CDN delays */
+  @font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url(https://fonts.gstatic.com/s/materialsymbolsoutlined/v232/kJF1BvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsI.woff2) format('woff2');
+    unicode-range: U+0020-00FF, U+E000-F8FF;
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--md-ref-typeface-plain); background: var(--md-sys-color-background); }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; font-family: 'Material Symbols Outlined'; font-style: normal; display: inline-block; line-height: 1; user-select: none; }
+</style>
+</head>
+<body>
+<script type="text/babel" src="Components.jsx"></script>
+<script type="text/babel" src="screens/LoginScreen.jsx"></script>
+<script type="text/babel" src="screens/TreeScreen.jsx"></script>
+<script type="text/babel" src="screens/PersonScreen.jsx"></script>
+<script type="text/babel" src="screens/AdminPersonsScreen.jsx"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const SCREENS = {
+  login:         { label: 'Login',        icon: 'login' },
+  tree:          { label: 'Tree',         icon: 'account_tree' },
+  person:        { label: 'Person Card',  icon: 'person' },
+  adminPersons:  { label: 'Admin: Persons', icon: 'badge' },
+};
+
+function App() {
+  const [screen, setScreen] = useState(() => localStorage.getItem('ft_ds_screen') || 'login');
+  const [toast, setToast] = useState(null);
+  const [role] = useState('admin');
+
+  useEffect(() => { localStorage.setItem('ft_ds_screen', screen); }, [screen]);
+
+  function showToast(msg, type = 'success') {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 2800);
+  }
+
+  function navigate(to) { setScreen(to); }
+
+  const navItems = Object.entries(SCREENS).map(([key, v]) => ({ key, ...v }));
+
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Sidebar (hidden on login screen) */}
+      {screen !== 'login' && (
+        <Sidebar
+          active={screen === 'adminPersons' ? 'persons' : screen === 'person' ? 'persons' : screen}
+          role={role}
+          onNav={key => {
+            const map = { tree: 'tree', albums: 'tree', persons: 'adminPersons', relationships: 'adminPersons', settings: 'adminPersons', home: 'tree', welcome: 'tree', backup: 'adminPersons', users: 'adminPersons', 'albums-admin': 'adminPersons' };
+            navigate(map[key] || key);
+          }}
+        />
+      )}
+
+      {/* Main content */}
+      <div style={{ flex: 1, minWidth: 0, position: 'relative' }}>
+        {/* Screen nav bar (top) */}
+        <div style={{
+          display: 'flex', gap: 4, padding: '8px 16px',
+          borderBottom: '1px solid var(--md-sys-color-outline-variant)',
+          background: 'var(--md-sys-color-surface-container-lowest)',
+          overflowX: 'auto',
+        }}>
+          {navItems.map(item => (
+            <button
+              key={item.key}
+              onClick={() => navigate(item.key)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '6px 14px', border: 'none', borderRadius: 'var(--md-sys-shape-corner-full)',
+                background: screen === item.key ? 'var(--md-sys-color-secondary-container)' : 'transparent',
+                color: screen === item.key ? 'var(--md-sys-color-on-secondary-container)' : 'var(--md-sys-color-on-surface-variant)',
+                cursor: 'pointer', fontSize: 13, fontWeight: 500,
+                fontFamily: 'var(--md-ref-typeface-plain)', whiteSpace: 'nowrap',
+              }}
+            >
+              <Icon name="{item.icon}" size={16} />
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Active screen */}
+        <div style={{ overflow: 'auto' }}>
+          {screen === 'login'        && <LoginScreen onLogin={() => navigate('tree')} />}
+          {screen === 'tree'         && <TreeScreen onPersonClick={() => navigate('person')} />}
+          {screen === 'person'       && <PersonScreen onBack={() => navigate('tree')} />}
+          {screen === 'adminPersons' && <AdminPersonsScreen onToast={showToast} onEdit={() => navigate('person')} />}
+        </div>
+      </div>
+
+      {toast && <Toast message={toast.msg} type={toast.type} visible />}
+    </div>
+  );
+}
+
+function mount() {
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+}
+// Wait for icon font before first render to avoid ligature text flash
+document.fonts.ready.then(mount).catch(mount);
+</script>
+<div id="root"></div>
+</body>
+</html>

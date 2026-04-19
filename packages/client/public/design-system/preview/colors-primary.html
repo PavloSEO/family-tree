@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+body { margin: 0; padding: 16px; background: var(--md-sys-color-background); font-family: var(--md-ref-typeface-plain); }
+.row { display: flex; gap: 8px; margin-bottom: 8px; }
+.swatch { flex: 1; border-radius: var(--md-sys-shape-corner-small); padding: 10px 8px; display: flex; flex-direction: column; gap: 2px; }
+.swatch-label { font-size: 10px; font-weight: 500; opacity: .7; }
+.swatch-hex { font-size: 11px; font-weight: 700; font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="swatch" style="background:#1565C0;color:#fff;min-height:64px;">
+    <span class="swatch-label">Primary</span>
+    <span class="swatch-hex">#1565C0</span>
+  </div>
+  <div class="swatch" style="background:#fff;color:#1565C0;border:1px solid #C3C6CF;min-height:64px;">
+    <span class="swatch-label">On Primary</span>
+    <span class="swatch-hex">#FFFFFF</span>
+  </div>
+  <div class="swatch" style="background:#D1E4FF;color:#001D36;min-height:64px;">
+    <span class="swatch-label">Primary Container</span>
+    <span class="swatch-hex">#D1E4FF</span>
+  </div>
+  <div class="swatch" style="background:#001D36;color:#D1E4FF;min-height:64px;">
+    <span class="swatch-label">On Primary Container</span>
+    <span class="swatch-hex">#001D36</span>
+  </div>
+</div>
+<div class="row">
+  <div class="swatch" style="background:#535F70;color:#fff;min-height:52px;">
+    <span class="swatch-label">Secondary</span>
+    <span class="swatch-hex">#535F70</span>
+  </div>
+  <div class="swatch" style="background:#D7E3F7;color:#101C2B;min-height:52px;">
+    <span class="swatch-label">Secondary Container</span>
+    <span class="swatch-hex">#D7E3F7</span>
+  </div>
+  <div class="swatch" style="background:#6B5778;color:#fff;min-height:52px;">
+    <span class="swatch-label">Tertiary</span>
+    <span class="swatch-hex">#6B5778</span>
+  </div>
+  <div class="swatch" style="background:#F2DAFF;color:#251431;min-height:52px;">
+    <span class="swatch-label">Tertiary Container</span>
+    <span class="swatch-hex">#F2DAFF</span>
+  </div>
+</div>
+</body>
+</html>

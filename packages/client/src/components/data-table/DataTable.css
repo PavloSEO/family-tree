@@ -1,4 +1,6 @@
 .data-table-layout {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--md-sys-shape-corner-medium);
   background: var(--md-sys-color-surface);
@@ -19,6 +21,11 @@
   max-width: 28rem;
 }
 
+.data-table-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -29,22 +36,22 @@
 }
 
 .data-table th {
-  padding: 12px 16px;
+  padding: 10px 14px;
   text-align: left;
   color: var(--md-sys-color-on-surface-variant);
-  font-size: 0.875rem;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 1.25rem;
+  line-height: 1.4;
   letter-spacing: 0.1px;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
   vertical-align: middle;
 }
 
 .data-table td {
-  padding: 12px 16px;
+  padding: 10px 14px;
   color: var(--md-sys-color-on-surface);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: 13px;
+  line-height: 1.4;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
@@ -76,7 +83,8 @@ md-text-button.data-table-sort-btn[disabled] {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px 14px;
+  font-size: 13px;
   color: var(--md-sys-color-on-surface-variant);
   border-top: 1px solid var(--md-sys-color-outline-variant);
   background: var(--md-sys-color-surface-container-low);
@@ -89,21 +97,34 @@ md-text-button.data-table-sort-btn[disabled] {
 }
 
 .data-table-empty {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 48px 24px;
+  gap: 0.75rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 40rem;
+  min-height: 12rem;
+  margin-inline: auto;
+  padding: 3rem 1.5rem;
   text-align: center;
 }
 
+/* `md-icon` sizes the box with `--md-icon-size` (default 24px); only `font-size` overflows and is clipped (`overflow: hidden` on host). */
 .data-table-empty__icon {
-  font-size: 48px;
+  --md-icon-size: 48px;
   color: var(--md-sys-color-on-surface-variant);
 }
 
+.data-table-empty__title {
+  max-width: 100%;
+  color: var(--md-sys-color-on-surface);
+}
+
 .data-table-empty__description {
+  max-width: 100%;
   color: var(--md-sys-color-on-surface-variant);
 }
 
@@ -124,4 +145,107 @@ md-text-button.data-table-sort-btn[disabled] {
   top: 0;
   left: 0;
   right: 0;
+}
+
+/* Person photo column — design handoff `brand-avatars.html` */
+.person-table-avatar {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.person-table-avatar__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.person-table-avatar__wrap--living {
+  box-shadow: 0 0 0 2.5px var(--md-sys-color-primary);
+}
+
+.person-table-avatar__wrap--dead {
+  box-shadow: 0 0 0 2.5px var(--md-sys-color-outline);
+}
+
+.person-table-avatar__pad {
+  border-radius: 4px;
+  padding: 2px;
+  line-height: 0;
+}
+
+.person-table-avatar__pad--male {
+  background: var(--md-sys-color-primary-container);
+}
+
+.person-table-avatar__pad--female {
+  background: var(--md-sys-color-tertiary-container);
+}
+
+.person-table-avatar__pad--neutral {
+  background: var(--md-sys-color-secondary-container);
+}
+
+.person-table-avatar__img {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.person-table-avatar__img--tint-young {
+  filter: saturate(1.2) brightness(1.05);
+}
+
+.person-table-avatar__img--tint-mid {
+  filter: saturate(1);
+}
+
+.person-table-avatar__img--tint-old {
+  filter: saturate(0.7) brightness(0.92);
+}
+
+.person-table-avatar__img--tint-dead {
+  filter: grayscale(0.65) brightness(0.88);
+}
+
+.person-table-avatar__badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--md-sys-color-background);
+  box-sizing: content-box;
+}
+
+.person-table-avatar__badge--living {
+  background: var(--md-sys-color-primary);
+}
+
+.person-table-avatar__badge--dead {
+  background: var(--md-sys-color-outline);
+}
+
+.person-table-status {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  display: inline-block;
+  line-height: 1.35;
+}
+
+.person-table-status--living {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.person-table-status--dead {
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
 }

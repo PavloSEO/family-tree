@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<style>
+body { margin: 0; padding: 16px; background: var(--md-sys-color-background); font-family: var(--md-ref-typeface-plain); }
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--md-sys-color-surface-container); }
+th {
+  padding: 10px 14px; text-align: left;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 13px; font-weight: 500; letter-spacing: 0.1px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+td {
+  padding: 10px 14px;
+  color: var(--md-sys-color-on-surface);
+  font-size: 13px; line-height: 1.4;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+tr:hover td { background: var(--md-sys-color-surface-container-low); }
+.avatar-cell { width:36px; height:36px; border-radius:4px; background:var(--md-sys-color-secondary-container); display:flex; align-items:center; justify-content:center; }
+.avatar-cell .material-symbols-outlined { font-size:20px; color:var(--md-sys-color-on-secondary-container); }
+.actions { display:flex; gap:4px; }
+.icon-btn { width:32px; height:32px; border:none; background:transparent; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--md-sys-color-on-surface-variant); }
+.icon-btn:hover { background:var(--md-sys-color-surface-container-high); }
+.icon-btn .material-symbols-outlined { font-size:18px; }
+.pagination { display:flex; align-items:center; justify-content:space-between; padding:8px 14px; color:var(--md-sys-color-on-surface-variant); font-size:13px; }
+</style>
+</head>
+<body>
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Gender</th>
+      <th>Birth date</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><div class="avatar-cell"><span class="material-symbols-outlined">person</span></div></td>
+      <td>Ivan</td><td>Petrov</td><td>M</td><td>15.03.1948</td>
+      <td style="color:var(--md-sys-color-on-surface-variant)">Deceased</td>
+      <td><div class="actions"><button class="icon-btn"><span class="material-symbols-outlined">edit</span></button><button class="icon-btn"><span class="material-symbols-outlined">delete</span></button></div></td>
+    </tr>
+    <tr>
+      <td><div class="avatar-cell" style="background:var(--md-sys-color-tertiary-container)"><span class="material-symbols-outlined" style="color:var(--md-sys-color-on-tertiary-container)">person</span></div></td>
+      <td>Maria</td><td>Petrova</td><td>F</td><td>22.07.1952</td>
+      <td style="color:var(--md-sys-color-primary)">Living</td>
+      <td><div class="actions"><button class="icon-btn"><span class="material-symbols-outlined">edit</span></button><button class="icon-btn"><span class="material-symbols-outlined">delete</span></button></div></td>
+    </tr>
+    <tr>
+      <td><div class="avatar-cell"><span class="material-symbols-outlined">person</span></div></td>
+      <td>Alexei</td><td>Petrov</td><td>M</td><td>05.11.1975</td>
+      <td style="color:var(--md-sys-color-primary)">Living</td>
+      <td><div class="actions"><button class="icon-btn"><span class="material-symbols-outlined">edit</span></button><button class="icon-btn"><span class="material-symbols-outlined">delete</span></button></div></td>
+    </tr>
+  </tbody>
+</table>
+<div class="pagination">
+  <span>Page 1 of 5</span>
+  <span>Total: 42</span>
+</div>
+</body>
+</html>

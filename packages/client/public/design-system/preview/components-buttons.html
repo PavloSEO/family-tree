@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+<style>
+body { margin: 0; padding: 16px; background: var(--md-sys-color-background); font-family: var(--md-ref-typeface-plain); }
+.section { margin-bottom: 16px; }
+.section-title { font-size: 10px; font-weight: 500; color: var(--md-sys-color-on-surface-variant); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Filled button */
+.btn-filled {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+  border: none; border-radius: var(--md-sys-shape-corner-full);
+  padding: 10px 24px; font-family: var(--md-ref-typeface-plain);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.1px;
+  cursor: pointer; line-height: 20px;
+}
+.btn-filled:hover { box-shadow: 0 1px 3px rgba(0,0,0,.2); filter: brightness(0.95); }
+
+/* Outlined button */
+.btn-outlined {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--md-sys-color-primary);
+  border: 1px solid var(--md-sys-color-outline); border-radius: var(--md-sys-shape-corner-full);
+  padding: 10px 24px; font-family: var(--md-ref-typeface-plain);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.1px;
+  cursor: pointer; line-height: 20px;
+}
+
+/* Text button */
+.btn-text {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--md-sys-color-primary);
+  border: none; border-radius: var(--md-sys-shape-corner-full);
+  padding: 10px 12px; font-family: var(--md-ref-typeface-plain);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.1px;
+  cursor: pointer; line-height: 20px;
+}
+
+/* Tonal button */
+.btn-tonal {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);
+  border: none; border-radius: var(--md-sys-shape-corner-full);
+  padding: 10px 24px; font-family: var(--md-ref-typeface-plain);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.1px;
+  cursor: pointer; line-height: 20px;
+}
+
+/* FAB */
+.fab {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+  border: none; border-radius: var(--md-sys-shape-corner-large);
+  width: 56px; height: 56px; box-shadow: var(--ft-elevation-3);
+  cursor: pointer; font-size: 24px;
+}
+.fab .material-symbols-outlined { font-size: 24px; }
+
+/* Icon button */
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--md-sys-color-on-surface-variant);
+  border: none; border-radius: var(--md-sys-shape-corner-full);
+  width: 40px; height: 40px; cursor: pointer;
+}
+.icon-btn:hover { background: var(--md-sys-color-surface-container-high); }
+.icon-btn .material-symbols-outlined { font-size: 20px; }
+</style>
+</head>
+<body>
+<div class="section">
+  <div class="section-title">Buttons</div>
+  <div class="row">
+    <button class="btn-filled"><span class="material-symbols-outlined" style="font-size:18px">login</span>Sign In</button>
+    <button class="btn-outlined">Cancel</button>
+    <button class="btn-tonal">Secondary action</button>
+    <button class="btn-text"><span class="material-symbols-outlined" style="font-size:18px">logout</span>Sign out</button>
+  </div>
+</div>
+<div class="section">
+  <div class="section-title">FAB + Icon Buttons</div>
+  <div class="row" style="align-items:center">
+    <button class="fab"><span class="material-symbols-outlined">add</span></button>
+    <button class="icon-btn"><span class="material-symbols-outlined">edit</span></button>
+    <button class="icon-btn"><span class="material-symbols-outlined">delete</span></button>
+    <button class="icon-btn"><span class="material-symbols-outlined">search</span></button>
+    <button class="icon-btn"><span class="material-symbols-outlined">arrow_back</span></button>
+  </div>
+</div>
+</body>
+</html>

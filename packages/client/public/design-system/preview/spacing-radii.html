@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+body { margin: 0; padding: 16px; background: var(--md-sys-color-background); font-family: var(--md-ref-typeface-plain); }
+.row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.label { font-size: 10px; color: var(--md-sys-color-on-surface-variant); width: 120px; flex-shrink: 0; font-family: monospace; }
+.demo { height: 32px; border-radius: var(--md-sys-shape-corner-medium); background: var(--md-sys-color-surface-container); display: flex; align-items: center; padding: 0 12px; }
+.r-none { border-radius: 0; }
+.r-xs { border-radius: 4px; }
+.r-s  { border-radius: 8px; }
+.r-m  { border-radius: 12px; }
+.r-l  { border-radius: 16px; }
+.r-xl { border-radius: 28px; }
+.r-full { border-radius: 9999px; }
+.box { width: 80px; height: 36px; background: var(--md-sys-color-primary-container); border: 1px solid var(--md-sys-color-outline-variant); }
+</style>
+</head>
+<body>
+<div class="row"><span class="label">none · 0px</span><div class="box r-none"></div></div>
+<div class="row"><span class="label">extra-small · 4px</span><div class="box r-xs"></div></div>
+<div class="row"><span class="label">small · 8px</span><div class="box r-s"></div></div>
+<div class="row"><span class="label">medium · 12px</span><div class="box r-m"></div></div>
+<div class="row"><span class="label">large · 16px</span><div class="box r-l"></div></div>
+<div class="row"><span class="label">extra-large · 28px</span><div class="box r-xl"></div></div>
+<div class="row"><span class="label">full · 9999px</span><div class="box r-full"></div></div>
+</body>
+</html>
